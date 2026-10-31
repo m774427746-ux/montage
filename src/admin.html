@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>مونتاج — المستخدمون</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#F1F3F6;--surface:#fff;--sunk:#E8EBF0;--ink:#15233F;--muted:#5A6479;--line:#D7DCE4;--accent:#F29A1E;--err:#C92A2A;
+  --fd:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;--fb:"IBM Plex Sans Arabic",Tahoma,sans-serif}
+@media (prefers-color-scheme:dark){:root{--bg:#0E1524;--surface:#162036;--sunk:#111A2C;--ink:#E7ECF5;--muted:#9BA6BC;--line:#2A3654;--err:#FF8A8A;color-scheme:dark}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px}
+.wrap{max-width:1100px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+h1{font-family:var(--fd);font-size:28px;margin:0 0 4px}
+.muted{color:var(--muted)}
+.n{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
+form{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+input{flex:1 1 240px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--surface);color:var(--ink);direction:ltr}
+button{border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:700;background:var(--accent);color:#15233F;cursor:pointer}
+button.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:8px 0 18px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.kpi.hero{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.kpi b{display:block;font-family:var(--fd);font-size:34px;line-height:1.2}
+.kpi span{font-size:13px;opacity:.8}
+.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;min-width:620px}
+th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
+th{background:var(--sunk);color:var(--muted);font-size:13px}
+tr:last-child td{border-bottom:0}
+td.e{direction:ltr;text-align:right}
+#msg{color:var(--err);font-weight:600;min-height:20px}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>المستخدمون</h1>
+  <p class="muted">كل من دخل «مونتاج» بالإيميل.</p>
+  <form id="f"><input id="k" type="password" placeholder="مفتاح الإدارة" autocomplete="current-password" aria-label="مفتاح الإدارة"><button type="submit">عرض</button></form>
+  <p id="msg" role="alert"></p>
+  <div id="out" hidden>
+    <div class="kpis" id="kpis"></div>
+    <div class="bar"><b>القائمة</b><span><button class="ghost" id="refresh" type="button">تحديث</button> <button id="csv" type="button">تنزيل CSV</button></span></div>
+    <div class="tw"><table><thead><tr><th>البريد</th><th>أول دخول</th><th>آخر دخول</th><th>عدد الزيارات</th></tr></thead><tbody id="rows"></tbody></table></div>
+  </div>
+</div>
+<script>
+(function(){
+  var data=null, $=function(id){return document.getElementById(id)};
+  var fmt=function(iso){ if(!iso) return "—"; var d=new Date(iso); return d.toLocaleString("ar-SA-u-nu-latn",{dateStyle:"medium",timeStyle:"short"}); };
+  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
+  function load(){
+    var key=$("k").value.trim(); if(!key){ $("msg").textContent="اكتب مفتاح الإدارة."; return; }
+    $("msg").textContent="";
+    fetch("/api/stats",{headers:{"x-admin-key":key}}).then(function(r){return r.json().then(function(j){return {s:r.status,j:j}})}).then(function(x){
+      if(x.s===401){ $("msg").textContent="المفتاح غير صحيح."; return; }
+      if(!x.j.ok){ $("msg").textContent= x.j.error==="storage_not_configured"?"قاعدة البيانات غير مربوطة بالمشروع بعد.":x.j.error==="admin_key_not_configured"?"لم يُضبط ADMIN_KEY في إعدادات Vercel.":"تعذّر جلب البيانات."; return; }
+      try{ sessionStorage.setItem("montage_admin",key); }catch(e){}
+      data=x.j; $("out").hidden=false;
+      var k=function(l,v,h){return '<div class="kpi'+(h?' hero':'')+'"><b class="n">'+v.toLocaleString("en-US")+'</b><span>'+l+'</span></div>'};
+      $("kpis").innerHTML=k("إجمالي المستخدمين",data.total,1)+k("جدد اليوم",data.newToday)+k("جدد آخر 7 أيام",data.new7d)+k("نشطون آخر 7 أيام",data.active7d)+k("إجمالي الزيارات",data.visits);
+      $("rows").innerHTML=data.users.map(function(u){return '<tr><td class="e">'+esc(u.email)+'</td><td>'+fmt(u.first)+'</td><td>'+fmt(u.last)+'</td><td class="n">'+u.visits+'</td></tr>'}).join("")||'<tr><td colspan="4" class="muted">لا يوجد مستخدمون بعد.</td></tr>';
+    }).catch(function(){ $("msg").textContent="تعذّر الاتصال بالخادم."; });
+  }
+  $("f").addEventListener("submit",function(e){e.preventDefault();load();});
+  $("refresh").addEventListener("click",load);
+  $("csv").addEventListener("click",function(){
+    if(!data) return;
+    var lines=[["email","first_seen","last_seen","visits"]].concat(data.users.map(function(u){return [u.email,u.first||"",u.last||"",u.visits]}));
+    var csv="﻿"+lines.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+    var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="montage-users.csv"; document.body.appendChild(a); a.click(); a.remove();
+  });
+  try{ var s=sessionStorage.getItem("montage_admin"); if(s){ $("k").value=s; load(); } }catch(e){}
+})();
+</script>
+</body>
+</html>
