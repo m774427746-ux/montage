@@ -1,0 +1,1403 @@
+<title>مونتاج</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a calm drafting-table tool — size shelf first, then a two-pane workspace (controls | flat-pattern stage). */
+:root{
+  --bg:#F1F3F6; --surface:#FFFFFF; --sunk:#E8EBF0; --ink:#15233F; --muted:#5A6479; --line:#D7DCE4;
+  --accent:#F29A1E; --accent-ink:#15233F; --accent-soft:#FDF0DC; --focus:#2E6BE6;
+  --paper:#FFFFFF; --grid:#E4E8EE; --err:#C92A2A; --err-soft:#FDECEC; --ok:#2B8A3E;
+  --cut:#15233F; --bleed:#E03131; --safe:#2F9E44; --glue:#7048E8; --guides:#1C7ED6;
+  --font-display:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;
+  --font-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
+  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
+  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.65;margin:0}
+.wrap{max-width:1240px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0}
+h1,h2,h3{font-family:var(--font-display);line-height:1.25;text-wrap:balance;margin:0}
+.n{direction:ltr;unicode-bidi:isolate;display:inline-block;font-variant-numeric:tabular-nums;white-space:nowrap}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.muted{color:var(--muted)}
+small{font-size:12.5px}
+
+/* header */
+header.top{padding-block:24px 6px}
+.brandrow{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px}
+h1{font-size:clamp(28px,4vw,40px);font-weight:700;letter-spacing:-.01em;line-height:1.1}
+.brand{display:flex;align-items:center;gap:14px}
+.brand .logo{width:56px;height:56px;flex:none}
+.brand .lede{margin-top:4px}
+.lede{margin:6px 0 0;color:var(--muted);max-width:60ch}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:18px;padding:0;list-style:none}
+.path li{display:flex;align-items:center;gap:8px;font-weight:600}
+.path .num{width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--ink);color:var(--bg);font-size:13px}
+.path .arr{color:var(--muted);font-weight:400}
+.note{display:flex;gap:10px;align-items:flex-start;margin-top:16px;padding:10px 14px;border:1px dashed var(--line);border-radius:var(--r);background:var(--surface);font-size:14px}
+.note b{color:var(--ink)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);background:var(--surface);border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600;font-size:14px;min-height:40px;text-decoration:none}
+.btn:hover{border-color:var(--ink)}
+.btn-dl{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn-dl:hover{filter:brightness(1.05);border-color:var(--accent-ink)}
+.btn-ink{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.btn svg{width:16px;height:16px;flex:none}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:9px;padding:3px;background:var(--surface);gap:2px}
+.seg button{border:0;background:transparent;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:600;font-size:13.5px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+
+/* shelf */
+section{padding-block:18px}
+.sechead{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin-bottom:14px}
+.sechead h2{font-size:20px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.toolbar label{font-size:13px;color:var(--muted)}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media (max-width:980px){.cards{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:720px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:420px){.cards{grid-template-columns:minmax(0,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;display:grid;grid-template-rows:auto auto 1fr auto;gap:8px;min-width:0}
+.card.sel{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.cardtop{display:flex;align-items:flex-end;justify-content:space-between;gap:8px}
+.oz{font-family:var(--font-display);font-size:30px;font-weight:700;line-height:1}
+.oz small{font-size:15px;font-weight:600;color:var(--muted);margin-inline-start:2px}
+.cupart{height:118px;display:block;width:100%}
+.cupart svg{height:100%;width:100%}
+.dims{display:grid;gap:2px;margin:0;font-size:13.5px}
+.dims div{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dotted var(--line);padding-block:3px}
+.dims dt{color:var(--muted)} .dims dd{margin:0;font-weight:600}
+.cardbtns{display:flex;gap:8px;flex-wrap:wrap}
+.cardbtns .btn{flex:1 1 auto;padding-inline:10px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{padding:10px 12px;text-align:start;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font-weight:600;color:var(--muted);font-size:13px;background:var(--sunk)}
+td.sz{font-family:var(--font-display);font-weight:700;font-size:17px}
+tr:last-child td{border-bottom:0}
+td .btn{min-height:34px;padding:5px 10px;font-size:13px}
+
+/* workspace */
+.ws{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.ws{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.panel h3{font-size:15px;margin-bottom:10px}
+.panel + .panel{margin-top:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 11px;font-weight:600;font-size:13.5px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.field{display:grid;gap:3px;margin-top:12px}
+.field label{font-weight:600;font-size:14px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.inwrap{display:flex;align-items:stretch;border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--surface)}
+.inwrap input{border:0;background:transparent;padding:8px 10px;width:100%;min-width:0;direction:ltr;text-align:left;font-variant-numeric:tabular-nums;font-size:15px}
+.inwrap span{padding:8px 10px;background:var(--sunk);color:var(--muted);font-size:13px;direction:ltr}
+.inwrap:focus-within{border-color:var(--focus)}
+.field.bad .inwrap{border-color:var(--err)}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.tag{font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
+.orig{font-size:12px;color:var(--muted);font-weight:400}
+.row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.errors{margin-top:12px;padding:10px 12px;border-radius:8px;background:var(--err-soft);color:var(--err);font-size:13.5px;font-weight:500}
+.errors ul{margin:0;padding-inline-start:18px}
+
+.stagehead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px}
+.stagehead h3{font-size:22px;margin:0}
+.badge{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 10px;border-radius:999px;background:var(--accent);color:var(--accent-ink);vertical-align:middle;margin-inline-start:8px;font-family:var(--font-body)}
+.zoomer{display:flex;gap:6px;align-items:center}
+.zoomer .btn{min-height:36px;padding:4px 10px}
+.zoomer output{min-width:52px;text-align:center;font-size:13px;color:var(--muted)}
+.stage{position:relative;height:min(62vh,560px,max(300px,78vw));min-height:300px;border:1px solid var(--line);border-radius:10px;overflow:hidden;cursor:grab;touch-action:none;
+  background-color:var(--sunk)}
+.stage.drag{cursor:grabbing}
+.stage svg{position:absolute;inset:0;width:100%;height:100%;display:block;direction:ltr}
+.stage .artboard{fill:var(--paper)}
+.stage svg *{vector-effect:non-scaling-stroke}
+.stage #CUT path{stroke-width:1.8px}
+.stage #BLEED path,.stage #SAFE path{stroke-width:1.4px;stroke-dasharray:7 4}
+.stage #GLUE path{stroke-width:1.4px}
+.stage #GUIDES path,.stage #GUIDES line{stroke-width:1px}
+.stage #GUIDES .dash{stroke-dasharray:6 4}
+.stage.hide-cut #CUT,.stage.hide-bleed #BLEED,.stage.hide-safe #SAFE,.stage.hide-glue #GLUE{display:none}
+.stagemsg{position:absolute;inset-inline:12px;bottom:12px;background:var(--err-soft);color:var(--err);padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px}
+.legend label{display:flex;align-items:center;gap:7px;font-size:13.5px;cursor:pointer;padding:3px 0}
+.legend input{width:16px;height:16px;accent-color:var(--ink)}
+.sw{width:22px;height:0;border-top:2.5px solid currentColor;display:inline-block}
+.sw.dashed{border-top-style:dashed}
+.sw.fill{height:12px;border:2px solid currentColor;background:color-mix(in srgb,currentColor 18%,transparent);border-radius:2px}
+.legdesc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px 16px;margin:10px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--muted)}
+.legdesc b{color:var(--ink);font-weight:600}
+.dlbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.dlbar .fname{font-size:12.5px;color:var(--muted)}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin:0}
+.calc div{background:var(--sunk);border-radius:8px;padding:8px 10px;min-width:0}
+.calc dt{font-size:12.5px;color:var(--muted)}
+.calc dd{margin:0;font-weight:700;font-size:15px}
+.calc .chk{color:var(--ok);font-size:12.5px;font-weight:600;display:block}
+.minicup{display:flex;justify-content:center}
+.minicup svg{width:100%;max-width:300px;height:auto}
+.formula{font-size:12.5px;color:var(--muted);margin:10px 0 0;direction:ltr;text-align:left;unicode-bidi:isolate;font-variant-numeric:tabular-nums;overflow-x:auto;white-space:nowrap}
+
+details.help{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:0}
+details.help summary{cursor:pointer;padding:14px 16px;font-weight:700;font-family:var(--font-display);font-size:17px;list-style-position:inside}
+details.help .body{padding:0 16px 16px}
+details.help ol{margin:0;padding-inline-start:22px;display:grid;gap:8px;max-width:75ch}
+.sources{font-size:13.5px;color:var(--muted);border-top:1px solid var(--line);padding-block:18px 36px;margin-top:10px}
+.sources p{margin:4px 0;max-width:80ch}
+.sitefoot{margin-top:32px;border-top:1px solid var(--line);background:var(--surface)}
+.footin{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));font-size:14px;color:var(--muted)}
+.footin p{margin:0}
+.footbrand{display:flex;align-items:center;gap:8px;font-family:var(--font-display);font-weight:700;color:var(--ink);font-size:16px}
+.footbrand svg{width:28px;height:28px}
+.contact a{color:var(--ink);font-weight:700;text-decoration:none;border-bottom:1.5px solid var(--accent)}
+.contact a:hover{color:var(--accent-ink);background:var(--accent-soft)}
+.toast{position:fixed;inset-inline:0;bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;z-index:20;padding-inline:16px}
+.toast div{background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:10px;font-weight:600;font-size:14px;max-width:560px;box-shadow:0 6px 24px rgba(0,0,0,.18)}
+.toast div.err{background:var(--err);color:#fff}
+textarea.copybox{width:100%;height:120px;margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:11px;direction:ltr;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink)}
+/* tabs + calculators */
+:root{ --pc-a:#FCE3BF; --pc-b:#D8E4FA; --pc-line:#15233F; --margin-fill:#E9ECF1; }
+[hidden]{display:none!important}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:16;background:var(--bg)}
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:8px}
+.tabs{display:flex;gap:4px;overflow-x:auto;padding-block:8px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs button{display:inline-flex;align-items:center;gap:8px;border:0;background:transparent;padding:9px 14px;border-radius:9px;font-weight:600;font-size:14.5px;color:var(--muted);cursor:pointer;white-space:nowrap;flex:none}
+.tabs button svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linejoin:round;stroke-linecap:round}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg)}
+.tabs button:hover:not([aria-selected="true"]){background:var(--sunk);color:var(--ink)}
+.sub{font-size:14px}
+.calc-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:900px){.calc-layout{grid-template-columns:minmax(0,1fr)}}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.pair[hidden]{display:none}
+.panel h3.mt{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.opts{display:grid;gap:6px;margin-top:12px}
+.check{display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer}
+.check input{width:17px;height:17px;accent-color:var(--ink);margin:0}
+.sel{width:100%;border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:var(--surface);min-height:41px;font-size:15px}
+.seg.full{display:flex;width:100%;margin-top:4px}
+.seg.full button{flex:1}
+.panel .seg.full + .field{margin-top:10px}
+.inwrap input:disabled{opacity:.5}
+.chips .chip{font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.kpi{background:var(--sunk);border-radius:10px;padding:12px 14px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.kpi.hero{background:var(--ink);color:var(--bg)}
+.kpi .l{font-size:13px;opacity:.85;font-weight:600}
+.kpi .v{font-family:var(--font-display);font-size:30px;font-weight:700;line-height:1.15;direction:ltr;unicode-bidi:isolate;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.kpi .s{font-size:12.5px;opacity:.75}
+.layouthead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 8px;font-size:13.5px;color:var(--muted)}
+.lkey{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.lkey i{width:14px;height:10px;border-radius:2px;display:inline-block;border:1.5px solid var(--pc-line);margin-inline-start:10px}
+.k-a{background:var(--pc-a)} .k-b{background:var(--pc-b)} .k-m{background:var(--margin-fill);border-style:dashed!important;border-color:#9AA3B5!important}
+.layoutbox{background:var(--sunk);border-radius:10px;padding:16px;display:flex;justify-content:center;align-items:center;min-height:240px}
+.layoutbox svg{width:100%;height:auto;max-height:560px;display:block}
+.layoutbox svg *{vector-effect:non-scaling-stroke}
+.lo-margin{fill:var(--margin-fill)}
+.lo-area{fill:var(--paper);stroke:#9AA3B5;stroke-width:1px;stroke-dasharray:5 4}
+.lo-sheet{fill:none;stroke:#7D879A;stroke-width:1.2px}
+.lo-a{fill:var(--pc-a);stroke:var(--pc-line);stroke-width:.9px}
+.lo-b{fill:var(--pc-b);stroke:var(--pc-line);stroke-width:.9px}
+.lo-bleed{fill:none;stroke:#E03131;stroke-width:.8px;stroke-dasharray:3 2}
+table.cmp{min-width:600px}
+table.cmp tbody tr{cursor:pointer}
+table.cmp tbody tr:hover td{background:var(--sunk)}
+table.cmp tbody tr.cur td{background:var(--accent-soft)}
+table.cmp tbody tr.none{cursor:default;color:var(--muted)}
+.best{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);margin-inline-start:4px}
+
+@media (prefers-reduced-motion:no-preference){.btn,.chip,.card{transition:border-color .15s, box-shadow .15s, filter .15s}}
+</style>
+
+<div id="app" dir="rtl" lang="ar">
+<header class="top wrap">
+  <div class="brandrow">
+    <div>
+      <div class="brand"><svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#15233F"/><g fill="#F29A1E"><rect x="13" y="13" width="9.6" height="9.6" rx="1.6"/><rect x="25.4" y="13" width="9.6" height="9.6" rx="1.6" opacity=".55"/><rect x="13" y="25.4" width="9.6" height="9.6" rx="1.6" opacity=".55"/><rect x="25.4" y="25.4" width="9.6" height="9.6" rx="1.6"/></g><path d="M6.5 10.5h3.5M10.5 6.5V10M41.5 10.5H38M37.5 6.5V10M6.5 37.5h3.5M10.5 41.5V38M41.5 37.5H38M37.5 41.5V38" stroke="#FFFFFF" stroke-width="1.7" stroke-linecap="round" fill="none"/></svg><div><h1>مونتاج</h1><p class="lede">أدوات المصمم للمطبعة: قوالب الأكواب، وتوزيع الأفرخ والاستيكرات والأكريليك.</p></div></div>
+    </div>
+  </div>
+</header>
+<nav class="tabbar" aria-label="الأدوات">
+  <div class="wrap">
+    <div class="tabs" role="tablist">
+      <button type="button" role="tab" data-tab="cups" aria-selected="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14l-2 16H7z"/><path d="M5.5 8h13"/></svg>قوالب الأكواب</button>
+      <button type="button" role="tab" data-tab="sheets" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأفرخ</button>
+      <button type="button" role="tab" data-tab="stickers" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
+      <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
+    </div>
+  </div>
+</nav>
+
+
+<main>
+<div class="tabpanel" id="tab-cups">
+<section class="wrap" id="shelf" aria-labelledby="shelfTitle">
+  <div class="sechead">
+    <h2 id="shelfTitle">قوالب الأكواب</h2>
+    <div class="toolbar">
+      <label for="fileKind">نوع الملف عند التنزيل:</label>
+      <div class="seg" id="fileKind" role="group" aria-label="نوع الملف">
+        <button type="button" data-kind="clean" aria-pressed="true">قالب نظيف</button>
+        <button type="button" data-kind="guides" aria-pressed="false">مع الأبعاد والإرشادات</button>
+      </div>
+      <div class="seg" role="group" aria-label="طريقة العرض">
+        <button type="button" data-view="cards" aria-pressed="true">بطاقات</button>
+        <button type="button" data-view="table" aria-pressed="false">جدول مقارنة</button>
+      </div>
+      <button class="btn btn-dl" id="zipAll" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>
+        كل المقاسات ZIP
+      </button>
+    </div>
+  </div>
+  <div class="cards" id="cards"></div>
+  <div class="tablewrap" id="tableWrap" hidden>
+    <table>
+      <thead><tr><th>المقاس</th><th>قطر الفوهة</th><th>قطر القاعدة</th><th>ارتفاع الكوب</th><th>الطول المائل</th><th>زاوية الفرد</th><th></th></tr></thead>
+      <tbody id="tbody"></tbody>
+    </table>
+  </div>
+  
+</section>
+
+<section class="wrap" id="workspace" aria-labelledby="wsTitle">
+  <div class="sechead"><h2 id="wsTitle">المعاينة والتخصيص</h2></div>
+  <div class="ws">
+    <div>
+      <div class="panel">
+        <h3>المقاس</h3>
+        <div class="chips" id="chips" role="group" aria-label="اختيار المقاس"></div>
+
+        <div class="field" data-key="D">
+          <label for="inD">قطر الفوهة <span class="orig" id="oD"></span></label>
+          <div class="inwrap"><input id="inD" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">عرض الفتحة العلوية التي يُشرب منها، ويحدّد طول القوس الخارجي في الفرد.</p>
+        </div>
+        <div class="field" data-key="d">
+          <label for="ind">قطر القاعدة <span class="orig" id="od"></span></label>
+          <div class="inwrap"><input id="ind" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">عرض أسفل الكوب، ويحدّد طول القوس الداخلي.</p>
+        </div>
+        <div class="field" data-key="h">
+          <label for="inh">ارتفاع الكوب <span class="orig" id="oh"></span></label>
+          <div class="inwrap"><input id="inh" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">الارتفاع الرأسي من القاعدة إلى الفوهة، وليس طول الجدار المائل.</p>
+        </div>
+        <div class="row2">
+          <button class="btn" type="button" id="resetDims">استعادة بيانات المقاس الأصلية</button>
+          <button class="btn" type="button" id="newCustom">إنشاء مقاس مخصص</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>الهوامش ولسان اللصق</h3>
+        
+        <div class="field" data-key="glue">
+          <label for="inglue">عرض منطقة اللصق</label>
+          <div class="inwrap"><input id="inglue" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">لسان منفصل على الحافة اليسرى من الفرد، يُقاس عرضه عموديًا على خط اللصق. ضع <span class="n">0</span> لإلغائه.</p>
+        </div>
+        <div class="field" data-key="bleed">
+          <label for="inbleed">هامش النزف</label>
+          <div class="inwrap"><input id="inbleed" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">امتداد للتصميم خارج حد القص حتى لا تظهر حواف بيضاء.</p>
+        </div>
+        <div class="field" data-key="safe">
+          <label for="insafe">هامش الأمان</label>
+          <div class="inwrap"><input id="insafe" inputmode="decimal" autocomplete="off"><span>mm</span></div>
+          <p class="hint">مسافة داخلية من حد القص تبقى فيها النصوص والشعارات.</p>
+        </div>
+        <div class="row2"><button class="btn" type="button" id="resetMargins">استعادة القيم الافتراضية</button></div>
+        <div class="errors" id="errors" role="alert" hidden></div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:0">
+      <div class="stagehead">
+        <h3 id="stageTitle">8 oz</h3>
+        <div class="zoomer" role="group" aria-label="التكبير">
+          <button class="btn" type="button" id="zOut" aria-label="تصغير">−</button>
+          <output id="zVal">100%</output>
+          <button class="btn" type="button" id="zIn" aria-label="تكبير">+</button>
+          <button class="btn" type="button" id="zFit">إعادة ضبط العرض</button>
+        </div>
+      </div>
+      <div class="stage" id="stage" aria-label="معاينة قالب الفرد المسطح"></div>
+      <div class="legend" role="group" aria-label="إظهار وإخفاء الطبقات">
+        <label style="color:var(--cut)"><input type="checkbox" id="lyCut" checked><span class="sw"></span><span style="color:var(--ink)">حد القص</span></label>
+        <label style="color:var(--bleed)"><input type="checkbox" id="lyBleed" checked><span class="sw dashed"></span><span style="color:var(--ink)">النزف</span></label>
+        <label style="color:var(--safe)"><input type="checkbox" id="lySafe" checked><span class="sw dashed"></span><span style="color:var(--ink)">المنطقة الآمنة</span></label>
+        <label style="color:var(--glue)"><input type="checkbox" id="lyGlue" checked><span class="sw fill"></span><span style="color:var(--ink)">منطقة اللصق</span></label>
+        <label style="color:var(--guides)"><input type="checkbox" id="lyGuides" checked><span class="sw"></span><span style="color:var(--ink)">الأبعاد والإرشادات</span></label>
+      </div>
+      <ul class="legdesc">
+        <li><b>حد القص:</b> الشكل النهائي لجسم الكوب بعد القص.</li>
+        <li><b>النزف:</b> مدّ الخلفيات والصور حتى هذا الخط.</li>
+        <li><b>المنطقة الآمنة:</b> أبقِ النصوص والشعارات داخلها.</li>
+        <li><b>منطقة اللصق:</b> تختفي تحت الطرف الآخر عند التركيب.</li>
+      </ul>
+      
+
+      <div class="dlbar">
+        <button class="btn btn-dl" type="button" id="dlClean">تنزيل القالب النظيف</button>
+        <button class="btn btn-dl" type="button" id="dlGuides">تنزيل القالب مع الأبعاد والإرشادات</button>
+        <button class="btn" type="button" id="copySvg">نسخ كود SVG</button>
+        <span class="fname" id="fname"></span>
+      </div>
+      <textarea class="copybox" id="copyBox" hidden readonly aria-label="كود SVG"></textarea>
+
+      <div style="margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,260px);gap:16px;align-items:start" id="calcRow">
+        <div>
+          <h3 style="font-size:15px;margin-bottom:8px">حسابات الفرد</h3>
+          <dl class="calc" id="calc"></dl>
+          <p class="formula" id="formula"></p>
+        </div>
+        <div class="minicup" id="minicup" aria-label="رسم الكوب وأبعاده"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</div>
+<div class="tabpanel" id="tab-sheets" hidden>
+<section class="wrap" aria-labelledby="sh-title">
+  <div class="sechead"><h2 id="sh-title">حاسبة الأفرخ</h2><span class="muted sub">كم قطعة تطلع من الفرخ، وكم فرخ تحتاج للكمية</span></div>
+  <div class="calc-layout">
+    <div class="panel side">
+      <h3>القطعة</h3>
+      <div class="chips" id="sh-presets" role="group" aria-label="مقاسات جاهزة"></div>
+      <div class="pair">
+        <div class="field"><label for="sh-w">العرض</label><div class="inwrap"><input id="sh-w" inputmode="decimal" autocomplete="off" value="9"><span>cm</span></div></div>
+        <div class="field"><label for="sh-h">الطول</label><div class="inwrap"><input id="sh-h" inputmode="decimal" autocomplete="off" value="5"><span>cm</span></div></div>
+      </div>
+      <div class="pair">
+        <div class="field"><label for="sh-bleed">النزف لكل جهة</label><div class="inwrap"><input id="sh-bleed" inputmode="decimal" autocomplete="off" value="0"><span>mm</span></div></div>
+        <div class="field"><label for="sh-gap">المسافة بين القطع</label><div class="inwrap"><input id="sh-gap" inputmode="decimal" autocomplete="off" value="0"><span>mm</span></div></div>
+      </div>
+      <div class="opts">
+        <label class="check"><input type="checkbox" id="sh-rot" checked> اختيار الاتجاه الأوفر</label>
+        <label class="check"><input type="checkbox" id="sh-circle"> قطعة دائرية</label>
+      </div>
+
+      <h3 class="mt">الفرخ</h3>
+      <div class="field"><label for="sh-paper">مقاس الورق</label><select id="sh-paper" class="sel"></select></div>
+      <div class="pair" id="sh-custom" hidden>
+        <div class="field"><label for="sh-pw">عرض الفرخ</label><div class="inwrap"><input id="sh-pw" inputmode="decimal" autocomplete="off" value="33"><span>cm</span></div></div>
+        <div class="field"><label for="sh-ph">طول الفرخ</label><div class="inwrap"><input id="sh-ph" inputmode="decimal" autocomplete="off" value="48"><span>cm</span></div></div>
+      </div>
+      <div class="field"><label for="sh-margin">الهامش غير المطبوع لكل جهة</label><div class="inwrap"><input id="sh-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
+
+      <h3 class="mt">الكمية والتكلفة</h3>
+      <div class="pair">
+        <div class="field"><label for="sh-qty">عدد الحبات</label><div class="inwrap"><input id="sh-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
+        <div class="field"><label for="sh-spare">زيادة للتالف</label><div class="inwrap"><input id="sh-spare" inputmode="decimal" autocomplete="off" value="0"><span>%</span></div></div>
+      </div>
+      <div class="field"><label for="sh-price">سعر طباعة الفرخ</label><div class="inwrap"><input id="sh-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="errors" id="sh-err" role="alert" hidden></div>
+    </div>
+    <div class="panel main">
+      <div class="kpis" id="sh-kpis"></div>
+      <div class="layouthead"><span id="sh-cap"></span><span class="lkey"><i class="k-a"></i>القطعة <i class="k-m"></i>هامش</span></div>
+      <div class="layoutbox" id="sh-stage"></div>
+      <div class="dlbar"><button class="btn btn-dl" type="button" id="sh-dl">تنزيل المونتاج SVG</button><span class="fname" id="sh-fname"></span></div>
+      <h3 class="mt">كل مقاسات الورق لهذه القطعة</h3>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>الورق</th><th>المقاس</th><th>حبة في الفرخ</th><th>الاستغلال</th><th>أفرخ للكمية</th><th>التكلفة</th></tr></thead><tbody id="sh-cmp"></tbody></table></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="tabpanel" id="tab-stickers" hidden>
+<section class="wrap" aria-labelledby="st-title">
+  <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><span class="muted sub">كم استيكر في المتر الطولي والمربع، وكم متر تحتاج</span></div>
+  <div class="calc-layout">
+    <div class="panel side">
+      <h3>الاستيكر</h3>
+      <div class="seg full" id="st-shape" role="group" aria-label="الشكل">
+        <button type="button" data-v="circle" aria-pressed="true">دائري</button>
+        <button type="button" data-v="square" aria-pressed="false">مربع</button>
+        <button type="button" data-v="rect" aria-pressed="false">مستطيل</button>
+      </div>
+      <div class="pair">
+        <div class="field"><label for="st-w" id="st-wl">القطر</label><div class="inwrap"><input id="st-w" inputmode="decimal" autocomplete="off" value="5"><span>cm</span></div></div>
+        <div class="field" id="st-hf" hidden><label for="st-h">الطول</label><div class="inwrap"><input id="st-h" inputmode="decimal" autocomplete="off" value="3"><span>cm</span></div></div>
+      </div>
+      <div class="field"><label for="st-gap">المسافة بين الاستيكرات</label><div class="inwrap"><input id="st-gap" inputmode="decimal" autocomplete="off" value="3"><span>mm</span></div></div>
+      <div class="opts">
+        <label class="check" id="st-rotwrap" hidden><input type="checkbox" id="st-rot" checked> اختيار الاتجاه الأوفر</label>
+      </div>
+
+      <h3 class="mt">الرول</h3>
+      <div class="field"><label for="st-roll">عرض الرول</label><select id="st-roll" class="sel"></select></div>
+      <div class="field" id="st-customf" hidden><label for="st-rw">عرض الرول</label><div class="inwrap"><input id="st-rw" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
+      <div class="field"><label for="st-side">الهامش الجانبي لكل جهة</label><div class="inwrap"><input id="st-side" inputmode="decimal" autocomplete="off" value="10"><span>mm</span></div></div>
+
+      <h3 class="mt">الكمية والتكلفة</h3>
+      <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
+      <div class="seg full" id="st-pmode" role="group" aria-label="طريقة التسعير">
+        <button type="button" data-v="sqm" aria-pressed="true">سعر المتر المربع</button>
+        <button type="button" data-v="lin" aria-pressed="false">سعر المتر الطولي</button>
+      </div>
+      <div class="field"><label for="st-price">السعر</label><div class="inwrap"><input id="st-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="errors" id="st-err" role="alert" hidden></div>
+    </div>
+    <div class="panel main">
+      <div class="kpis" id="st-kpis"></div>
+      <div class="layouthead"><span id="st-cap"></span><span class="lkey"><i class="k-a"></i>استيكر <i class="k-m"></i>هامش</span></div>
+      <div class="layoutbox" id="st-stage"></div>
+      <div class="dlbar"><button class="btn btn-dl" type="button" id="st-dl">تنزيل متر واحد SVG للقص</button><span class="fname" id="st-fname"></span></div>
+      <h3 class="mt">كل عروض الرولات لهذا الاستيكر</h3>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>عرض الرول</th><th>في الصف</th><th>في المتر الطولي</th><th>المتر الطولي للكمية</th><th>المتر المربع للكمية</th><th>التكلفة</th></tr></thead><tbody id="st-cmp"></tbody></table></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="tabpanel" id="tab-acrylic" hidden>
+<section class="wrap" aria-labelledby="ac-title">
+  <div class="sechead"><h2 id="ac-title">حاسبة الأكريليك</h2><span class="muted sub">كم قطعة من اللوح أو من سرير الليزر، ووزنها وتكلفتها</span></div>
+  <div class="calc-layout">
+    <div class="panel side">
+      <h3>القطعة</h3>
+      <div class="seg full" id="ac-shape" role="group" aria-label="الشكل">
+        <button type="button" data-v="rect" aria-pressed="true">مستطيل</button>
+        <button type="button" data-v="circle" aria-pressed="false">دائري</button>
+      </div>
+      <div class="pair">
+        <div class="field"><label for="ac-w" id="ac-wl">العرض</label><div class="inwrap"><input id="ac-w" inputmode="decimal" autocomplete="off" value="10"><span>cm</span></div></div>
+        <div class="field" id="ac-hf"><label for="ac-h">الطول</label><div class="inwrap"><input id="ac-h" inputmode="decimal" autocomplete="off" value="15"><span>cm</span></div></div>
+      </div>
+      <div class="pair">
+        <div class="field"><label for="ac-t">السماكة</label><select id="ac-t" class="sel"></select></div>
+        <div class="field"><label for="ac-gap">المسافة بين القطع</label><div class="inwrap"><input id="ac-gap" inputmode="decimal" autocomplete="off" value="3"><span>mm</span></div></div>
+      </div>
+      <div class="opts"><label class="check" id="ac-rotwrap"><input type="checkbox" id="ac-rot" checked> اختيار الاتجاه الأوفر</label></div>
+
+      <h3 class="mt">اللوح</h3>
+      <div class="field"><label for="ac-sheet">مقاس اللوح أو سرير الليزر</label><select id="ac-sheet" class="sel"></select></div>
+      <div class="pair" id="ac-custom" hidden>
+        <div class="field"><label for="ac-sw">العرض</label><div class="inwrap"><input id="ac-sw" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
+        <div class="field"><label for="ac-sh">الطول</label><div class="inwrap"><input id="ac-sh" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
+      </div>
+      <div class="field"><label for="ac-margin">هامش الحافة لكل جهة</label><div class="inwrap"><input id="ac-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
+
+      <h3 class="mt">الكمية والتكلفة</h3>
+      <div class="field"><label for="ac-qty">عدد القطع</label><div class="inwrap"><input id="ac-qty" inputmode="numeric" autocomplete="off" value="100"><span>قطعة</span></div></div>
+      <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="errors" id="ac-err" role="alert" hidden></div>
+    </div>
+    <div class="panel main">
+      <div class="kpis" id="ac-kpis"></div>
+      <div class="layouthead"><span id="ac-cap"></span><span class="lkey"><i class="k-a"></i>القطعة <i class="k-m"></i>هامش</span></div>
+      <div class="layoutbox" id="ac-stage"></div>
+      <div class="dlbar"><button class="btn btn-dl" type="button" id="ac-dl">تنزيل ملف القص SVG</button><span class="fname" id="ac-fname"></span></div>
+      <h3 class="mt">كل مقاسات الألواح لهذه القطعة</h3>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>اللوح</th><th>المقاس</th><th>قطعة في اللوح</th><th>الاستغلال</th><th>ألواح للكمية</th><th>التكلفة</th></tr></thead><tbody id="ac-cmp"></tbody></table></div>
+    </div>
+  </div>
+</section>
+</div>
+
+</main>
+<footer class="sitefoot">
+  <div class="wrap footin">
+    <div class="footbrand"><svg viewBox="0 0 48 48" aria-hidden="true"><rect width="48" height="48" rx="12" fill="#15233F"/><g fill="#F29A1E"><rect x="13" y="13" width="9.6" height="9.6" rx="1.6"/><rect x="25.4" y="13" width="9.6" height="9.6" rx="1.6" opacity=".55"/><rect x="13" y="25.4" width="9.6" height="9.6" rx="1.6" opacity=".55"/><rect x="25.4" y="25.4" width="9.6" height="9.6" rx="1.6"/></g></svg><span>مونتاج</span></div>
+    <p class="copy">© <span class="n">2026</span> مصعب بن حميدة · <span class="n">MOSAB DESIGN</span> — جميع الحقوق محفوظة</p>
+    <p class="contact">للتواصل: <a href="https://wa.me/966534701732" target="_blank" rel="noopener"><span class="n">+966 53 470 1732</span></a></p>
+  </div>
+</footer>
+<div class="toast" aria-live="polite"><div id="toast" hidden></div></div>
+</div>
+
+<script>
+(function(){
+"use strict";
+document.documentElement.setAttribute("dir","rtl");
+document.documentElement.setAttribute("lang","ar");
+
+/* ---------- Cup sizes (mm). Frozen: never edited. ---------- */
+const SIZES = Object.freeze([
+  {id:"4oz",  oz:4,  D:62, d:45, h:62},
+  {id:"8oz",  oz:8,  D:80, d:57, h:92},
+  {id:"10oz", oz:10, D:90, d:60, h:100},
+  {id:"12oz", oz:12, D:90, d:60, h:110},
+  {id:"16oz", oz:16, D:90, d:60, h:135},
+  {id:"20oz", oz:20, D:90, d:62, h:150},
+  {id:"22oz", oz:22, D:90, d:62, h:160},
+  {id:"24oz", oz:24, D:90, d:62, h:175}
+].map(Object.freeze));
+const SUGGESTED = Object.freeze({glue:10, bleed:3, safe:3});
+const byId = id => SIZES.find(s=>s.id===id);
+
+/* ---------- Formatting ---------- */
+const fx = (x,dp=2)=>{ const v=Number(x.toFixed(dp)); return (Object.is(v,-0)?0:v).toString(); };
+const P4 = x => { const v = Number(x.toFixed(4)); return (Object.is(v,-0)?0:v).toString(); };
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const num = (v,u="mm") => `<span class="n">${v}${u?" "+u:""}</span>`;
+
+/* ---------- Geometry ---------- */
+const TAU = Math.PI*2;
+const Pp = (rho,phi)=>[rho*Math.sin(phi), -rho*Math.cos(phi)];           // polar, phi from vertical-up
+const angOf = p => Math.atan2(p[0], -p[1]);
+// point on the line parallel to the radial line at angle phi, shifted k along n=(cos,sin), at distance t along d=(sin,-cos)
+const onLine = (phi,k,t)=>[k*Math.cos(phi)+t*Math.sin(phi), k*Math.sin(phi)-t*Math.cos(phi)];
+const onLineR = (phi,k,rho)=>onLine(phi,k,Math.sqrt(rho*rho-k*k));       // ...where |p| = rho
+
+class PathB{
+  constructor(){this.s=[];}
+  M(p){this.s.push(["M",p]);return this;}
+  L(p){this.s.push(["L",p]);return this;}
+  // arc centred on origin from current point to p, radius rho, angles phi0->phi1
+  A(rho,p,phi0,phi1){this.s.push(["A",p,rho,phi0,phi1]);return this;}
+  Z(){this.s.push(["Z"]);return this;}
+  d(ox,oy){
+    return this.s.map(g=>{
+      if(g[0]==="Z") return "Z";
+      const x=P4(g[1][0]+ox), y=P4(g[1][1]+oy);
+      if(g[0]==="A"){ const span=g[4]-g[3]; return `A${P4(g[2])} ${P4(g[2])} 0 ${Math.abs(span)>Math.PI?1:0} ${span>0?1:0} ${x} ${y}`; }
+      return `${g[0]}${x} ${y}`;
+    }).join(" ");
+  }
+  pts(){
+    const out=[];
+    for(const g of this.s){
+      if(g[0]==="Z") continue;
+      if(g[0]==="A"){ const n=48; for(let i=0;i<=n;i++){ out.push(Pp(g[2], g[3]+(g[4]-g[3])*i/n)); } }
+      else out.push(g[1]);
+    }
+    return out;
+  }
+}
+
+function validate(p){
+  const errs=[]; const names={D:"قطر الفوهة",d:"قطر القاعدة",h:"ارتفاع الكوب",glue:"عرض منطقة اللصق",bleed:"هامش النزف",safe:"هامش الأمان"};
+  const bad={};
+  for(const k of ["D","d","h"]){
+    const v=p[k];
+    if(v===null||Number.isNaN(v)){errs.push(`أدخل رقمًا في «${names[k]}».`);bad[k]=1;}
+    else if(v<=0){errs.push(`«${names[k]}» يجب أن يكون أكبر من صفر.`);bad[k]=1;}
+    else if(k!=="h" && (v<10||v>400)){errs.push(`«${names[k]}» يجب أن يكون بين 10 و400 مم.`);bad[k]=1;}
+    else if(k==="h" && (v<10||v>600)){errs.push(`«${names[k]}» يجب أن يكون بين 10 و600 مم.`);bad[k]=1;}
+  }
+  const lim={glue:40,bleed:15,safe:20};
+  for(const k of ["glue","bleed","safe"]){
+    const v=p[k];
+    if(v===null||Number.isNaN(v)){errs.push(`أدخل رقمًا في «${names[k]}» (أو 0).`);bad[k]=1;}
+    else if(v<0){errs.push(`«${names[k]}» لا يمكن أن يكون سالبًا.`);bad[k]=1;}
+    else if(v>lim[k]){errs.push(`«${names[k]}» يجب ألا يتجاوز ${lim[k]} مم.`);bad[k]=1;}
+  }
+  if(errs.length) return {errs,bad};
+  if(p.d>p.D){errs.push("قطر القاعدة يجب ألا يتجاوز قطر الفوهة. هذه الأداة للأكواب التي تضيق نحو الأسفل.");bad.d=1;bad.D=1;}
+  if(errs.length) return {errs,bad};
+  const g=geom(p,true);
+  if(g.err){errs.push(g.err.msg); for(const k of g.err.keys) bad[k]=1;}
+  return {errs,bad};
+}
+
+// Builds the exact flat pattern. All values in mm.
+function geom(p, checkOnly){
+  const R=p.D/2, r=p.d/2, h=p.h, w=p.glue, b=p.bleed, m=p.safe;
+  const dR=R-r, s=Math.hypot(h,dR);
+  const G={R,r,h,s,w,b,m,D:p.D,d:p.d};
+  const fail=(msg,keys)=>({err:{msg,keys}});
+  if(dR < 1e-6){
+    // Cylinder: rectangle, width = mouth circumference
+    const C=TAU*R;
+    if(m*2>=h || m*2>=C) return fail("هامش الأمان كبير بالنسبة لارتفاع الكوب.",["safe"]);
+    if(checkOnly) return {};
+    Object.assign(G,{kind:"cyl",C,outerArc:C,innerArc:C,theta:0});
+    // seam on the left (x=0): glue flap extends to the left
+    G.body=new PathB().M([0,0]).L([C,0]).L([C,h]).L([0,h]).Z();
+    G.bleedP=new PathB().M([-b,-b]).L([C+b,-b]).L([C+b,h+b]).L([-b,h+b]).Z();
+    G.safeP= m>0? new PathB().M([m,m]).L([C-m,m]).L([C-m,h-m]).L([m,h-m]).Z() : null;
+    G.glueP= w>0? new PathB().M([0,0]).L([-w,0]).L([-w,h]).L([0,h]).Z() : null;
+    return G;
+  }
+  const L=s*R/dR, l=s*r/dR, theta=TAU*dR/s;
+  // feasibility
+  if(b>=l/2) return fail("هامش النزف كبير جدًا لهذا الشكل.",["bleed"]);
+  if(w>=l*0.9) return fail("عرض منطقة اللصق كبير جدًا لهذا الشكل.",["glue"]);
+  if(m>0){
+    if(l+m >= L-m) return fail("هامش الأمان أكبر من نصف طول جدار الكوب.",["safe","h"]);
+    const spanIn = theta - 2*Math.asin(m/(l+m));
+    if(spanIn<=0.01) return fail("هامش الأمان كبير بالنسبة لعرض القالب.",["safe"]);
+  }
+  const extra = 2*Math.asin(Math.min(1,b/(l-b))) + (w>0? Math.asin(Math.min(1,w/l)) : 0);
+  if(theta + extra >= TAU - 0.05) return fail("الكوب منخفض جدًا مقارنة بفرق القطرين، فيتداخل القالب مع نفسه. زِد الارتفاع أو قرّب القطرين.",["h","D","d"]);
+  if(checkOnly) return {};
+  const pl=-theta/2, pr=theta/2;
+  Object.assign(G,{kind:"cone",L,l,theta,pl,pr});
+  // body (CUT)
+  const Lin=Pp(l,pl), Lout=Pp(L,pl), Rout=Pp(L,pr), Rin=Pp(l,pr);
+  G.body=new PathB().M(Lin).L(Lout).A(L,Rout,pl,pr).L(Rin).A(l,Lin,pr,pl).Z();
+  G.outerArc=L*(angOf(Rout)-angOf(Lout)); G.innerArc=l*(angOf(Rin)-angOf(Lin));
+  // geometric offset (k>0 outward, k<0 inward) with mitred 90° corners
+  const offset=k=>{
+    const Lo=L+k, lo=l-k;
+    const a=onLineR(pl,-k,lo), bb=onLineR(pl,-k,Lo), c=onLineR(pr,k,Lo), d=onLineR(pr,k,lo);
+    return new PathB().M(a).L(bb).A(Lo,c,angOf(bb),angOf(c)).L(d).A(lo,a,angOf(d),angOf(a)).Z();
+  };
+  G.bleedP = b>0? offset(b) : null;
+  G.safeP  = m>0? offset(-m) : null;
+  // glue flap on the LEFT seam (outside), measured perpendicular to the seam
+  if(w>0){
+    const Ain=Pp(l,pl), Aout=Pp(L,pl), Bout=onLineR(pl,-w,L), Bin=onLineR(pl,-w,l);
+    G.glueP=new PathB().M(Ain).L(Aout).A(L,Bout,pl,angOf(Bout)).L(Bin).A(l,Ain,angOf(Bin),pl).Z();
+  } else G.glueP=null;
+  return G;
+}
+
+/* ---------- SVG export (single source for preview and files) ---------- */
+const COL={cut:"#15233F",bleed:"#E03131",safe:"#2F9E44",glue:"#7048E8",guides:"#1C7ED6"};
+const FONT='Arial, Helvetica, sans-serif';
+
+function buildGuides(G,label){
+  // returns {paths:[{pb,cls}], texts:[{x,y,t,rot,anchor,size}], anchors:[[x,y]]}
+  const paths=[], texts=[], anchors=[];
+  const T=(p,t,rot=0,anchor="middle",size=3.2)=>{texts.push({x:p[0],y:p[1],t,rot,anchor,size}); const hw=t.length*size*0.29; const c=Math.cos(rot*Math.PI/180), s=Math.sin(rot*Math.PI/180); anchors.push([p[0]-hw*c,p[1]-hw*s],[p[0]+hw*c,p[1]+hw*s],[p[0],p[1]-size],[p[0],p[1]+size]);};
+  const tick=(a,b)=>paths.push({pb:new PathB().M(a).L(b)});
+  const b=G.b, gap=6;
+  if(G.kind==="cone"){
+    const {L,l,pl,pr}=G;
+    paths.push({pb:new PathB().M(Pp(l-b-3,0)).L(Pp(L+b+3,0)),cls:"dash"});
+    // mouth arc dimension
+    const ro=L+b+gap; paths.push({pb:new PathB().M(Pp(ro,pl)).A(ro,Pp(ro,pr),pl,pr)});
+    for(const ph of [pl,pr]){ tick(Pp(L+1,ph),Pp(ro+2,ph)); }
+    T(Pp(ro+3,0),`MOUTH ARC = PI x ${fx(G.D)} = ${fx(G.outerArc)} mm`);
+    // base arc dimension
+    const ri=l-b-gap; paths.push({pb:new PathB().M(Pp(ri,pl)).A(ri,Pp(ri,pr),pl,pr)});
+    for(const ph of [pl,pr]){ tick(Pp(l-1,ph),Pp(ri-2,ph)); }
+    T(Pp(ri-6,0),`BASE ARC = PI x ${fx(G.d)} = ${fx(G.innerArc)} mm`);
+    // slant along the RIGHT seam (glue is on the left)
+    const k=b+gap; const a=onLine(pr,k,l), c=onLine(pr,k,L);
+    paths.push({pb:new PathB().M(a).L(c)});
+    tick(onLine(pr,1,l),onLine(pr,k+2,l)); tick(onLine(pr,1,L),onLine(pr,k+2,L));
+    let rot=Math.atan2(c[1]-a[1],c[0]-a[0])*180/Math.PI; if(rot>90||rot<-90) rot+=180;
+    T(onLine(pr,k+4,(l+L)/2),`SLANT s = ${fx(G.s)} mm (height ${fx(G.h)} mm)`,rot);
+    if(G.w>=4){ let gr=(pl*180/Math.PI)-90; if(gr<-90) gr+=180; T(onLine(pl,-G.w/2-Math.min(3.2,G.w*0.55)*0.35,(l+L)/2),`GLUE ${fx(G.w)} mm`,gr,"middle",Math.min(3.2,G.w*0.55)); }
+  } else {
+    const {C,h}=G;
+    paths.push({pb:new PathB().M([C/2,-b-3]).L([C/2,h+b+3]),cls:"dash"});
+    const yt=-b-gap; paths.push({pb:new PathB().M([0,yt]).L([C,yt])}); tick([0,-1],[0,yt-2]); tick([C,-1],[C,yt-2]);
+    T([C/2,yt-3],`MOUTH = PI x ${fx(G.D)} = ${fx(C)} mm`);
+    const yb=h+b+gap; paths.push({pb:new PathB().M([0,yb]).L([C,yb])}); tick([0,h+1],[0,yb+2]); tick([C,h+1],[C,yb+2]);
+    T([C/2,yb+6],`BASE = PI x ${fx(G.d)} = ${fx(C)} mm (cylinder)`);
+    const xr=C+b+gap; paths.push({pb:new PathB().M([xr,0]).L([xr,h])}); tick([C+1,0],[xr+2,0]); tick([C+1,h],[xr+2,h]);
+    T([xr+4,h/2],`HEIGHT ${fx(h)} mm`,90);
+    if(G.w>=4) T([-G.w/2,h/2],`GLUE ${fx(G.w)} mm`,-90,"middle",Math.min(3.2,G.w*0.55));
+  }
+  return {paths,texts,anchors};
+}
+
+function bbox(pts){let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;for(const [x,y] of pts){if(x<x0)x0=x;if(y<y0)y0=y;if(x>x1)x1=x;if(y>y1)y1=y;}return {x0,y0,x1,y1};}
+
+function buildSVG(G, opts){
+  const withGuides=!!opts.guides, label=opts.label;
+  const shapes=[G.body,G.bleedP,G.safeP,G.glueP].filter(Boolean);
+  let pts=[]; shapes.forEach(s=>pts=pts.concat(s.pts()));
+  let gd=null, info=[];
+  if(withGuides){
+    gd=buildGuides(G,label);
+    gd.paths.forEach(p=>pts=pts.concat(p.pb.pts())); pts=pts.concat(gd.anchors);
+    info=[
+      `CUP ${label} - FLAT PATTERN - SCALE 1:1 - UNITS mm`,
+      `Mouth D ${fx(G.D)} | Base d ${fx(G.d)} | Height h ${fx(G.h)} | Slant s ${fx(G.s)}`,
+      G.kind==="cone" ? `Outer radius ${fx(G.L)} | Inner radius ${fx(G.l)} | Sector angle ${fx(G.theta*180/Math.PI,3)} deg` : `Cylinder: flat width PI x D = ${fx(G.C)} | height ${fx(G.h)}`,
+      `CUT = body edge | BLEED ${fx(G.b)} | SAFE ${fx(G.m)} | GLUE ${fx(G.w)} (perpendicular to seam)`
+    ];
+  }
+  const bb=bbox(pts);
+  const mg=withGuides?8:5;
+  const infoFs=3, infoLh=4.8, infoH=withGuides? info.length*infoLh+4 : 0;
+  const infoW = withGuides? Math.max(...info.map(t=>t.length*infoFs*0.53)) : 0;
+  let W=(bb.x1-bb.x0)+2*mg; if(infoW+2*mg>W) W=infoW+2*mg;
+  const H=(bb.y1-bb.y0)+2*mg+infoH;
+  const ox=(W-(bb.x1-bb.x0))/2-bb.x0, oy=mg-bb.y0;
+  const Wf=P4(W), Hf=P4(H);
+  const o=[];
+  o.push(`<?xml version="1.0" encoding="UTF-8"?>`);
+  o.push(`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${Wf}mm" height="${Hf}mm" viewBox="0 0 ${Wf} ${Hf}">`);
+  o.push(`<title>Cup ${esc(label)} flat pattern template</title>`);
+  o.push(`<desc>Cup flat pattern, 1:1 in millimetres. Mouth ${fx(G.D)} mm, base ${fx(G.d)} mm, height ${fx(G.h)} mm. Bleed ${fx(G.b)} mm, safe ${fx(G.m)} mm, glue ${fx(G.w)} mm.</desc>`);
+  if(withGuides){
+    o.push(`<g id="GUIDES" fill="none" stroke="${COL.guides}" stroke-width="0.15">`);
+    for(const p of gd.paths) o.push(`<path${p.cls?` class="${p.cls}" stroke-dasharray="2 1.2"`:""} d="${p.pb.d(ox,oy)}"/>`);
+    for(const t of gd.texts){ const x=P4(t.x+ox), y=P4(t.y+oy); o.push(`<text x="${x}" y="${y}"${t.rot?` transform="rotate(${P4(t.rot)} ${x} ${y})"`:""} font-family="${FONT}" font-size="${P4(t.size)}" fill="${COL.guides}" stroke="none" text-anchor="${t.anchor}">${esc(t.t)}</text>`); }
+    let iy=H-mg-infoH+infoLh+1;
+    for(const t of info){ o.push(`<text x="${P4(mg)}" y="${P4(iy)}" font-family="${FONT}" font-size="${infoFs}" fill="${COL.guides}" stroke="none">${esc(t)}</text>`); iy+=infoLh; }
+    o.push(`</g>`);
+  }
+  if(G.glueP) o.push(`<g id="GLUE"><path d="${G.glueP.d(ox,oy)}" fill="${COL.glue}" fill-opacity="0.12" stroke="${COL.glue}" stroke-width="0.2"/></g>`);
+  if(G.bleedP) o.push(`<g id="BLEED"><path d="${G.bleedP.d(ox,oy)}" fill="none" stroke="${COL.bleed}" stroke-width="0.2" stroke-dasharray="2 1"/></g>`);
+  if(G.safeP) o.push(`<g id="SAFE"><path d="${G.safeP.d(ox,oy)}" fill="none" stroke="${COL.safe}" stroke-width="0.2" stroke-dasharray="2 1"/></g>`);
+  o.push(`<g id="CUT"><path d="${G.body.d(ox,oy)}" fill="none" stroke="${COL.cut}" stroke-width="0.25"/></g>`);
+  o.push(`</svg>`);
+  return {svg:o.join("\n")+"\n", W, H};
+}
+
+/* ---------- State ---------- */
+const st = {
+  sel:"8oz",                              // size id or "custom"
+  dims:{D:80,d:57,h:92},
+  margins:{...SUGGESTED},
+  raw:{},                                 // raw input strings
+  valid:true, lastGood:null, kind:"clean",
+  view:{z:1,cx:.5,cy:.5}
+};
+const params = ()=>({...st.dims,...st.margins});
+const isModified = ()=>{ if(st.sel==="custom") return true; const s=byId(st.sel); return s.D!==st.dims.D||s.d!==st.dims.d||s.h!==st.dims.h; };
+const labelFor = ()=> st.sel==="custom" ? "custom" : (isModified()? `${byId(st.sel).oz}oz custom` : `${byId(st.sel).oz}oz`);
+function fileName(kind, sizeId, dims){
+  const suf = kind==="guides"?"guides":"template";
+  const tag = d=>`D${fx(d.D,1)}-d${fx(d.d,1)}-h${fx(d.h,1)}`.replace(/\./g,"_");
+  if(sizeId==="custom") return `cup-custom-${tag(dims)}-${suf}.svg`;
+  const s=byId(sizeId);
+  const mod = s.D!==dims.D||s.d!==dims.d||s.h!==dims.h;
+  return mod? `cup-${s.id}-custom-${tag(dims)}-${suf}.svg` : `cup-${s.id}-${suf}.svg`;
+}
+
+/* ---------- Downloads: artifact capability, else a normal browser download ---------- */
+let dlNS=null; const hasHost = !!(window.claude && typeof window.claude.use==="function");
+const dlReady = hasHost ? window.claude.use("downloads").then(ns=>{dlNS=ns;}).catch(()=>{dlNS=null;}) : Promise.resolve();
+async function saveFile(filename, data, mime){
+  if(hasHost){
+    await dlReady;
+    if(dlNS){
+      try{ const res=await dlNS.save({filename, data: data instanceof Uint8Array? new Blob([data],{type:mime}) : data}); toast(`تم تنزيل ${filename}`); return res; }
+      catch(e){
+        const c=e&&e.code;
+        if(c==="declined") toast("أُلغي التنزيل.");
+        else if(c==="rate_limited") toast("هناك نافذة تنزيل مفتوحة بالفعل. أكملها ثم أعد المحاولة.","err");
+        else toast("تعذّر التنزيل في هذا العرض. استخدم «نسخ كود SVG».","err");
+        return null;
+      }
+    }
+    toast("التنزيل غير متاح في هذا العرض. استخدم «نسخ كود SVG».","err"); return null;
+  }
+  const blob = data instanceof Blob? data : new Blob([data],{type:mime});
+  const url=URL.createObjectURL(blob); const a=document.createElement("a");
+  a.href=url; a.download=filename; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),5000);
+  toast(`تم تنزيل ${filename}`); return {status:"saved"};
+}
+
+/* ---------- ZIP (store, no compression) ---------- */
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+const crc32=u=>{let c=0xFFFFFFFF;for(let i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;};
+function makeZip(files){
+  const enc=new TextEncoder(); const parts=[], cen=[]; let off=0;
+  const now=new Date(); const dt=((now.getFullYear()-1980)<<9)|((now.getMonth()+1)<<5)|now.getDate(); const tm=(now.getHours()<<11)|(now.getMinutes()<<5)|(now.getSeconds()>>1);
+  for(const f of files){
+    const name=enc.encode(f.name), data=typeof f.data==="string"?enc.encode(f.data):f.data, crc=crc32(data);
+    const lh=new DataView(new ArrayBuffer(30));
+    lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(8,0,true);lh.setUint16(10,tm,true);lh.setUint16(12,dt,true);
+    lh.setUint32(14,crc,true);lh.setUint32(18,data.length,true);lh.setUint32(22,data.length,true);lh.setUint16(26,name.length,true);lh.setUint16(28,0,true);
+    parts.push(new Uint8Array(lh.buffer),name,data);
+    const ch=new DataView(new ArrayBuffer(46));
+    ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);ch.setUint16(12,tm,true);ch.setUint16(14,dt,true);
+    ch.setUint32(16,crc,true);ch.setUint32(20,data.length,true);ch.setUint32(24,data.length,true);ch.setUint16(28,name.length,true);
+    ch.setUint32(42,off,true);
+    cen.push(new Uint8Array(ch.buffer),name);
+    off+=30+name.length+data.length;
+  }
+  const cenSize=cen.reduce((a,b)=>a+b.length,0);
+  const end=new DataView(new ArrayBuffer(22));
+  end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);end.setUint32(12,cenSize,true);end.setUint32(16,off,true);
+  const all=[...parts,...cen,new Uint8Array(end.buffer)]; const total=all.reduce((a,b)=>a+b.length,0);
+  const out=new Uint8Array(total); let p=0; for(const a of all){out.set(a,p);p+=a.length;} return out;
+}
+
+/* ---------- Cup drawings ---------- */
+function cupShape(D,d,h,k,cx,baseY,stroke,fillTop){
+  const rt=D*k/2, rb=d*k/2, H=h*k, yt=baseY-H, e=0.2;
+  return `<path d="M${cx-rt} ${yt} L${cx-rb} ${baseY} A${rb} ${rb*e} 0 0 0 ${cx+rb} ${baseY} L${cx+rt} ${yt}" style="fill:none;stroke:${stroke};stroke-width:1.4;stroke-linejoin:round"/>
+  <ellipse cx="${cx}" cy="${yt}" rx="${rt}" ry="${rt*e}" style="fill:${fillTop};stroke:${stroke};stroke-width:1.4"/>`;
+}
+function cardCup(s){ // common scale so cards compare honestly
+  const k=0.6;
+  return `<svg viewBox="0 0 120 120" role="img" aria-label="رسم كوب ${s.oz} أونصة">${cupShape(s.D,s.d,s.h,k,60,114,"currentColor","var(--accent-soft)")}</svg>`;
+}
+function miniCup(G){
+  const Wb=260, Hb=266, padX=48, padY=42;
+  const k=Math.min((Wb-2*padX)/G.D,(Hb-2*padY-10)/G.h);
+  const cx=Wb/2, base=Hb-padY, top=base-G.h*k, rt=G.D*k/2, rb=G.d*k/2;
+  const c="var(--ink)", a="var(--guides)";
+  const t=(x,y,s,anc="middle")=>`<text x="${x}" y="${y}" font-size="11" text-anchor="${anc}" style="fill:${c};font-family:var(--font-body)" direction="ltr">${s}</text>`;
+  return `<svg viewBox="0 0 ${Wb} ${Hb}">
+   ${cupShape(G.D,G.d,G.h,k,cx,base,c,"var(--accent-soft)")}
+   <line x1="${cx-rt}" y1="${top-rt*0.2-10}" x2="${cx+rt}" y2="${top-rt*0.2-10}" style="stroke:${a}"/>
+   <line x1="${cx-rt}" y1="${top-rt*0.2-14}" x2="${cx-rt}" y2="${top-rt*0.2-6}" style="stroke:${a}"/><line x1="${cx+rt}" y1="${top-rt*0.2-14}" x2="${cx+rt}" y2="${top-rt*0.2-6}" style="stroke:${a}"/>
+   ${t(cx,top-rt*0.2-16,`Ø ${fx(G.D,1)} mm`)}
+   <line x1="${cx-rb}" y1="${base+rb*0.2+10}" x2="${cx+rb}" y2="${base+rb*0.2+10}" style="stroke:${a}"/>
+   <line x1="${cx-rb}" y1="${base+rb*0.2+6}" x2="${cx-rb}" y2="${base+rb*0.2+14}" style="stroke:${a}"/><line x1="${cx+rb}" y1="${base+rb*0.2+6}" x2="${cx+rb}" y2="${base+rb*0.2+14}" style="stroke:${a}"/>
+   ${t(cx,base+rb*0.2+25,`Ø ${fx(G.d,1)} mm`)}
+   <line x1="${cx+rt+14}" y1="${top}" x2="${cx+rt+14}" y2="${base}" style="stroke:${a}"/>
+   <line x1="${cx+rt+10}" y1="${top}" x2="${cx+rt+18}" y2="${top}" style="stroke:${a}"/><line x1="${cx+rt+10}" y1="${base}" x2="${cx+rt+18}" y2="${base}" style="stroke:${a}"/>
+   ${t(cx+rt+20,(top+base)/2+4,`h ${fx(G.h,1)}`,"start")}
+   ${t(cx-(rt+rb)/2-8,(top+base)/2+4,`s ${fx(G.s,1)}`,"end")}
+  </svg>`;
+}
+
+/* ---------- Rendering: shelf ---------- */
+const $=id=>document.getElementById(id);
+const DL_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 21h16"/></svg>';
+function renderShelf(){
+  $("cards").innerHTML = SIZES.map(s=>`
+    <article class="card${st.sel===s.id?" sel":""}" data-id="${s.id}">
+      <div class="cardtop"><div class="oz"><span class="n">${s.oz}<small>oz</small></span></div><span class="muted" style="font-size:12px">سعة</span></div>
+      <div class="cupart" style="color:var(--ink)">${cardCup(s)}</div>
+      <dl class="dims">
+        <div><dt>قطر الفوهة</dt><dd>${num(s.D)}</dd></div>
+        <div><dt>قطر القاعدة</dt><dd>${num(s.d)}</dd></div>
+        <div><dt>ارتفاع الكوب</dt><dd>${num(s.h)}</dd></div>
+      </dl>
+      <div class="cardbtns">
+        <button class="btn" type="button" data-act="open" data-id="${s.id}">معاينة وتخصيص</button>
+        <button class="btn btn-dl" type="button" data-act="dl" data-id="${s.id}" aria-label="تنزيل SVG لمقاس ${s.oz} أونصة">${DL_ICON}تنزيل SVG</button>
+      </div>
+    </article>`).join("");
+  $("tbody").innerHTML = SIZES.map(s=>{
+    const G=geom({...s,...SUGGESTED});
+    return `<tr><td class="sz"><span class="n">${s.oz} oz</span></td><td>${num(s.D)}</td><td>${num(s.d)}</td><td>${num(s.h)}</td><td>${num(fx(G.s,1))}</td><td>${num(fx(G.theta*180/Math.PI,1),"°")}</td>
+      <td><div class="cardbtns" style="flex-wrap:nowrap"><button class="btn" type="button" data-act="open" data-id="${s.id}">معاينة</button><button class="btn btn-dl" type="button" data-act="dl" data-id="${s.id}">تنزيل SVG</button></div></td></tr>`;
+  }).join("");
+}
+
+/* ---------- Rendering: workspace ---------- */
+function renderChips(){
+  $("chips").innerHTML = SIZES.map(s=>`<button type="button" class="chip" data-id="${s.id}" aria-pressed="${st.sel===s.id}"><span class="n">${s.oz} oz</span></button>`).join("")
+    + `<button type="button" class="chip" data-id="custom" aria-pressed="${st.sel==="custom"}">مقاس مخصص</button>`;
+}
+function fillInputs(){
+  const v={...st.dims,...st.margins};
+  for(const k of ["D","d","h","glue","bleed","safe"]){ const el=$("in"+k); el.value=fx(v[k],2); st.raw[k]=el.value; }
+  const s = st.sel==="custom"? null : byId(st.sel);
+  $("oD").innerHTML = s? `الأصلي ${num(s.D)}`:""; $("od").innerHTML = s? `الأصلي ${num(s.d)}`:""; $("oh").innerHTML = s? `الأصلي ${num(s.h)}`:"";
+  $("resetDims").disabled = !s;
+}
+const parseNum = str=>{
+  if(str==null) return null;
+  let t=String(str).trim().replace(/[٠-٩]/g,c=>"٠١٢٣٤٥٦٧٨٩".indexOf(c)).replace(/[۰-۹]/g,c=>"۰۱۲۳۴۵۶۷۸۹".indexOf(c)).replace(/[٫,]/g,".").replace(/−/g,"-");
+  if(t==="") return null;
+  if(!/^-?\d*\.?\d+$|^-?\d+\.$/.test(t)) return NaN;
+  return parseFloat(t);
+};
+
+let current=null; // {G, clean, guides}
+function compute(){
+  const p={}; for(const k of ["D","d","h","glue","bleed","safe"]) p[k]=parseNum(st.raw[k]);
+  const v=validate(p);
+  document.querySelectorAll(".field").forEach(f=>f.classList.toggle("bad",!!v.bad[f.dataset.key]));
+  const box=$("errors");
+  if(v.errs.length){ box.hidden=false; box.innerHTML=`<ul>${v.errs.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`; st.valid=false; }
+  else { box.hidden=true; st.valid=true; st.dims={D:p.D,d:p.d,h:p.h}; st.margins={glue:p.glue,bleed:p.bleed,safe:p.safe}; }
+  if(st.valid){
+    const G=geom(params()); const lab=labelFor();
+    current={G, label:lab, clean:buildSVG(G,{guides:false,label:lab}), guides:buildSVG(G,{guides:true,label:lab}), dims:{...st.dims}, sel:st.sel};
+  }
+  renderWorkspace();
+}
+function renderWorkspace(){
+  const s = st.sel==="custom"? null : byId(st.sel);
+  $("stageTitle").innerHTML = (s? `<span class="n">${s.oz} oz</span>` : "مقاس جديد") + (isModified()? `<span class="badge">مقاس مخصص</span>`:"");
+  ["dlClean","dlGuides","copySvg"].forEach(id=>$(id).disabled=!st.valid);
+  const old=$("stage").querySelector(".stagemsg"); if(old) old.remove();
+  if(!current){ return; }
+  if(!st.valid){ const m=document.createElement("div"); m.className="stagemsg"; m.textContent="القيم الحالية غير صالحة؛ المعاينة تعرض آخر قالب صحيح، والتنزيل متوقف حتى تصحيح القيم."; $("stage").appendChild(m); }
+  drawStage();
+  const G=current.G;
+  $("fname").innerHTML = st.valid? `<span class="n">${fileName("clean",current.sel,current.dims)}</span>` : "";
+  const ok = (a,b)=>Math.abs(a-b)<1e-6 ? `<span class="chk">✓ يساوي محيط ${b===Math.PI*G.D?"الفوهة":"القاعدة"} <span class="n">π × ${fx(b===Math.PI*G.D?G.D:G.d,2)}</span></span>` : `<span class="chk" style="color:var(--err)">✗ فرق ${fx(a-b,6)}</span>`;
+  const rows=[
+    ["الطول المائل للجدار s", num(fx(G.s,2))],
+    G.kind==="cone"? ["نصف قطر القوس الخارجي", num(fx(G.L,2))] : ["شكل الفرد","مستطيل (القطران متساويان)"],
+    G.kind==="cone"? ["نصف قطر القوس الداخلي", num(fx(G.l,2))] : ["عرض المستطيل", num(fx(G.C,2))],
+    G.kind==="cone"? ["زاوية القطاع", num(fx(G.theta*180/Math.PI,3),"°")] : ["ارتفاع المستطيل", num(fx(G.h,2))],
+    ["طول القوس الخارجي", num(fx(G.outerArc,2)) + ok(G.outerArc,Math.PI*G.D)],
+    ["طول القوس الداخلي", num(fx(G.innerArc,2)) + ok(G.innerArc,Math.PI*G.d)],
+    ["أبعاد الملف النظيف", num(`${fx(current.clean.W,1)} × ${fx(current.clean.H,1)}`)],
+    ["أبعاد ملف الإرشادات", num(`${fx(current.guides.W,1)} × ${fx(current.guides.H,1)}`)]
+  ];
+  $("calc").innerHTML = rows.map(r=>`<div><dt>${r[0]}</dt><dd>${r[1]}</dd></div>`).join("");
+  $("formula").textContent = G.kind==="cone"
+    ? `s = √(h² + (R − r)²) = ${fx(G.s,3)}   ·   outer = s·R/(R−r) = ${fx(G.L,3)}   ·   inner = s·r/(R−r) = ${fx(G.l,3)}   ·   θ = 2π(R−r)/s = ${fx(G.theta,5)} rad`
+    : `R = r → cylinder: width = π·D = ${fx(G.C,3)} mm, height = h = ${fx(G.h,3)} mm`;
+  $("minicup").innerHTML = miniCup(G);
+}
+
+/* ---------- Stage: preview of the exact export SVG with pan/zoom ---------- */
+function drawStage(){
+  const stage=$("stage");
+  const showGuides=$("lyGuides").checked;
+  const doc = showGuides? current.guides : current.clean;
+  const inner = doc.svg.replace(/^<\?xml[^>]*>\s*/,"");
+  const keep=stage.querySelector(".stagemsg");
+  stage.innerHTML = inner; if(keep) stage.appendChild(keep);
+  const svg=stage.querySelector("svg");
+  svg.removeAttribute("width"); svg.removeAttribute("height");
+  svg.setAttribute("aria-hidden","true");
+  const ab=document.createElementNS("http://www.w3.org/2000/svg","rect");
+  ab.setAttribute("class","artboard"); ab.setAttribute("x",0); ab.setAttribute("y",0); ab.setAttribute("width",doc.W); ab.setAttribute("height",doc.H);
+  ab.setAttribute("stroke","#9AA3B5"); ab.setAttribute("stroke-width","1");
+  svg.insertBefore(ab, svg.querySelector("g"));
+  stage.className="stage"+["cut","bleed","safe","glue"].filter(k=>!$("ly"+k[0].toUpperCase()+k.slice(1)).checked).map(k=>" hide-"+k).join("");
+  stage._doc=doc; applyView();
+}
+function applyView(){
+  const stage=$("stage"), svg=stage.querySelector("svg"); if(!svg) return;
+  const {W,H}=stage._doc, pad=1.06;
+  const w=W*pad/st.view.z, h=H*pad/st.view.z;
+  const x=st.view.cx*W - w/2, y=st.view.cy*H - h/2;
+  svg.setAttribute("viewBox",`${x} ${y} ${w} ${h}`);
+  $("zVal").textContent = Math.round(st.view.z*100)+"%";
+}
+function zoom(f){ st.view.z=Math.min(40,Math.max(0.5,st.view.z*f)); applyView(); }
+function resetView(){ st.view={z:1,cx:.5,cy:.5}; applyView(); }
+(function pan(){
+  const stage=$("stage"); let drag=null;
+  stage.addEventListener("pointerdown",e=>{ if(e.button!==0) return; drag={x:e.clientX,y:e.clientY,cx:st.view.cx,cy:st.view.cy}; stage.setPointerCapture(e.pointerId); stage.classList.add("drag"); });
+  stage.addEventListener("pointermove",e=>{
+    if(!drag||!stage._doc) return; const r=stage.getBoundingClientRect(); const {W,H}=stage._doc;
+    const w=W*1.06/st.view.z, h=H*1.06/st.view.z, sc=Math.max(w/r.width,h/r.height);
+    st.view.cx=drag.cx-(e.clientX-drag.x)*sc/W; st.view.cy=drag.cy-(e.clientY-drag.y)*sc/H; applyView();
+  });
+  const end=()=>{drag=null;stage.classList.remove("drag");};
+  stage.addEventListener("pointerup",end); stage.addEventListener("pointercancel",end);
+  stage.addEventListener("wheel",e=>{ if(!(e.ctrlKey||e.metaKey)) return; e.preventDefault(); zoom(e.deltaY<0?1.15:1/1.15); },{passive:false});
+  stage.addEventListener("dblclick",resetView);
+})();
+
+/* ---------- Actions ---------- */
+function selectSize(id, scroll){
+  st.sel=id;
+  if(id!=="custom"){ const s=byId(id); st.dims={D:s.D,d:s.d,h:s.h}; }
+  fillInputs(); renderChips(); resetView0(); compute();
+  document.querySelectorAll(".card").forEach(c=>c.classList.toggle("sel",c.dataset.id===id));
+  if(scroll) $("workspace").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth", block:"start"});
+}
+function resetView0(){ st.view={z:1,cx:.5,cy:.5}; }
+async function downloadFor(sizeId, kind){
+  const s=byId(sizeId); const G=geom({...s,...st.margins});
+  if(!G||!G.body){ toast("إعدادات الهوامش الحالية غير صالحة لهذا المقاس.","err"); return; }
+  const lab=`${s.oz}oz`; const doc=buildSVG(G,{guides:kind==="guides",label:lab});
+  await saveFile(fileName(kind,sizeId,{D:s.D,d:s.d,h:s.h}), doc.svg, "image/svg+xml");
+}
+async function downloadCurrent(kind){
+  if(!st.valid||!current){ toast("صحّح القيم أولًا.","err"); return; }
+  const doc = kind==="guides"? current.guides : current.clean;
+  await saveFile(fileName(kind,current.sel,current.dims), doc.svg, "image/svg+xml");
+}
+async function downloadZip(){
+  const files=[]; let bad=0;
+  for(const s of SIZES){
+    const v=validate({...s,...st.margins}); if(v.errs.length){bad++;continue;}
+    const G=geom({...s,...st.margins});
+    files.push({name:`cup-templates/${fileName("clean",s.id,s)}`, data:buildSVG(G,{guides:false,label:`${s.oz}oz`}).svg});
+    files.push({name:`cup-templates/with-guides/${fileName("guides",s.id,s)}`, data:buildSVG(G,{guides:true,label:`${s.oz}oz`}).svg});
+  }
+  if(bad){ toast("إعدادات الهوامش الحالية غير صالحة لبعض المقاسات. صحّحها ثم أعد المحاولة.","err"); return; }
+  files.push({name:"cup-templates/README.txt", data:
+`مكتبة قوالب الأكواب — Cup flat-pattern templates (SVG, 1:1, mm)
+
+لكل مقاس ملفان: قالب نظيف (template) ونسخة مع الأبعاد والإرشادات (with-guides/).
+المجموعات داخل كل ملف: CUT حد القص، BLEED النزف، SAFE المنطقة الآمنة، GLUE لسان اللصق، GUIDES الأبعاد.
+الإعدادات المستخدمة: نزف ${fx(st.margins.bleed)} مم، أمان ${fx(st.margins.safe)} مم، لصق ${fx(st.margins.glue)} مم (يُقاس عموديًا على خط اللصق).
+`});
+  const zip=makeZip(files);
+  await saveFile("cup-templates-all-sizes.zip", new Blob([zip],{type:"application/zip"}), "application/zip");
+}
+let toastT=null;
+function toast(msg,kind){ const t=$("toast"); t.textContent=msg; t.className=kind==="err"?"err":""; t.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>t.hidden=true,3600); }
+
+/* ---------- Wiring ---------- */
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-act]"); if(!b) return;
+  if(b.dataset.act==="open") selectSize(b.dataset.id,true);
+  if(b.dataset.act==="dl") downloadFor(b.dataset.id, st.kind);
+});
+$("chips").addEventListener("click",e=>{ const c=e.target.closest(".chip"); if(!c) return;
+  if(c.dataset.id==="custom"){ $("newCustom").click(); return; } selectSize(c.dataset.id,false); });
+document.querySelectorAll("#fileKind button").forEach(b=>b.addEventListener("click",()=>{ st.kind=b.dataset.kind; document.querySelectorAll("#fileKind button").forEach(x=>x.setAttribute("aria-pressed",x===b)); }));
+document.querySelectorAll("[data-view]").forEach(b=>b.addEventListener("click",()=>{
+  const t=b.dataset.view==="table"; $("cards").hidden=t; $("tableWrap").hidden=!t;
+  document.querySelectorAll("[data-view]").forEach(x=>x.setAttribute("aria-pressed",x===b));
+  try{localStorage.setItem("cupView",b.dataset.view)}catch(_){}
+}));
+for(const k of ["D","d","h","glue","bleed","safe"]){
+  $("in"+k).addEventListener("input",e=>{ st.raw[k]=e.target.value; compute(); if(["D","d","h"].includes(k)){ renderChips(); } if(["glue","bleed","safe"].includes(k) && st.valid) renderShelf(); });
+}
+$("resetDims").addEventListener("click",()=>{ if(st.sel!=="custom") selectSize(st.sel,false); toast("استُعيدت بيانات المقاس الأصلية."); });
+$("newCustom").addEventListener("click",()=>{ st.sel="custom"; if(!st.valid) st.dims={D:90,d:60,h:120}; fillInputs(); renderChips(); resetView0(); compute(); document.querySelectorAll(".card").forEach(c=>c.classList.remove("sel")); $("inD").focus(); toast("مقاس مخصص جديد: عدّل القيم كما تريد."); });
+$("resetMargins").addEventListener("click",()=>{ st.margins={...SUGGESTED}; fillInputs(); compute(); renderShelf(); });
+["lyCut","lyBleed","lySafe","lyGlue","lyGuides"].forEach(id=>$(id).addEventListener("change",()=>{ if(current) drawStage(); }));
+$("zIn").addEventListener("click",()=>zoom(1.25)); $("zOut").addEventListener("click",()=>zoom(1/1.25)); $("zFit").addEventListener("click",resetView);
+$("dlClean").addEventListener("click",()=>downloadCurrent("clean"));
+$("dlGuides").addEventListener("click",()=>downloadCurrent("guides"));
+$("zipAll").addEventListener("click",downloadZip);
+$("copySvg").addEventListener("click",async()=>{
+  if(!current||!st.valid) return; const txt=($("lyGuides").checked?current.guides:current.clean).svg; const box=$("copyBox");
+  try{ await navigator.clipboard.writeText(txt); toast("نُسخ كود SVG. الصقه في ملف نصي باسم ‎.svg أو مباشرة في Illustrator."); }
+  catch(_){ box.hidden=false; box.value=txt; box.focus(); box.select(); toast("حدّد النص الظاهر وانسخه يدويًا."); }
+});
+window.addEventListener("resize",()=>applyView());
+
+
+/* =====================================================================
+   Calculators: sheets (imposition), stickers (rolls), acrylic (sheets/laser bed)
+   All internal units are millimetres.
+   ===================================================================== */
+const EPS=1e-6;
+const LTR=t=>`\u2066${t}\u2069`;
+const fitN=(L,s,g)=> s>L+EPS ? 0 : Math.floor((L+g+EPS)/(s+g));
+const fmtN=(x,dp=0)=>Number(x).toLocaleString("en-US",{maximumFractionDigits:dp,minimumFractionDigits:0});
+const money=x=>fmtN(x, x<10?2:x<1000?1:0)+" ر.س";
+const cmTxt=mm=>fx(mm/10,2);
+const safeName=s=>String(s).replace(/\./g,"_");
+
+function gridItems(x0,y0,W,H,w,h,g,rot){
+  const nx=fitN(W,w,g), ny=fitN(H,h,g), items=[];
+  for(let j=0;j<ny;j++) for(let i=0;i<nx;i++) items.push({x:x0+i*(w+g),y:y0+j*(h+g),w,h,rot});
+  return {n:nx*ny,nx,ny,items};
+}
+// Uniform grid of w×h pieces in W×H, in whichever single direction fits more.
+function packRects(W,H,w,h,g,allowRot){
+  let best={n:0,items:[],desc:"",parts:0};
+  const take=c=>{ if(c.n>best.n || (c.n===best.n && c.n>0 && c.parts<best.parts)) best=c; };
+  const A=gridItems(0,0,W,H,w,h,g,false); take({n:A.n,items:A.items,parts:1,desc:LTR(`${A.nx} × ${A.ny}`)});
+  if(allowRot && Math.abs(w-h)>EPS){
+    const B=gridItems(0,0,W,H,h,w,g,true); take({n:B.n,items:B.items,parts:1,desc:LTR(`${B.nx} × ${B.ny}`)});
+  }
+  return best;
+}
+// Circles: straight rows and columns.
+function packCircles(W,H,d,g,allowStagger=false){
+  const p=d+g; let best={n:0,items:[],desc:""};
+  const G=gridItems(0,0,W,H,d,d,g,false); if(G.n>best.n) best={n:G.n,items:G.items,desc:LTR(`${G.nx} × ${G.ny}`)};
+  if(!allowStagger) return best;
+  for(const tr of [false,true]){
+    const WW=tr?H:W, HH=tr?W:H; if(d>WW+EPS||d>HH+EPS) continue;
+    const rp=p*Math.sqrt(3)/2, rows=Math.floor((HH-d+EPS)/rp)+1;
+    const n0=fitN(WW,d,g), n1= WW-d-p/2>=-EPS ? Math.floor((WW-d-p/2+EPS)/p)+1 : 0;
+    const items=[];
+    for(let r=0;r<rows;r++){ const off=r%2?p/2:0, n=r%2?n1:n0;
+      for(let i=0;i<n;i++){ const a=off+i*p, b=r*rp; items.push(tr?{x:b,y:a,w:d,h:d}:{x:a,y:b,w:d,h:d}); } }
+    if(items.length>best.n) best={n:items.length,items,desc:"ترتيب متداخل"};
+  }
+  return best;
+}
+function centerItems(items,W,H){
+  if(!items.length) return items;
+  let x0=Infinity,y0=Infinity,x1=-Infinity,y1=-Infinity;
+  for(const it of items){x0=Math.min(x0,it.x);y0=Math.min(y0,it.y);x1=Math.max(x1,it.x+it.w);y1=Math.max(y1,it.y+it.h);}
+  const dx=(W-(x1-x0))/2-x0, dy=(H-(y1-y0))/2-y0;
+  return items.map(it=>({...it,x:it.x+dx,y:it.y+dy}));
+}
+// Sheet imposition: pieces (with bleed) inside the printable area, centred.
+function impose(o){
+  const W=o.sheetW-2*o.margin, H=o.sheetH-2*o.margin;
+  if(W<=0||H<=0) return {n:0,items:[],desc:""};
+  const w=o.w+2*o.bleed, h=o.h+2*o.bleed;
+  const r = o.circle ? packCircles(W,H,w,o.gap,false) : packRects(W,H,w,h,o.gap,o.rot);
+  r.items=centerItems(r.items,W,H).map(it=>({...it,x:it.x+o.margin,y:it.y+o.margin}));
+  return r;
+}
+
+/* ---------- Layout drawing (preview and 1:1 export share geometry) ---------- */
+function rectD(x,y,w,h){return `M${P4(x)} ${P4(y)}h${P4(w)}v${P4(h)}h${P4(-w)}Z`;}
+function circD(cx,cy,r){return `M${P4(cx-r)} ${P4(cy)}a${P4(r)} ${P4(r)} 0 1 0 ${P4(2*r)} 0a${P4(r)} ${P4(r)} 0 1 0 ${P4(-2*r)} 0Z`;}
+function layoutPreview(o){
+  // o: {W,H, area:{x,y,w,h}, items, bleed, circle}
+  const pad=Math.max(o.W,o.H)*0.015;
+  let a="",b="",bl="";
+  for(const it of o.items){
+    const k=o.bleed||0, x=it.x+k, y=it.y+k, w=it.w-2*k, h=it.h-2*k;
+    const d = o.circle ? circD(x+w/2,y+h/2,w/2) : rectD(x,y,w,h);
+    a+=d;
+    if(k>0) bl += o.circle ? circD(it.x+it.w/2,it.y+it.h/2,it.w/2) : rectD(it.x,it.y,it.w,it.h);
+  }
+  const ar=o.area;
+  return `<svg viewBox="${P4(-pad)} ${P4(-pad)} ${P4(o.W+2*pad)} ${P4(o.H+2*pad)}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="${esc(o.label||"")}">
+    <rect class="lo-margin" x="0" y="0" width="${P4(o.W)}" height="${P4(o.H)}"/>
+    <rect class="lo-area" x="${P4(ar.x)}" y="${P4(ar.y)}" width="${P4(ar.w)}" height="${P4(ar.h)}"/>
+    ${bl?`<path class="lo-bleed" d="${bl}"/>`:""}
+    <path class="lo-a" d="${a}"/><path class="lo-b" d="${b}"/>
+    <rect class="lo-sheet" x="0" y="0" width="${P4(o.W)}" height="${P4(o.H)}"/>
+  </svg>`;
+}
+function layoutExport(o){
+  // kind: sheet | roll | acrylic
+  const W=P4(o.W), H=P4(o.H), out=[];
+  out.push(`<?xml version="1.0" encoding="UTF-8"?>`);
+  out.push(`<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}">`);
+  out.push(`<title>${esc(o.title)}</title>`);
+  const shape=(x,y,w,h)=> o.circle ? `<circle cx="${P4(x+w/2)}" cy="${P4(y+h/2)}" r="${P4(w/2)}"/>` : `<rect x="${P4(x)}" y="${P4(y)}" width="${P4(w)}" height="${P4(h)}"/>`;
+  if(o.kind==="sheet"){
+    out.push(`<g id="SHEET" fill="none" stroke="#9AA3B5" stroke-width="0.2"><rect x="0" y="0" width="${W}" height="${H}"/></g>`);
+    out.push(`<g id="PRINT-AREA" fill="none" stroke="#9AA3B5" stroke-width="0.15" stroke-dasharray="2 1"><rect x="${P4(o.area.x)}" y="${P4(o.area.y)}" width="${P4(o.area.w)}" height="${P4(o.area.h)}"/></g>`);
+    if(o.bleed>0){ out.push(`<g id="BLEED" fill="none" stroke="#E03131" stroke-width="0.15" stroke-dasharray="1.5 0.8">`); for(const it of o.items) out.push(shape(it.x,it.y,it.w,it.h)); out.push(`</g>`); }
+    out.push(`<g id="TRIM" fill="none" stroke="#15233F" stroke-width="0.2">`);
+    for(const it of o.items){ const k=o.bleed||0; out.push(shape(it.x+k,it.y+k,it.w-2*k,it.h-2*k)); }
+    out.push(`</g>`);
+  } else if(o.kind==="roll"){
+    out.push(`<g id="ROLL" fill="none" stroke="#9AA3B5" stroke-width="0.2"><rect x="0" y="0" width="${W}" height="${H}"/></g>`);
+    out.push(`<g id="CutContour" fill="none" stroke="#EC008C" stroke-width="0.25">`);
+    for(const it of o.items) out.push(shape(it.x,it.y,it.w,it.h));
+    out.push(`</g>`);
+  } else {
+    out.push(`<g id="SHEET" fill="none" stroke="#9AA3B5" stroke-width="0.2"><rect x="0" y="0" width="${W}" height="${H}"/></g>`);
+    out.push(`<g id="CUT" fill="none" stroke="#FF0000" stroke-width="0.1">`);
+    for(const it of o.items) out.push(shape(it.x,it.y,it.w,it.h));
+    out.push(`</g>`);
+  }
+  out.push(`</svg>`);
+  return out.join("\n")+"\n";
+}
+
+/* ---------- Shared UI helpers ---------- */
+const rd=id=>parseNum($(id).value);
+const kpi=(label,val,sub,hero)=>`<div class="kpi${hero?" hero":""}"><span class="l">${label}</span><span class="v">${val}</span>${sub?`<span class="s">${sub}</span>`:""}</div>`;
+function showErrs(prefix,errs,bad){
+  const box=$(prefix+"-err");
+  document.querySelectorAll(`#tab-${prefix==="sh"?"sheets":prefix==="st"?"stickers":"acrylic"} .field`).forEach(f=>{const i=f.querySelector("input"); f.classList.toggle("bad",!!(i&&bad[i.id]));});
+  if(errs.length){ box.hidden=false; box.innerHTML=`<ul>${errs.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`; } else box.hidden=true;
+}
+function check(spec){ // [{id,name,min,max,optional,int,zeroOk}]
+  const errs=[], bad={}, v={};
+  for(const s of spec){
+    const x=rd(s.id);
+    if(x===null){ if(s.optional){v[s.id]=null;continue;} errs.push(`أدخل رقمًا في «${s.name}».`); bad[s.id]=1; continue; }
+    if(Number.isNaN(x)){ errs.push(`«${s.name}» يجب أن يكون رقمًا.`); bad[s.id]=1; continue; }
+    if(x<0){ errs.push(`«${s.name}» لا يمكن أن يكون سالبًا.`); bad[s.id]=1; continue; }
+    if(x===0 && !s.zeroOk){ errs.push(`«${s.name}» يجب أن يكون أكبر من صفر.`); bad[s.id]=1; continue; }
+    if(s.int && !Number.isInteger(x)){ errs.push(`«${s.name}» يجب أن يكون عددًا صحيحًا.`); bad[s.id]=1; continue; }
+    if(s.max!==undefined && x>s.max){ errs.push(`«${s.name}» يجب ألا يتجاوز ${fmtN(s.max)}.`); bad[s.id]=1; continue; }
+    v[s.id]=x;
+  }
+  return {errs,bad,v};
+}
+const segVal=id=>document.querySelector(`#${id} button[aria-pressed="true"]`).dataset.v;
+function segWire(id,cb){ document.querySelectorAll(`#${id} button`).forEach(b=>b.addEventListener("click",()=>{ document.querySelectorAll(`#${id} button`).forEach(x=>x.setAttribute("aria-pressed",x===b)); cb(); })); }
+function fillSelect(id,groups,def){
+  $(id).innerHTML = groups.map(g=>`<optgroup label="${g.label}">${g.items.map(p=>`<option value="${p.v}"${p.v===def?" selected":""}>${p.t.replace(/[0-9][0-9.]*( × [0-9.]+)?( cm)?/g,m=>LTR(m))}</option>`).join("")}</optgroup>`).join("") + `<option value="custom">مقاس مخصص…</option>`;
+}
+function wireInputs(scope,fn){ document.querySelectorAll(`#${scope} input, #${scope} select`).forEach(el=>el.addEventListener(el.tagName==="SELECT"||el.type==="checkbox"?"change":"input",fn)); }
+
+/* ---------- 1. Sheets ---------- */
+const PAPERS=[
+  {label:"ورق الطابعات الديجيتال",g:"ديجيتال",items:[
+    {v:"A4",t:"A4 — 21 × 29.7",w:210,h:297},{v:"A3",t:"A3 — 29.7 × 42",w:297,h:420},
+    {v:"SRA4",t:"SRA4 — 22.5 × 32",w:225,h:320},{v:"SRA3",t:"SRA3 — 32 × 45",w:320,h:450},
+    {v:"33x48",t:"33 × 48",w:330,h:480},{v:"13x19",t:"13 × 19 إنش — 33 × 48.3",w:330,h:483},
+    {v:"12x18",t:"12 × 18 إنش — 30.5 × 45.7",w:305,h:457},{v:"35x50",t:"35 × 50",w:350,h:500},
+    {v:"32x46",t:"32 × 46",w:320,h:460},{v:"33x66",t:"33 × 66 (فرخ طويل)",w:330,h:660},{v:"33x70",t:"33 × 70 (فرخ طويل)",w:330,h:700}]},
+  {label:"أفرخ الأوفست",g:"أوفست",items:[
+    {v:"50x70",t:"50 × 70",w:500,h:700},{v:"64x90",t:"64 × 90",w:640,h:900},
+    {v:"70x100",t:"70 × 100",w:700,h:1000},{v:"72x102",t:"72 × 102",w:720,h:1020}]}
+];
+const ALLPAPERS=PAPERS.flatMap(g=>g.items.map(p=>({...p,g:g.g})));
+const ITEMS=[
+  {t:"كرت شخصي 9 × 5",w:9,h:5},{t:"كرت 8.5 × 5.5",w:8.5,h:5.5},{t:"كرت مربع 6 × 6",w:6,h:6},
+  {t:"دائري 5 سم",w:5,h:5,c:1},{t:"A6",w:10.5,h:14.8},{t:"A5",w:14.8,h:21},{t:"DL 9.9 × 21",w:9.9,h:21},{t:"A4",w:21,h:29.7}
+];
+let shCur=null;
+function shSheet(){ const v=$("sh-paper").value; if(v==="custom"){ const w=rd("sh-pw"),h=rd("sh-ph"); return {v,t:"مخصص",w:w*10,h:h*10}; } return ALLPAPERS.find(p=>p.v===v); }
+function sheetsCalc(){
+  const custom=$("sh-paper").value==="custom"; $("sh-custom").hidden=!custom;
+  const circle=$("sh-circle").checked; $("sh-h").disabled=circle; if(circle) $("sh-h").value=$("sh-w").value;
+  const spec=[{id:"sh-w",name:"عرض القطعة",max:200},{id:"sh-h",name:"طول القطعة",max:200},{id:"sh-bleed",name:"النزف",max:10,zeroOk:1},{id:"sh-gap",name:"المسافة بين القطع",max:50,zeroOk:1},
+    {id:"sh-margin",name:"الهامش غير المطبوع",max:50,zeroOk:1},{id:"sh-qty",name:"عدد الحبات",max:1e8,int:1},{id:"sh-spare",name:"زيادة التالف",max:100,zeroOk:1},{id:"sh-price",name:"سعر الفرخ",optional:1,zeroOk:1,max:1e6}];
+  if(custom) spec.push({id:"sh-pw",name:"عرض الفرخ",max:300},{id:"sh-ph",name:"طول الفرخ",max:300});
+  const c=check(spec);
+  document.querySelectorAll("#sh-presets .chip").forEach(ch=>ch.setAttribute("aria-pressed", String(+ch.dataset.w===c.v["sh-w"] && +ch.dataset.h===c.v["sh-h"] && !!+ch.dataset.c===circle)));
+  if(c.errs.length){ showErrs("sh",c.errs,c.bad); $("sh-dl").disabled=true; return; }
+  const v=c.v, P=shSheet();
+  const base={w:v["sh-w"]*10,h:v["sh-h"]*10,bleed:v["sh-bleed"],gap:v["sh-gap"],margin:v["sh-margin"],rot:$("sh-rot").checked,circle};
+  const r=impose({...base,sheetW:P.w,sheetH:P.h});
+  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذا الفرخ. اختر فرخًا أكبر أو قلّل الهامش."],{"sh-w":1,"sh-h":1}); $("sh-dl").disabled=true; return; }
+  showErrs("sh",[],{}); $("sh-dl").disabled=false;
+  const need=Math.ceil(v["sh-qty"]*(1+v["sh-spare"]/100)), sheets=Math.ceil(need/r.n);
+  const pieceA = circle? Math.PI*(base.w/2)**2 : base.w*base.h;
+  const util=r.n*pieceA/(P.w*P.h)*100, price=v["sh-price"];
+  const area={x:base.margin,y:base.margin,w:P.w-2*base.margin,h:P.h-2*base.margin};
+  let html=kpi("حبة في الفرخ",fmtN(r.n),`الترتيب ${r.desc}`,true)
+    + kpi("أفرخ للكمية",fmtN(sheets),`لـ ${fmtN(need)} حبة${sheets*r.n>need?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
+    + kpi("استغلال الفرخ",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`);
+  if(price!=null) html+=kpi("التكلفة",money(sheets*price),`الحبة ${money(sheets*price/need)}`);
+  $("sh-kpis").innerHTML=html;
+  $("sh-cap").innerHTML=`فرخ ${num(`${cmTxt(P.w)} × ${cmTxt(P.h)}`,"cm")} · القطعة ${num(`${fx(v["sh-w"])} × ${fx(v["sh-h"])}`,"cm")}`;
+  shCur={W:P.w,H:P.h,area,items:r.items,bleed:base.bleed,circle,n:r.n,P,v};
+  $("sh-stage").innerHTML=layoutPreview({...shCur,label:`توزيع ${r.n} قطعة على الفرخ`});
+  $("sh-fname").innerHTML=`<span class="n">${shName()}</span>`;
+  // comparison across all papers
+  const rows=ALLPAPERS.map(p=>{ const q=impose({...base,sheetW:p.w,sheetH:p.h}); const s=q.n?Math.ceil(need/q.n):null; return {p,n:q.n,u:q.n*pieceA/(p.w*p.h)*100,s}; });
+  const bestU=Math.max(...rows.map(x=>x.n?x.u:0));
+  $("sh-cmp").innerHTML=rows.map(x=>`<tr data-v="${x.p.v}" class="${x.p.v===P.v?"cur":""}${x.n?"":" none"}" tabindex="0">
+    <td>${/^(A|SRA)/.test(x.p.v)?x.p.v:/x1[89]$/.test(x.p.v)?num(x.p.t.split(" — ")[0].replace(" إنش",""),"")+" إنش":x.p.v.startsWith("33x6")||x.p.v==="33x70"?"فرخ طويل":x.p.g}${x.n&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td><td>${num(`${cmTxt(x.p.w)} × ${cmTxt(x.p.h)}`,"")}</td>
+    <td><b>${x.n?fmtN(x.n):"—"}</b></td><td>${x.n?fmtN(x.u,1)+"%":"—"}</td><td>${x.s?fmtN(x.s):"—"}</td><td>${x.s&&price!=null?money(x.s*price):"—"}</td></tr>`).join("");
+}
+function shName(){ const v=shCur.v; return `imposition-${safeName(fx(v["sh-w"]))}x${safeName(fx(v["sh-h"]))}cm-on-${safeName(cmTxt(shCur.W))}x${safeName(cmTxt(shCur.H))}cm-${shCur.n}up.svg`; }
+
+/* ---------- 2. Stickers ---------- */
+const ROLLS=[{label:"عرض رول الفينيل",items:[50,61,76,91,106,127,137,152,160].map(c=>({v:String(c),t:`${c} cm`,w:c*10}))}];
+const ALLROLLS=ROLLS[0].items;
+function rowModels(shape,w,h,g,Wp,stag,rot){
+  const models=[];
+  if(shape==="circle"){
+    models.push({n:()=>fitN(Wp,w,g),pitch:w+g,len:w,off:()=>0,a:w,b:w,desc:"شبكة"});
+    if(false){ const p=w+g, n0=fitN(Wp,w,g), n1= Wp-w-p/2>=-EPS? Math.floor((Wp-w-p/2+EPS)/p)+1:0;
+      models.push({n:r=>r%2?n1:n0,pitch:p*Math.sqrt(3)/2,len:w,off:r=>r%2?p/2:0,a:w,b:w,desc:"متداخل"}); }
+  } else {
+    models.push({n:()=>fitN(Wp,w,g),pitch:h+g,len:h,off:()=>0,a:w,b:h,desc:"عادي"});
+    if(rot && Math.abs(w-h)>EPS) models.push({n:()=>fitN(Wp,h,g),pitch:w+g,len:w,off:()=>0,a:h,b:w,desc:"مدوّر"});
+  }
+  return models;
+}
+const perLen=(m,L)=>{ let c=0; for(let r=0; r*m.pitch+m.len<=L+EPS; r++) c+=m.n(r); return c; };
+function lenFor(m,qty){ let c=0,r=0; if(m.n(0)===0) return Infinity; while(c<qty){ c+=m.n(r); r++; if(r>1e7) return Infinity; } return (r-1)*m.pitch+m.len; }
+function stickerPlan(o){ // o: {shape,w,h,g,rollW,side,stag,rot,qty}
+  const Wp=o.rollW-2*o.side; if(Wp<=0) return null;
+  const ms=rowModels(o.shape,o.w,o.h,o.g,Wp,o.stag,o.rot).filter(m=>m.n(0)>0);
+  if(!ms.length) return null;
+  let best=null; for(const m of ms){ const pm=perLen(m,1000), L=lenFor(m,o.qty); if(!best||pm>best.pm||(pm===best.pm&&L<best.L)) best={m,pm,L}; }
+  const lengthMM=best.L+2*o.side;
+  const sq = o.shape==="circle" ? packCircles(1000,1000,o.w,o.g,false).n : packRects(1000,1000,o.w,o.h,o.g,o.rot).n;
+  return {...best,Wp,lengthMM,areaM2:o.rollW*lengthMM/1e6,perSqm:sq,across:best.m.n(0)};
+}
+function stickersCalc(){
+  const shape=segVal("st-shape"); const circle=shape==="circle";
+  $("st-hf").hidden=shape!=="rect"; $("st-wl").textContent= circle?"القطر": shape==="square"?"الضلع":"العرض";
+  $("st-rotwrap").hidden=shape!=="rect";
+  const custom=$("st-roll").value==="custom"; $("st-customf").hidden=!custom;
+  const spec=[{id:"st-w",name:circle?"القطر":"العرض",max:150},{id:"st-gap",name:"المسافة بين الاستيكرات",max:50,zeroOk:1},{id:"st-side",name:"الهامش الجانبي",max:100,zeroOk:1},
+    {id:"st-qty",name:"عدد الاستيكرات",max:1e8,int:1},{id:"st-price",name:"السعر",optional:1,zeroOk:1,max:1e6}];
+  if(shape==="rect") spec.push({id:"st-h",name:"الطول",max:150});
+  if(custom) spec.push({id:"st-rw",name:"عرض الرول",max:500});
+  const c=check(spec);
+  if(c.errs.length){ showErrs("st",c.errs,c.bad); $("st-dl").disabled=true; return; }
+  const v=c.v, w=v["st-w"]*10, h= shape==="rect"? v["st-h"]*10 : w;
+  const rollW = custom? v["st-rw"]*10 : ALLROLLS.find(r=>r.v===$("st-roll").value).w;
+  const base={shape,w,h,g:v["st-gap"],side:v["st-side"],stag:false,rot:$("st-rot").checked,qty:v["st-qty"]};
+  const plan=stickerPlan({...base,rollW});
+  if(!plan){ showErrs("st",["الاستيكر أعرض من المساحة المطبوعة في الرول. اختر رولًا أعرض أو قلّل الهامش الجانبي."],{"st-w":1,"st-h":1,"st-side":1}); $("st-dl").disabled=true; return; }
+  showErrs("st",[],{}); $("st-dl").disabled=false;
+  const pmode=segVal("st-pmode"), price=v["st-price"];
+  const cost = p=> price==null? null : (pmode==="sqm"? p.areaM2*price : p.lengthMM/1000*price);
+  let html=kpi("في المتر الطولي",fmtN(plan.pm),`${plan.across} في الصف · ${plan.m.desc}`,true)
+    + kpi("في المتر المربع",fmtN(plan.perSqm),"بنفس المسافة بين الاستيكرات")
+    + kpi("طول الطباعة للكمية",fmtN(plan.lengthMM/1000,2)+" m",`${fmtN(plan.areaM2,2)} m² · لـ ${fmtN(base.qty)} استيكر`);
+  const cst=cost(plan); if(cst!=null) html+=kpi("التكلفة",money(cst),`الاستيكر ${money(cst/base.qty)}`);
+  $("st-kpis").innerHTML=html;
+  $("st-cap").innerHTML=`متر واحد من رول عرضه ${num(cmTxt(rollW),"cm")}`;
+  // 1 m strip: x along roll length, y across roll width
+  const items=[]; const m=plan.m;
+  for(let r=0; r*m.pitch+m.len<=1000+EPS; r++){ const n=m.n(r); for(let i=0;i<n;i++) items.push({x:r*m.pitch, y:base.side+m.off(r)+i*(m.a+base.g), w:m.b, h:m.a}); }
+  stCur={W:1000,H:rollW,area:{x:0,y:base.side,w:1000,h:rollW-2*base.side},items,bleed:0,circle:shape==="circle",shape,v,rollW,n:plan.pm};
+  $("st-stage").innerHTML=layoutPreview({...stCur,label:`${plan.pm} استيكر في متر واحد`});
+  $("st-fname").innerHTML=`<span class="n">${stName()}</span>`;
+  $("st-cmp").innerHTML=ALLROLLS.map(r=>{ const p=stickerPlan({...base,rollW:r.w}); const cc=p?cost(p):null; const cur=!custom&&r.v===$("st-roll").value;
+    return `<tr data-v="${r.v}" class="${cur?"cur":""}${p?"":" none"}" tabindex="0"><td><b>${num(r.w/10,"cm")}</b></td><td>${p?p.across:"—"}</td><td><b>${p?fmtN(p.pm):"—"}</b></td><td>${p?fmtN(p.lengthMM/1000,2)+" m":"—"}</td><td>${p?fmtN(p.areaM2,2)+" m²":"—"}</td><td>${cc!=null?money(cc):"—"}</td></tr>`; }).join("");
+}
+let stCur=null;
+function stName(){ const v=stCur.v; const sz= stCur.shape==="rect"? `${safeName(fx(v["st-w"]))}x${safeName(fx(v["st-h"]))}cm` : `${safeName(fx(v["st-w"]))}cm`; return `stickers-${stCur.shape}-${sz}-roll-${safeName(cmTxt(stCur.rollW))}cm-1m-${stCur.n}pcs.svg`; }
+
+/* ---------- 3. Acrylic ---------- */
+const ACR=[
+  {label:"ألواح الأكريليك",items:[
+    {v:"122x244",t:"122 × 244",w:1220,h:2440},{v:"122x183",t:"122 × 183",w:1220,h:1830},{v:"125x250",t:"125 × 250",w:1250,h:2500},
+    {v:"100x200",t:"100 × 200",w:1000,h:2000},{v:"205x305",t:"205 × 305",w:2050,h:3050},{v:"61x122",t:"61 × 122 (ربع لوح)",w:610,h:1220}]},
+  {label:"مساحة سرير الليزر",items:[
+    {v:"L60x40",t:"ليزر 60 × 40",w:600,h:400},{v:"L90x60",t:"ليزر 90 × 60",w:900,h:600},{v:"L130x90",t:"ليزر 130 × 90",w:1300,h:900},{v:"L160x100",t:"ليزر 160 × 100",w:1600,h:1000}]}
+];
+const ALLACR=ACR.flatMap(g=>g.items);
+const DENSITY=1.19e-3; // g per mm³ (PMMA)
+let acCur=null;
+function acrylicCalc(){
+  const circle=segVal("ac-shape")==="circle";
+  $("ac-hf").hidden=circle; $("ac-wl").textContent=circle?"القطر":"العرض"; $("ac-rotwrap").hidden=circle;
+  const custom=$("ac-sheet").value==="custom"; $("ac-custom").hidden=!custom;
+  const spec=[{id:"ac-w",name:circle?"القطر":"العرض",max:300},{id:"ac-gap",name:"المسافة بين القطع",max:50,zeroOk:1},{id:"ac-margin",name:"هامش الحافة",max:100,zeroOk:1},
+    {id:"ac-qty",name:"عدد القطع",max:1e7,int:1},{id:"ac-price",name:"سعر اللوح",optional:1,zeroOk:1,max:1e6}];
+  if(!circle) spec.push({id:"ac-h",name:"الطول",max:300});
+  if(custom) spec.push({id:"ac-sw",name:"عرض اللوح",max:400},{id:"ac-sh",name:"طول اللوح",max:400});
+  const c=check(spec);
+  if(c.errs.length){ showErrs("ac",c.errs,c.bad); $("ac-dl").disabled=true; return; }
+  const v=c.v, w=v["ac-w"]*10, h=circle? w : v["ac-h"]*10, t=+$("ac-t").value;
+  const S= custom? {v:"custom",t:"مخصص",w:v["ac-sw"]*10,h:v["ac-sh"]*10} : ALLACR.find(s=>s.v===$("ac-sheet").value);
+  const base={w,h,bleed:0,gap:v["ac-gap"],margin:v["ac-margin"],rot:$("ac-rot").checked,circle};
+  const r=impose({...base,sheetW:S.w,sheetH:S.h});
+  if(r.n===0){ showErrs("ac",["القطعة أكبر من مساحة القص في هذا اللوح."],{"ac-w":1,"ac-h":1}); $("ac-dl").disabled=true; return; }
+  showErrs("ac",[],{}); $("ac-dl").disabled=false;
+  const qty=v["ac-qty"], sheets=Math.ceil(qty/r.n), area=circle?Math.PI*(w/2)**2:w*h, util=r.n*area/(S.w*S.h)*100;
+  const wt=area*t*DENSITY, price=v["ac-price"];
+  let html=kpi(S.v.startsWith("L")?"قطعة في سرير الليزر":"قطعة في اللوح",fmtN(r.n),`الترتيب ${r.desc}`,true)
+    + kpi(S.v.startsWith("L")?"دفعات قص للكمية":"ألواح للكمية",fmtN(sheets),`لـ ${fmtN(qty)} قطعة${sheets*r.n>qty?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
+    + kpi(S.v.startsWith("L")?"استغلال السرير":"استغلال اللوح",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`)
+    + kpi("وزن القطعة",fmtN(wt,wt<10?1:0)+" g",`الكمية ${fmtN(wt*qty/1000,2)} kg · سماكة ${t} mm`);
+  if(price!=null) html+=kpi("التكلفة",money(sheets*price),`القطعة ${money(sheets*price/qty)}`);
+  $("ac-kpis").innerHTML=html;
+  $("ac-cap").innerHTML=`${S.v.startsWith("L")?"سرير":"لوح"} ${num(`${cmTxt(S.w)} × ${cmTxt(S.h)}`,"cm")} · القطعة ${num(circle?`Ø ${fx(w/10)}`:`${fx(w/10)} × ${fx(h/10)}`,"cm")}`;
+  acCur={W:S.w,H:S.h,area:{x:base.margin,y:base.margin,w:S.w-2*base.margin,h:S.h-2*base.margin},items:r.items,bleed:0,circle,n:r.n,S,w,h,t};
+  $("ac-stage").innerHTML=layoutPreview({...acCur,label:`توزيع ${r.n} قطعة على اللوح`});
+  $("ac-fname").innerHTML=`<span class="n">${acName()}</span>`;
+  const rows=ALLACR.map(s=>{ const q=impose({...base,sheetW:s.w,sheetH:s.h}); return {s,n:q.n,u:q.n*area/(s.w*s.h)*100,k:q.n?Math.ceil(qty/q.n):null}; });
+  const bestU=Math.max(...rows.filter(x=>!x.s.v.startsWith("L")).map(x=>x.n?x.u:0));
+  $("ac-cmp").innerHTML=rows.map(x=>`<tr data-v="${x.s.v}" class="${x.s.v===S.v?"cur":""}${x.n?"":" none"}" tabindex="0"><td>${x.s.v.startsWith("L")?"سرير ليزر":"لوح"}${x.n&&!x.s.v.startsWith("L")&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td>
+    <td>${num(`${cmTxt(x.s.w)} × ${cmTxt(x.s.h)}`,"")}</td><td><b>${x.n?fmtN(x.n):"—"}</b></td><td>${x.n?fmtN(x.u,1)+"%":"—"}</td><td>${x.k?fmtN(x.k):"—"}</td><td>${x.k&&price!=null?money(x.k*price):"—"}</td></tr>`).join("");
+}
+function acName(){ const a=acCur; const sz=a.circle?`d${safeName(fx(a.w/10))}cm`:`${safeName(fx(a.w/10))}x${safeName(fx(a.h/10))}cm`; return `acrylic-${sz}-${a.t}mm-on-${safeName(cmTxt(a.W))}x${safeName(cmTxt(a.H))}cm-${a.n}pcs.svg`; }
+
+/* ---------- Wiring ---------- */
+$("sh-presets").innerHTML=ITEMS.map(p=>`<button type="button" class="chip" data-w="${p.w}" data-h="${p.h}" data-c="${p.c?1:0}" aria-pressed="false">${p.t}</button>`).join("");
+$("sh-presets").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; $("sh-w").value=b.dataset.w; $("sh-h").value=b.dataset.h; $("sh-circle").checked=b.dataset.c==="1"; sheetsCalc(); });
+fillSelect("sh-paper",PAPERS,"33x48");
+fillSelect("st-roll",ROLLS,"127");
+fillSelect("ac-sheet",ACR,"122x244");
+$("ac-t").innerHTML=[2,3,4,5,6,8,10,12,15,20].map(t=>`<option value="${t}"${t===3?" selected":""}>${t} mm</option>`).join("");
+wireInputs("tab-sheets",sheetsCalc); wireInputs("tab-stickers",stickersCalc); wireInputs("tab-acrylic",acrylicCalc);
+segWire("st-shape",stickersCalc); segWire("st-pmode",stickersCalc); segWire("ac-shape",acrylicCalc);
+const pickRow=(tb,sel,fn)=>{ const h=e=>{ if(e.type==="keydown"&&e.key!=="Enter") return; const tr=e.target.closest("tr[data-v]"); if(!tr||tr.classList.contains("none")) return; $(sel).value=tr.dataset.v; fn(); $(sel).scrollIntoView({block:"nearest"}); }; $(tb).addEventListener("click",h); $(tb).addEventListener("keydown",h); };
+pickRow("sh-cmp","sh-paper",sheetsCalc); pickRow("st-cmp","st-roll",stickersCalc); pickRow("ac-cmp","ac-sheet",acrylicCalc);
+$("sh-dl").addEventListener("click",()=>{ if(!shCur) return; const P=shCur.P; saveFile(shName(), layoutExport({...shCur,kind:"sheet",title:`Imposition ${shCur.n}-up on ${cmTxt(P.w)} x ${cmTxt(P.h)} cm`}), "image/svg+xml"); });
+$("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), layoutExport({...stCur,kind:"roll",title:`Stickers - 1 m of ${cmTxt(stCur.rollW)} cm roll`}), "image/svg+xml"); });
+$("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
+
+/* ---------- Tabs (hash routed) ---------- */
+const TABS=["cups","sheets","stickers","acrylic"]; const rendered={};
+function showTab(t){
+  if(!TABS.includes(t)) t="cups";
+  TABS.forEach(x=>{ $("tab-"+x).hidden=x!==t; const b=document.querySelector(`[data-tab="${x}"]`); b.setAttribute("aria-selected",String(x===t)); b.tabIndex= x===t?0:-1; });
+  if(!rendered[t]){ rendered[t]=1; if(t==="sheets") sheetsCalc(); if(t==="stickers") stickersCalc(); if(t==="acrylic") acrylicCalc(); }
+  if(t==="cups" && current) applyView();
+  const ab=document.querySelector(`[data-tab="${t}"]`); const bar=ab.parentElement; bar.scrollLeft += (ab.getBoundingClientRect().left+ab.offsetWidth/2) - (bar.getBoundingClientRect().left+bar.clientWidth/2);
+}
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{ const t=b.dataset.tab; try{ if(location.hash!=="#"+t) location.hash=t; else showTab(t);}catch(_){ } showTab(t); }));
+window.addEventListener("hashchange",()=>showTab(location.hash.slice(1)));
+window.CalcLib={packRects,packCircles,impose,stickerPlan,layoutExport,PAPERS,ROLLS,ACR};
+
+// expose pure functions for verification
+window.CupLib={SIZES,SUGGESTED,geom,validate,buildSVG,fileName,makeZip,crc32,parseNum};
+
+// init
+try{ if(localStorage.getItem("cupView")==="table") document.querySelector('[data-view="table"]').click(); }catch(_){}
+renderShelf(); renderChips(); fillInputs(); compute();
+showTab((location.hash||"").slice(1));
+})();
+</script>
