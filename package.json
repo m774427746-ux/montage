@@ -1,0 +1,8 @@
+{
+  "name": "montage",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "مونتاج — أدوات المصمم للمطبعة",
+  "engines": { "node": ">=18" }
+}
