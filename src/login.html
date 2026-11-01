@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Asbarix — دخول الفريق</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<style>
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Medium.ttf") format("truetype");font-weight:500}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-SemiBold.ttf") format("truetype");font-weight:600}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Black.ttf") format("truetype");font-weight:800 900}
+:root{--bg:#FAF7F2;--surface:#FFFFFF;--ink:#2B1A20;--muted:#6E5E63;--line:#E2D6CC;--accent:#7C1E33;--err:#B42335}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1A1215;--surface:#241A1E;--ink:#F3ECE6;--muted:#B9A9AC;--line:#3D2F34;--accent:#C5A777;--err:#FF8A8A}}
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px 16px;background:var(--bg);color:var(--ink);font-family:"Jali Arabic",Tahoma,sans-serif}
+.card{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px 24px;display:grid;gap:14px;text-align:center}
+img{width:180px;margin:0 auto}
+h1{font-size:24px;margin:0}
+p{margin:0;color:var(--muted);font-size:14px}
+input{width:100%;box-sizing:border-box;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font:inherit;font-size:16px;background:var(--surface);color:var(--ink);text-align:left;direction:ltr}
+button{min-height:46px;border:0;border-radius:10px;background:var(--accent);color:#fff;font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6}
+#msg{min-height:20px;margin:0;color:var(--err);font-size:14px;font-weight:600}
+</style>
+</head>
+<body>
+<main class="card">
+  <img src="/assets/asbarix.svg" alt="Asbarix">
+  <h1>دخول الفريق</h1>
+  <p>أدخل رمز الفريق للمتابعة.</p>
+  <form id="f" novalidate>
+    <input id="code" type="password" autocomplete="current-password" placeholder="رمز الفريق" required>
+    <p id="msg" role="alert"></p>
+    <button id="btn" type="submit">دخول</button>
+  </form>
+</main>
+<script>
+document.getElementById("f").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = document.getElementById("btn"), msg = document.getElementById("msg");
+  const code = document.getElementById("code").value;
+  if (!code.trim()) { msg.textContent = "أدخل الرمز."; return; }
+  btn.disabled = true; msg.textContent = "";
+  try {
+    const r = await fetch("/api/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ code }) });
+    if (r.ok) { location.replace("/"); return; }
+    msg.textContent = r.status === 503 ? "الدخول غير مُفعَّل بعد. تواصل مع المسؤول." : "الرمز غير صحيح.";
+  } catch (_) {
+    msg.textContent = "تعذّر الاتصال. حاول مرة أخرى.";
+  }
+  btn.disabled = false;
+});
+</script>
+</body>
+</html>

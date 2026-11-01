@@ -1,4 +1,4 @@
-// Builds public/index.html (tools + email gate) and public/admin.html. Run: node src/build.mjs
+// Builds public/index.html (tools), public/admin.html and public/login.html. Run: node src/build.mjs
 import { readFileSync, writeFileSync, mkdirSync, cpSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,12 +15,12 @@ const head = `<!doctype html>
 <meta property="og:title" content="Asbarix — أدوات المصمم للمطبعة">
 <meta property="og:description" content="قوالب الأكواب، وحاسبات الأفرخ والاستيكرات والأكريليك.">
 ${icon}
-<script>try{if(!localStorage.getItem("montage_user"))document.documentElement.classList.add("gated")}catch(e){document.documentElement.classList.add("gated")}</script>
 </head>
 <body>
 `;
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, "assets"), join(OUT, "assets"), { recursive: true });
-writeFileSync(join(OUT, "index.html"), head + read("app.html") + "\n" + read("gate.html") + "\n</body>\n</html>\n");
+writeFileSync(join(OUT, "index.html"), head + read("app.html") + "\n" + "\n</body>\n</html>\n");
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
+writeFileSync(join(OUT, "login.html"), read("login.html"));
 console.log("built public/index.html and public/admin.html");
