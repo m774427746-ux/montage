@@ -12,25 +12,27 @@ export default async function handler(req, res) {
   if (!configured()) return res.status(503).json({ ok: false, error: "storage_not_configured", message: "الحفظ المشترك غير مُفعَّل بعد. التعديلات لن تُحفظ." });
 
   if (req.method === "GET") {
-    if (!isTeam(req) && !isAdmin(req)) return res.status(401).json({ ok: false, error: "unauthorized" });
+    if (!(await isTeam(req)) && !(await isAdmin(req))) return res.status(401).json({ ok: false, error: "unauthorized" });
     try {
       const [raw] = await pipeline([["GET", KEY]]);
-      return res.status(200).json({ ok: true, prices: raw ? JSON.parse(raw) : null });
+      const data=raw?JSON.parse(raw):null;
+      if(data && !(await isAdmin(req))) data.items=data.items.map(({cost,...item})=>item);
+      return res.status(200).json({ok:true,prices:data});
     } catch {
       return res.status(502).json({ ok: false, error: "storage_error", message: "تعذّر قراءة الأسعار المحفوظة." });
     }
   }
 
   if (req.method === "PUT") {
-    if (!isAdmin(req)) return res.status(401).json({ ok: false, error: "unauthorized", message: "سجّل دخول الإدارة أولًا." });
+    if (!(await isAdmin(req))) return res.status(401).json({ ok: false, error: "unauthorized", message: "سجّل دخول الإدارة أولًا." });
     const list = parseBody(req).prices;
     if (!Array.isArray(list) || list.length > 500) return res.status(400).json({ ok: false, error: "invalid_prices" });
     const clean = [];
     for (const item of list) {
       const id = String(item && item.id || "");
-      const retail = num(item && item.retail), individual = num(item && item.individual);
-      if (!id || id.length > 20 || !valid(retail) || !valid(individual)) return res.status(400).json({ ok: false, error: "invalid_prices", id });
-      clean.push({ id, retail, individual });
+      const retail = num(item && item.retail), individual = num(item && item.individual), cost = num(item?.cost ?? null);
+      if (!id || id.length > 20 || !valid(retail) || !valid(individual) || !valid(cost) || typeof item.designerCanEdit !== "boolean") return res.status(400).json({ ok: false, error: "invalid_prices", id });
+      clean.push({ id, retail, individual, cost, designerCanEdit: item.designerCanEdit });
     }
     try {
       const stamp = new Date().toISOString();

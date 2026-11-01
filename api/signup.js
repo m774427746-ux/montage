@@ -1,4 +1,5 @@
 import { configured, pipeline, readBody } from "./_redis.js";
+import { isTeam, isAdmin } from "./_session.js";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -6,6 +7,7 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ ok: false, error: "method_not_allowed" });
+  if (!(await isTeam(req)) && !(await isAdmin(req))) return res.status(401).json({ ok: false, error: "unauthorized" });
 
   const email = String(readBody(req).email || "").trim().toLowerCase();
   if (!EMAIL.test(email) || email.length > 254) return res.status(400).json({ ok: false, error: "invalid_email" });
