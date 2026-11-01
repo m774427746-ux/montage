@@ -1,26 +1,27 @@
 <title>Asbarix</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a calm drafting-table tool — size shelf first, then a two-pane workspace (controls | flat-pattern stage). */
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Black.ttf") format("truetype");font-weight:800 900;font-display:swap}
 :root{
-  --bg:#F1F3F6; --surface:#FFFFFF; --sunk:#E8EBF0; --ink:#15233F; --muted:#5A6479; --line:#D7DCE4;
-  --accent:#F29A1E; --accent-ink:#15233F; --accent-soft:#FDF0DC; --focus:#2E6BE6;
-  --paper:#FFFFFF; --grid:#E4E8EE; --err:#C92A2A; --err-soft:#FDECEC; --ok:#2B8A3E;
-  --cut:#15233F; --bleed:#E03131; --safe:#2F9E44; --glue:#7048E8; --guides:#1C7ED6;
-  --font-display:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;
-  --font-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --bg:#FAF7F2; --surface:#FFFFFF; --sunk:#F1EBE3; --ink:#2B1A20; --muted:#6E5E63; --line:#E2D6CC;
+  --accent:#7C1E33; --accent-ink:#FFFFFF; --accent-soft:#F3E7E9; --focus:#C5A777;
+  --paper:#FFFFFF; --grid:#ECE4DA; --err:#B42335; --err-soft:#FBE9EB; --ok:#2B7A4B;
+  --cut:#2B1A20; --bleed:#E03131; --safe:#2F9E44; --glue:#7048E8; --guides:#1C7ED6;
+  --gold:#C5A777;
+  --font-display:"Jali Arabic",Tahoma,"Segoe UI",sans-serif;
+  --font-body:"Jali Arabic",Tahoma,"Segoe UI",sans-serif;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
-  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --bg:#1A1215; --surface:#241A1E; --sunk:#1F1619; --ink:#F3ECE6; --muted:#B9A9AC; --line:#3D2F34;
+  --accent:#C5A777; --accent-ink:#1A1215; --accent-soft:#3A2A2E; --focus:#C5A777;
   --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
-  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --bg:#1A1215; --surface:#241A1E; --sunk:#1F1619; --ink:#F3ECE6; --muted:#B9A9AC; --line:#3D2F34;
+  --accent:#C5A777; --accent-ink:#1A1215; --accent-soft:#3A2A2E; --focus:#C5A777;
   --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }
 
 *{box-sizing:border-box}
@@ -170,7 +171,7 @@ details.help ol{margin:0;padding-inline-start:22px;display:grid;gap:8px;max-widt
 .toast div.err{background:var(--err);color:#fff}
 textarea.copybox{width:100%;height:120px;margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:11px;direction:ltr;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink)}
 /* tabs + calculators */
-:root{ --pc-a:#FCE3BF; --pc-b:#D8E4FA; --pc-line:#15233F; --margin-fill:#E9ECF1; }
+:root{ --pc-a:#FCE3BF; --pc-b:#D8E4FA; --pc-line:#2B1A20; --margin-fill:#E9ECF1; }
 [hidden]{display:none!important}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:16;background:var(--bg)}
 .tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:8px}
@@ -704,7 +705,7 @@ function geom(p, checkOnly){
 }
 
 /* ---------- SVG export (single source for preview and files) ---------- */
-const COL={cut:"#15233F",bleed:"#E03131",safe:"#2F9E44",glue:"#7048E8",guides:"#1C7ED6"};
+const COL={cut:"#2B1A20",bleed:"#E03131",safe:"#2F9E44",glue:"#7048E8",guides:"#1C7ED6"};
 const FONT='Arial, Helvetica, sans-serif';
 
 function buildGuides(G,label){
@@ -1191,7 +1192,7 @@ function layoutExport(o){
     out.push(`<g id="SHEET" fill="none" stroke="#9AA3B5" stroke-width="0.2"><rect x="0" y="0" width="${W}" height="${H}"/></g>`);
     out.push(`<g id="PRINT-AREA" fill="none" stroke="#9AA3B5" stroke-width="0.15" stroke-dasharray="2 1"><rect x="${P4(o.area.x)}" y="${P4(o.area.y)}" width="${P4(o.area.w)}" height="${P4(o.area.h)}"/></g>`);
     if(o.bleed>0){ out.push(`<g id="BLEED" fill="none" stroke="#E03131" stroke-width="0.15" stroke-dasharray="1.5 0.8">`); for(const it of o.items) out.push(shape(it.x,it.y,it.w,it.h)); out.push(`</g>`); }
-    out.push(`<g id="TRIM" fill="none" stroke="#15233F" stroke-width="0.2">`);
+    out.push(`<g id="TRIM" fill="none" stroke="#2B1A20" stroke-width="0.2">`);
     for(const it of o.items){ const k=o.bleed||0; out.push(shape(it.x+k,it.y+k,it.w-2*k,it.h-2*k)); }
     out.push(`</g>`);
   } else if(o.kind==="roll"){

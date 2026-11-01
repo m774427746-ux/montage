@@ -11,7 +11,7 @@ const head = `<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="Asbarix: قوالب أكواب SVG بالأبعاد الفعلية، وحاسبات توزيع الأفرخ والاستيكرات والأكريليك للمصممين والمطابع.">
-<meta name="theme-color" content="#15233F">
+<meta name="theme-color" content="#7C1E33">
 <meta property="og:title" content="Asbarix — أدوات المصمم للمطبعة">
 <meta property="og:description" content="قوالب الأكواب، وحاسبات الأفرخ والاستيكرات والأكريليك.">
 ${icon}
