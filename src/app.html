@@ -405,6 +405,13 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       </div>
       <div class="field"><label for="sh-margin">الهامش غير المطبوع لكل جهة</label><div class="inwrap"><input id="sh-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
+      <h3 class="mt">تسعيرة البيع الأولية</h3>
+      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
+      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
+      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
+      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
+      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
+      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="pair">
         <div class="field"><label for="sh-qty">عدد الحبات</label><div class="inwrap"><input id="sh-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
@@ -450,6 +457,13 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       <div class="field" id="st-customf" hidden><label for="st-rw">عرض الرول</label><div class="inwrap"><input id="st-rw" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
       <div class="field"><label for="st-side">الهامش الجانبي لكل جهة</label><div class="inwrap"><input id="st-side" inputmode="decimal" autocomplete="off" value="10"><span>mm</span></div></div>
 
+      <h3 class="mt">تسعيرة البيع الأولية</h3>
+      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
+      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
+      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
+      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
+      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
+      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
       <div class="seg full" id="st-pmode" role="group" aria-label="طريقة التسعير">
@@ -499,6 +513,13 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       </div>
       <div class="field"><label for="ac-margin">هامش الحافة لكل جهة</label><div class="inwrap"><input id="ac-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
+      <h3 class="mt">تسعيرة البيع الأولية</h3>
+      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
+      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
+      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
+      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
+      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
+      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="field"><label for="ac-qty">عدد القطع</label><div class="inwrap"><input id="ac-qty" inputmode="numeric" autocomplete="off" value="100"><span>قطعة</span></div></div>
       <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
@@ -1330,6 +1351,7 @@ const ALLACR=ACR.flatMap(g=>g.items);
 const DENSITY=1.19e-3; // g per mm³ (PMMA)
 let acCur=null;
 function acrylicCalc(){
+  if(window.asbarixSaleReady) updateSale();
   const circle=segVal("ac-shape")==="circle";
   $("ac-hf").hidden=circle; $("ac-wl").textContent=circle?"القطر":"العرض"; $("ac-rotwrap").hidden=circle;
   const custom=$("ac-sheet").value==="custom"; $("ac-custom").hidden=!custom;
@@ -1400,4 +1422,33 @@ try{ if(localStorage.getItem("cupView")==="table") document.querySelector('[data
 renderShelf(); renderChips(); fillInputs(); compute();
 showTab((location.hash||"").slice(1));
 })();
+</script>
+
+<script>
+
+// Sale reference is independent of sheet purchase cost and PMMA weight.
+const SALE_MATERIALS=[{"id": "2", "name": "اكريلك سعودي شفاف ١ ملم", "rate": 0.012, "unit": "cm2"}, {"id": "3", "name": "اكريلك سعودي شفاف ٢ ملم", "rate": 0.014, "unit": "cm2"}, {"id": "4", "name": "اكريلك سعودي شفاف ٣ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "5", "name": "اكريلك سعودي شفاف ٤ ملم", "rate": 0.025, "unit": "cm2"}, {"id": "6", "name": "اكريلك سعودي شفاف ٦ ملم", "rate": 0.036, "unit": "cm2"}, {"id": "7", "name": "اكريلك سعودي شفاف ٨ ملم", "rate": 0.06, "unit": "cm2"}, {"id": "8", "name": "اكريلك سعودي شفاف ١٠ملم", "rate": 0.07, "unit": "cm2"}, {"id": "9", "name": "اكريلك سعودي شفاف ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "10", "name": "اكريلك سعودي ملون ١ ملم", "rate": null, "unit": "cm2"}, {"id": "11", "name": "اكريلك سعودي ملون ٢ ملم", "rate": null, "unit": "cm2"}, {"id": "12", "name": "اكريلك سعودي ملون ٣ ملم", "rate": null, "unit": "cm2"}, {"id": "13", "name": "اكريلك سعودي ملون ٤ ملم", "rate": null, "unit": "cm2"}, {"id": "14", "name": "اكريلك سعودي ملون ٦ ملم", "rate": null, "unit": "cm2"}, {"id": "15", "name": "اكريلك سعودي ملون ٨ ملم", "rate": null, "unit": "cm2"}, {"id": "16", "name": "اكريلك سعودي ملون ١٠ملم", "rate": null, "unit": "cm2"}, {"id": "17", "name": "اكريلك سعودي ملون ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "18", "name": "اكريلك تايلندي شفاف ١ ملم", "rate": 0.014, "unit": "cm2"}, {"id": "19", "name": "اكريلك تايلندي شفاف ٢ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "20", "name": "اكريلك تايلندي شفاف ٣ ملم", "rate": 0.023, "unit": "cm2"}, {"id": "21", "name": "اكريلك تايلندي شفاف ٤ ملم", "rate": 0.03, "unit": "cm2"}, {"id": "22", "name": "اكريلك تايلندي شفاف ٦ ملم", "rate": 0.042, "unit": "cm2"}, {"id": "23", "name": "اكريلك تايلندي شفاف ٨ ملم", "rate": 0.062, "unit": "cm2"}, {"id": "24", "name": "اكريلك تايلندي شفاف ١٠ملم", "rate": 0.075, "unit": "cm2"}, {"id": "25", "name": "اكريلك تايلندي شفاف ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "26", "name": "اكريلك تايلندي ملون ١ ملم", "rate": null, "unit": "cm2"}, {"id": "27", "name": "اكريلك تايلندي ملون ٢ ملم", "rate": null, "unit": "cm2"}, {"id": "28", "name": "اكريلك تايلندي ملون ٣ ملم", "rate": 0.022, "unit": "cm2"}, {"id": "29", "name": "اكريلك تايلندي ملون ٤ ملم", "rate": null, "unit": "cm2"}, {"id": "30", "name": "اكريلك تايلندي ملون ٦ ملم", "rate": null, "unit": "cm2"}, {"id": "31", "name": "اكريلك تايلندي ملون ٨ ملم", "rate": null, "unit": "cm2"}, {"id": "32", "name": "اكريلك تايلندي ملون ١٠ملم", "rate": null, "unit": "cm2"}, {"id": "33", "name": "اكريلك تايلندي ملون ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "34", "name": "لوح خشبي جهة واحدة ٣ ملم", "rate": 0.003, "unit": "cm2"}, {"id": "35", "name": "لوح خشبي جهتين ٣ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "36", "name": "اكريلك مرايه ذهبي", "rate": 0.04, "unit": "cm2"}, {"id": "37", "name": "اكريلك مرايه فضي", "rate": 0.04, "unit": "cm2"}, {"id": "38", "name": "اكريلك ساندوتش ذهبي", "rate": 0.03, "unit": "cm2"}, {"id": "39", "name": "اكريلك سانندوتش فضي", "rate": 0.03, "unit": "cm2"}, {"id": "40", "name": "حفر اكريلك", "rate": 0.1, "unit": "cm2"}, {"id": "41", "name": "صبغ لون", "rate": 0.1, "unit": "cm2"}, {"id": "42", "name": "تجميع اكريلك صغير", "rate": 5.0, "unit": "piece"}, {"id": "43", "name": "تجميع اكريلك وسط", "rate": 10.0, "unit": "piece"}, {"id": "44", "name": "تجميع اكريلك كبير", "rate": 15.0, "unit": "piece"}, {"id": "45", "name": "قاعدة خشب ١٠ سم", "rate": 10.0, "unit": "piece"}, {"id": "46", "name": "قاعدة خشب ١٥ سم", "rate": 25.0, "unit": "piece"}, {"id": "47", "name": "قاعدة خشب ٢١ سم", "rate": 35.0, "unit": "piece"}, {"id": "48", "name": "قاعدة خشب ٣٠ سم", "rate": 45.0, "unit": "piece"}, {"id": "49", "name": "ستكر أبيض", "rate": null, "unit": "cm2"}];
+const sm=document.getElementById('sale-material');
+sm.innerHTML=SALE_MATERIALS.map(m=>`<option value="${m.id}">${m.name}${m.rate===null?' — السعر غير محدد':''}</option>`).join('');
+function updateSale(){
+ const m=SALE_MATERIALS.find(x=>x.id===sm.value);if(!m)return;
+ const rateInput=document.getElementById('sale-rate');
+ const out=document.getElementById('sale-result');
+ const rate=rateInput.value.trim()===''?null:Number(rateInput.value);
+ const qty=Number(document.getElementById('ac-qty').value);
+ const width=Number(document.getElementById('ac-w').value);
+ const circle=document.querySelector('#ac-shape [aria-pressed="true"]').dataset.v==='circle';
+ const height=circle?width:Number(document.getElementById('ac-h').value);
+ const factor=Number(document.getElementById('sale-client').value);
+ if(rate===null){out.textContent='سعر هذه الخامة غير محدد. أدخل سعر الوحدة لإظهار الإجمالي.';return;}
+ if(!Number.isFinite(rate)||rate<0||!Number.isInteger(qty)||qty<=0||(m.unit==='cm2'&&(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0))){out.textContent='أدخل سعرًا ومقاسات وكمية صحيحة.';return;}
+ const per=rate*(m.unit==='cm2'?width*height:1)*factor;
+ out.textContent=`سعر البيع: ${(per*qty).toFixed(2)} ر.س · القطعة: ${per.toFixed(2)} ر.س · ${qty} قطعة · لا يشمل خدمات إضافية أو ضريبة غير مذكورة في المرجع`;
+}
+function selectSale(){const m=SALE_MATERIALS.find(x=>x.id===sm.value);document.getElementById('sale-rate').value=m.rate===null?'':m.rate;document.getElementById('sale-unit').textContent=m.unit==='piece'?'ر.س / قطعة':'ر.س / سم²';updateSale();}
+sm.addEventListener('change',selectSale);
+['sale-rate','sale-client','ac-qty','ac-w','ac-h'].forEach(id=>document.getElementById(id).addEventListener('input',updateSale));
+selectSale();
+
+window.asbarixSaleReady=true;
 </script>
