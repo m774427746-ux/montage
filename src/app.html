@@ -107,6 +107,7 @@ td .btn{min-height:34px;padding:5px 10px;font-size:13px}
 .inwrap:focus-within{border-color:var(--focus)}
 .field.bad .inwrap{border-color:var(--err)}
 .hint{font-size:12.5px;color:var(--muted);margin:0}
+.fnote{font-size:12.5px;color:var(--err);font-weight:600;margin:6px 0 0}
 .tag{font-size:11.5px;font-weight:600;border-radius:999px;padding:1px 8px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
 .orig{font-size:12px;color:var(--muted);font-weight:400}
 .row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
@@ -447,6 +448,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
   <div class="calc-layout">
     <div class="panel side">
       <h3>الاستيكر</h3>
+      <div class="chips" id="st-presets" role="group" aria-label="مقاسات جاهزة"></div>
       <div class="seg full" id="st-shape" role="group" aria-label="الشكل">
         <button type="button" data-v="circle" aria-pressed="true">دائري</button>
         <button type="button" data-v="square" aria-pressed="false">مربع</button>
@@ -505,6 +507,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 
 <div class="chips qty-shortcuts" aria-label="كميات سريعة"><button type="button" class="chip" data-qty="10">10 قطع</button><button type="button" class="chip" data-qty="50">50 قطعة</button><button type="button" class="chip" data-qty="100">100 قطعة</button><button type="button" class="chip" data-qty="500">500 قطعة</button></div>
       <h3>القطعة</h3>
+      <div class="chips" id="ac-presets" role="group" aria-label="مقاسات جاهزة"></div>
       <div class="seg full" id="ac-shape" role="group" aria-label="الشكل">
         <button type="button" data-v="rect" aria-pressed="true">مستطيل</button>
         <button type="button" data-v="circle" aria-pressed="false">دائري</button>
@@ -540,7 +543,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 <button class="btn btn-dl" id="quote-copy" type="button" disabled>نسخ عرض السعر</button><p id="quote-copy-status" role="status"></p>
 <textarea id="quote-text" class="copybox" aria-label="نص عرض السعر" readonly hidden></textarea>
 </section>
-<section class="quote-card ai-card" aria-labelledby="ai-title"><div class="quote-heading"><h3 id="ai-title">مساعد Asbarix</h3><span class="quote-tag">Google Gemini</span></div><p class="hint">اسأل عن الخامة أو اطلب شرح تسعيرتك. الإجابات إرشادية.</p><div class="chips" style="margin:14px 0"><button class="chip" type="button" data-ai-question="اشرح لي السعر الحالي وما الذي لا يشمله">اشرح تسعيرتي</button><button class="chip" type="button" data-ai-question="ما المعلومات الناقصة لاختيار خامة مناسبة لهذا الطلب؟">ساعدني أختار الخامة</button></div><form id="ai-form"><label for="ai-question">سؤالك</label><textarea id="ai-question" class="sel" rows="3" maxlength="1500" required placeholder="مثال: ما الفرق بين الأكريليك الشفاف والمرايا؟"></textarea><label class="check" style="margin:10px 0"><input id="ai-context" type="checkbox" checked>إرفاق مقاسات وتسعيرة الحاسبة مع السؤال</label><p class="hint">يُرسل السؤال والبيانات المرفقة إلى Google لمعالجة الإجابة.</p><button class="btn btn-dl" id="ai-send" type="submit" style="margin-top:12px">اسأل المساعد</button></form><p id="ai-status" role="status" aria-live="polite"></p><div id="ai-answer" role="region" aria-label="إجابة المساعد" style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9"></div></section><details class="production-options"><summary>مخطط القص واستغلال اللوح</summary>      <div class="kpis" id="ac-kpis"></div>
+<details class="production-options"><summary>مخطط القص واستغلال اللوح</summary>      <div class="kpis" id="ac-kpis"></div>
       <div class="layouthead"><span id="ac-cap"></span><span class="lkey"><i class="k-a"></i>القطعة <i class="k-m"></i>هامش</span></div>
       <div class="layoutbox" id="ac-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="ac-dl">تنزيل ملف القص SVG</button><span class="fname" id="ac-fname"></span></div>
@@ -1211,19 +1214,30 @@ const rd=id=>parseNum($(id).value);
 const kpi=(label,val,sub,hero)=>`<div class="kpi${hero?" hero":""}"><span class="l">${label}</span><span class="v">${val}</span>${sub?`<span class="s">${sub}</span>`:""}</div>`;
 function showErrs(prefix,errs,bad){
   const box=$(prefix+"-err");
-  document.querySelectorAll(`#tab-${prefix==="sh"?"sheets":prefix==="st"?"stickers":"acrylic"} .field`).forEach(f=>{const i=f.querySelector("input"); f.classList.toggle("bad",!!(i&&bad[i.id]));});
-  if(errs.length){ box.hidden=false; box.innerHTML=`<ul>${errs.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`; } else box.hidden=true;
+  const scope=document.querySelector(`#tab-${prefix==="sh"?"sheets":prefix==="st"?"stickers":"acrylic"}`);
+  scope.querySelectorAll(".field").forEach(f=>{
+    const i=f.querySelector("input"); const msg=i&&bad[i.id];
+    f.classList.toggle("bad",!!msg);
+    let note=f.querySelector(".fnote");
+    if(msg){ if(!note){ note=document.createElement("p"); note.className="fnote"; f.appendChild(note); } note.textContent=msg; }
+    else if(note) note.remove();
+  });
+  if(errs.length){
+    // invalid input: never keep the previous result on screen
+    $(prefix+"-kpis").innerHTML=""; $(prefix+"-stage").innerHTML="";
+    box.hidden=false; box.innerHTML=`<ul>${errs.map(e=>`<li>${esc(e)}</li>`).join("")}</ul>`;
+  } else box.hidden=true;
 }
 function check(spec){ // [{id,name,min,max,optional,int,zeroOk}]
   const errs=[], bad={}, v={};
   for(const s of spec){
     const x=rd(s.id);
-    if(x===null){ if(s.optional){v[s.id]=null;continue;} errs.push(`أدخل رقمًا في «${s.name}».`); bad[s.id]=1; continue; }
-    if(Number.isNaN(x)){ errs.push(`«${s.name}» يجب أن يكون رقمًا.`); bad[s.id]=1; continue; }
-    if(x<0){ errs.push(`«${s.name}» لا يمكن أن يكون سالبًا.`); bad[s.id]=1; continue; }
-    if(x===0 && !s.zeroOk){ errs.push(`«${s.name}» يجب أن يكون أكبر من صفر.`); bad[s.id]=1; continue; }
-    if(s.int && !Number.isInteger(x)){ errs.push(`«${s.name}» يجب أن يكون عددًا صحيحًا.`); bad[s.id]=1; continue; }
-    if(s.max!==undefined && x>s.max){ errs.push(`«${s.name}» يجب ألا يتجاوز ${fmtN(s.max)}.`); bad[s.id]=1; continue; }
+    if(x===null){ if(s.optional){v[s.id]=null;continue;} bad[s.id]=`أدخل رقمًا في «${s.name}».`; errs.push(`أدخل رقمًا في «${s.name}».`); continue; }
+    if(Number.isNaN(x)){ bad[s.id]=`«${s.name}» يجب أن يكون رقمًا.`; errs.push(`«${s.name}» يجب أن يكون رقمًا.`); continue; }
+    if(x<0){ bad[s.id]=`«${s.name}» لا يمكن أن يكون سالبًا.`; errs.push(`«${s.name}» لا يمكن أن يكون سالبًا.`); continue; }
+    if(x===0 && !s.zeroOk){ bad[s.id]=`«${s.name}» يجب أن يكون أكبر من صفر.`; errs.push(`«${s.name}» يجب أن يكون أكبر من صفر.`); continue; }
+    if(s.int && !Number.isInteger(x)){ bad[s.id]=`«${s.name}» يجب أن يكون عددًا صحيحًا.`; errs.push(`«${s.name}» يجب أن يكون عددًا صحيحًا.`); continue; }
+    if(s.max!==undefined && x>s.max){ bad[s.id]=`«${s.name}» يجب ألا يتجاوز ${fmtN(s.max)}.`; errs.push(`«${s.name}» يجب ألا يتجاوز ${fmtN(s.max)}.`); continue; }
     v[s.id]=x;
   }
   return {errs,bad,v};
@@ -1266,7 +1280,7 @@ function sheetsCalc(){
   const v=c.v, P=shSheet();
   const base={w:v["sh-w"]*10,h:v["sh-h"]*10,bleed:v["sh-bleed"],gap:v["sh-gap"],margin:v["sh-margin"],rot:$("sh-rot").checked,circle};
   const r=impose({...base,sheetW:P.w,sheetH:P.h});
-  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذا الفرخ. اختر فرخًا أكبر أو قلّل الهامش."],{"sh-w":1,"sh-h":1}); $("sh-dl").disabled=true; return; }
+  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذا الفرخ. اختر فرخًا أكبر أو قلّل الهامش."],{"sh-w":"القطعة أكبر من الفرخ","sh-h":"القطعة أكبر من الفرخ"}); $("sh-dl").disabled=true; return; }
   showErrs("sh",[],{}); $("sh-dl").disabled=false;
   const need=Math.ceil(v["sh-qty"]*(1+v["sh-spare"]/100)), sheets=Math.ceil(need/r.n);
   const pieceA = circle? Math.PI*(base.w/2)**2 : base.w*base.h;
@@ -1331,7 +1345,7 @@ function stickersCalc(){
   const rollW = custom? v["st-rw"]*10 : ALLROLLS.find(r=>r.v===$("st-roll").value).w;
   const base={shape,w,h,g:v["st-gap"],side:v["st-side"],stag:false,rot:$("st-rot").checked,qty:v["st-qty"]};
   const plan=stickerPlan({...base,rollW});
-  if(!plan){ showErrs("st",["الاستيكر أعرض من المساحة المطبوعة في الرول. اختر رولًا أعرض أو قلّل الهامش الجانبي."],{"st-w":1,"st-h":1,"st-side":1}); $("st-dl").disabled=true; return; }
+  if(!plan){ showErrs("st",["الاستيكر أعرض من المساحة المطبوعة في الرول. اختر رولًا أعرض أو قلّل الهامش الجانبي."],{"st-w":"الاستيكر أعرض من الرول","st-h":"الاستيكر أعرض من الرول","st-side":"الاستيكر أعرض من الرول"}); $("st-dl").disabled=true; return; }
   showErrs("st",[],{}); $("st-dl").disabled=false;
   const pmode=segVal("st-pmode"), price=v["st-price"];
   const cost = p=> price==null? null : (pmode==="sqm"? p.areaM2*price : p.lengthMM/1000*price);
@@ -1379,7 +1393,7 @@ function acrylicCalc(){
   const S= custom? {v:"custom",t:"مخصص",w:v["ac-sw"]*10,h:v["ac-sh"]*10} : ALLACR.find(s=>s.v===$("ac-sheet").value);
   const base={w,h,bleed:0,gap:v["ac-gap"],margin:v["ac-margin"],rot:$("ac-rot").checked,circle};
   const r=impose({...base,sheetW:S.w,sheetH:S.h});
-  if(r.n===0){ showErrs("ac",["القطعة أكبر من مساحة القص في هذا اللوح."],{"ac-w":1,"ac-h":1}); $("ac-dl").disabled=true; return; }
+  if(r.n===0){ showErrs("ac",["القطعة أكبر من مساحة القص في هذا اللوح."],{"ac-w":"القطعة أكبر من اللوح","ac-h":"القطعة أكبر من اللوح"}); $("ac-dl").disabled=true; return; }
   showErrs("ac",[],{}); $("ac-dl").disabled=false;
   const qty=v["ac-qty"], sheets=Math.ceil(qty/r.n), area=circle?Math.PI*(w/2)**2:w*h, util=r.n*area/(S.w*S.h)*100;
   const wt=area*t*DENSITY, price=v["ac-price"];
@@ -1403,6 +1417,17 @@ function acName(){ const a=acCur; const sz=a.circle?`d${safeName(fx(a.w/10))}cm`
 /* ---------- Wiring ---------- */
 $("sh-presets").innerHTML=ITEMS.map(p=>`<button type="button" class="chip" data-w="${p.w}" data-h="${p.h}" data-c="${p.c?1:0}" aria-pressed="false">${p.t}</button>`).join("");
 $("sh-presets").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; $("sh-w").value=b.dataset.w; $("sh-h").value=b.dataset.h; $("sh-circle").checked=b.dataset.c==="1"; sheetsCalc(); });
+// Ready sizes for stickers and acrylic (same chips pattern as sheets).
+const STICKER_PRESETS=[{t:"دائري 5 سم",shape:"circle",w:5},{t:"دائري 7 سم",shape:"circle",w:7},{t:"دائري 10 سم",shape:"circle",w:10},{t:"مربع 5 سم",shape:"square",w:5}];
+const ACRYLIC_PRESETS=[{t:"10 × 15",shape:"rect",w:10,h:15},{t:"15 × 20",shape:"rect",w:15,h:20},{t:"20 × 30",shape:"rect",w:20,h:30},{t:"دائري 5 سم",shape:"circle",w:5}];
+function wirePresets(id,list,shapeId,w,h,calc){
+  $(id).innerHTML=list.map((p,i)=>`<button type="button" class="chip" data-i="${i}">${p.t}</button>`).join("");
+  $(id).addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; const p=list[+b.dataset.i];
+    document.querySelector(`#${shapeId} [data-v="${p.shape}"]`).click(); $(w).value=p.w; if(h&&p.h!==undefined) $(h).value=p.h; calc(); });
+}
+wirePresets("st-presets",STICKER_PRESETS,"st-shape","st-w","st-h",stickersCalc);
+wirePresets("ac-presets",ACRYLIC_PRESETS,"ac-shape","ac-w","ac-h",acrylicCalc);
+
 fillSelect("sh-paper",PAPERS,"33x48");
 fillSelect("st-roll",ROLLS,"127");
 fillSelect("ac-sheet",ACR,"122x244");
@@ -1433,6 +1458,36 @@ window.CupLib={SIZES,SUGGESTED,geom,validate,buildSVG,fileName,makeZip,crc32,par
 
 // init
 try{ if(localStorage.getItem("cupView")==="table") document.querySelector('[data-view="table"]').click(); }catch(_){}
+// Remember last calculator inputs on this device only (localStorage, not shared).
+const REMEMBER_KEY="asbarix:last-inputs";
+const REMEMBER_FIELDS=["sh-w","sh-h","sh-qty","sh-paper","sh-circle","st-w","st-h","st-qty","st-roll","ac-w","ac-h","ac-qty","ac-sheet"];
+const REMEMBER_SEGS=["st-shape","ac-shape"];
+function saveLastInputs(){
+ try{
+  const data={};
+  REMEMBER_FIELDS.forEach(id=>{const el=$(id);if(el)data[id]=el.type==="checkbox"?el.checked:el.value;});
+  REMEMBER_SEGS.forEach(id=>{const b=document.querySelector(`#${id} [aria-pressed="true"]`);if(b)data[id]=b.dataset.v;});
+  data["sale-material"]=document.getElementById("sale-material")?.value;
+  data["sale-client"]=document.getElementById("sale-client")?.value;
+  localStorage.setItem(REMEMBER_KEY,JSON.stringify(data));
+ }catch(_){}
+}
+function restoreLastInputs(){
+ let data=null;
+ try{data=JSON.parse(localStorage.getItem(REMEMBER_KEY)||"null");}catch(_){}
+ if(!data||typeof data!=="object")return;
+ const canSet=(el,v)=>el.tagName!=="SELECT"||[...el.options].some(o=>o.value===String(v));
+ REMEMBER_FIELDS.forEach(id=>{const el=$(id);if(!el||!(id in data))return;if(el.type==="checkbox")el.checked=!!data[id];else if(canSet(el,data[id]))el.value=data[id];});
+ REMEMBER_SEGS.forEach(id=>{const b=document.querySelector(`#${id} [data-v="${data[id]}"]`);if(b&&b.getAttribute("aria-pressed")!=="true")b.click();});
+ const sm=document.getElementById("sale-material"),sc=document.getElementById("sale-client");
+ if(sm&&data["sale-material"]&&canSet(sm,data["sale-material"]))sm.value=data["sale-material"];
+ if(sc&&data["sale-client"]&&canSet(sc,data["sale-client"]))sc.value=data["sale-client"];
+}
+document.addEventListener("input",saveLastInputs);
+document.addEventListener("change",saveLastInputs);
+document.addEventListener("click",e=>{if(e.target.closest(".seg"))saveLastInputs();});
+window.restoreLastInputs=restoreLastInputs;
+restoreLastInputs();
 renderShelf(); renderChips(); fillInputs(); compute();
 showTab((location.hash||"").slice(1));
 })();
@@ -1469,6 +1524,7 @@ function updateSale(){
 function selectSale(){const m=SALE_MATERIALS.find(x=>x.id===sm.value);document.getElementById('sale-rate').value=m.rate===null?'':m.rate;document.getElementById('sale-unit').textContent=m.unit==='piece'?'ر.س / قطعة':'ر.س / سم²';updateSale();}
 sm.addEventListener('change',selectSale);
 ['sale-rate','sale-client','ac-qty','ac-w','ac-h'].forEach(id=>document.getElementById(id).addEventListener('input',updateSale));
+restoreLastInputs();
 selectSale();
 
 
@@ -1476,16 +1532,4 @@ document.querySelectorAll('[data-qty]').forEach(b=>b.addEventListener('click',()
 document.getElementById('sale-search').addEventListener('input',e=>{const q=e.target.value.trim();let count=0;Array.from(sm.options).forEach(o=>{o.hidden=!o.textContent.includes(q);if(!o.hidden)count++;});document.getElementById('quote-copy-status').textContent=count?'': 'لا توجد خامة مطابقة. جرّب اسمًا أقصر.';});
 document.getElementById('quote-copy').addEventListener('click',async()=>{const box=document.getElementById('quote-text'),status=document.getElementById('quote-copy-status');try{await navigator.clipboard.writeText(box.value);status.textContent='تم نسخ عرض السعر';}catch(e){box.hidden=false;box.select();status.textContent='يمكنك نسخ النص من المربع أدناه';}});
 window.asbarixSaleReady=true;
-</script>
-
-<script>
-(()=>{
- const form=document.getElementById('ai-form'),input=document.getElementById('ai-question'),button=document.getElementById('ai-send'),status=document.getElementById('ai-status'),answer=document.getElementById('ai-answer');let busy=false;
- fetch('/api/assistant').then(r=>r.json()).then(d=>{if(!d.configured)status.textContent='المساعد بانتظار تفعيل الاتصال بخدمة Google.';}).catch(()=>{});
- document.querySelectorAll('[data-ai-question]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.aiQuestion;input.focus();}));
- form.addEventListener('submit',async e=>{e.preventDefault();if(busy||!input.value.trim())return;busy=true;button.disabled=true;button.textContent='جارٍ التفكير…';status.textContent='';answer.textContent='';
- let context='';if(document.getElementById('ai-context').checked){const m=document.getElementById('sale-material');context=JSON.stringify({material:m.selectedOptions[0]?.textContent,quote:document.getElementById('quote-text').value,widthCm:document.getElementById('ac-w').value,heightCm:document.getElementById('ac-h').value,quantity:document.getElementById('ac-qty').value,shape:document.querySelector('#ac-shape [aria-pressed="true"]').dataset.v});}
- try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(50000),body:JSON.stringify({question:input.value.trim(),context})});const d=await r.json();if(!r.ok)throw new Error(d.message||'تعذّر الحصول على الإجابة.');answer.textContent=d.answer;status.textContent='إجابة المساعد';}catch(err){status.textContent=err.name==='TimeoutError'?'انتهت مهلة الاتصال. حاول مجددًا.':err.message;}finally{busy=false;button.disabled=false;button.textContent='اسأل المساعد';}
- });
-})();
 </script>
