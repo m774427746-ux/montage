@@ -4,8 +4,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 const SRC = dirname(fileURLToPath(import.meta.url)), OUT = join(SRC, "..", "public");
 const read = (f) => readFileSync(join(SRC, f), "utf8");
-const logo = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><rect width='48' height='48' rx='12' fill='#15233F'/><g fill='#F29A1E'><rect x='13' y='13' width='9.6' height='9.6' rx='1.6'/><rect x='25.4' y='25.4' width='9.6' height='9.6' rx='1.6'/><rect x='25.4' y='13' width='9.6' height='9.6' rx='1.6' opacity='.55'/><rect x='13' y='25.4' width='9.6' height='9.6' rx='1.6' opacity='.55'/></g></svg>";
-const icon = `<link rel="icon" href="data:image/svg+xml,${encodeURIComponent(logo)}">`;
+const icon = `<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">`;
 const head = `<!doctype html>
 <html lang="ar" dir="rtl">
 <head>

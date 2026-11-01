@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="30 32 230 220"><rect x="30" y="32" width="230" height="220" rx="36" fill="white"/><g
+     transform="translate(36 30)"
+     id="g4">
+    <!-- Geometric A: creative production, two precision-cut limbs -->
+    <path
+       d="M92 16H129L210 207H169L112 72L51 207H10Z"
+       fill="#7C1E33"
+       id="path1" />
+    <path
+       d="M70 143H155L170 177H55Z"
+       fill="#C5A777"
+       id="path2" />
+    <!-- Precision registration detail -->
+    <path
+       d="M187 32H215V41H196V60H187Z"
+       fill="#C5A777"
+       id="path3" />
+    <path
+       d="M10 16H38V25H19V44H10Z"
+       fill="#C5A777"
+       id="path4" />
+  </g></svg>

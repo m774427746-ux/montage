@@ -221,6 +221,22 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
 .best{display:inline-block;font-size:11.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--accent);color:var(--accent-ink);margin-inline-start:4px}
 
 @media (prefers-reduced-motion:no-preference){.btn,.chip,.card{transition:border-color .15s, box-shadow .15s, filter .15s}}
+
+/* Asbarix: clear selling summary and optional production detail. */
+:root{--accent:#C5A777;--accent-ink:#301722;--accent-soft:#F5EFE4;--focus:#9B4056}
+header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10px;padding:8px;box-sizing:content-box}
+#tab-acrylic .calc-layout{grid-template-columns:minmax(280px,360px) minmax(0,1fr);gap:24px}
+#tab-acrylic .panel{border-radius:18px;padding:22px}#tab-acrylic .side>h3{font-size:16px;margin-top:24px}
+#tab-acrylic .side>h3:first-child{margin-top:0}#tab-acrylic .main{padding:0;border:0;background:none}
+.quote-card{padding:28px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:0 12px 36px #30172208;margin-bottom:20px}
+.quote-heading{display:flex;justify-content:space-between;gap:12px;align-items:center}.quote-eyebrow{font-size:11px;letter-spacing:.08em;color:var(--muted)}.quote-tag{font-size:11px;padding:4px 10px;border-radius:30px;background:var(--accent-soft);color:#63364A}
+.quote-material{font-size:17px;font-weight:600;margin:22px 0 18px}.quote-prices{display:grid;grid-template-columns:1.5fr 1fr;gap:16px}
+.quote-prices>div{display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:22px;min-width:0}.quote-total{background:#7C1E33;color:#fff}.quote-piece{background:var(--sunk);color:var(--ink)}
+.quote-prices strong{font-size:clamp(26px,4vw,46px);line-height:1.3;direction:ltr;text-align:right;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.quote-prices span,.quote-prices small{font-size:13px}.quote-total small{color:#E9D4DA}
+#sale-result{font-size:14px;color:var(--muted);margin:18px 0 8px}.quote-disclaimer{font-size:12px;color:var(--muted);margin:0 0 20px}.quote-card .btn{width:100%;min-height:46px}.quote-card #quote-copy-status{font-size:12px;color:var(--muted);margin:8px 0 0}
+.production-options{border:1px solid var(--line);border-radius:14px;padding:16px;background:var(--surface);margin-top:20px}.production-options summary{cursor:pointer;font-weight:600}.production-options[open]>summary{margin-bottom:20px}.qty-shortcuts{margin-top:10px}.qty-shortcuts button{min-height:36px}
+@media(max-width:900px){#tab-acrylic .calc-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){.quote-card{padding:18px}.quote-prices{gap:8px}.quote-prices>div{padding:16px 12px}.quote-heading{flex-wrap:wrap}#tab-acrylic .panel.side{padding:18px}}
 </style>
 
 <div id="app" dir="rtl" lang="ar">
@@ -405,13 +421,6 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       </div>
       <div class="field"><label for="sh-margin">الهامش غير المطبوع لكل جهة</label><div class="inwrap"><input id="sh-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
-      <h3 class="mt">تسعيرة البيع الأولية</h3>
-      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
-      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
-      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
-      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
-      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
-      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="pair">
         <div class="field"><label for="sh-qty">عدد الحبات</label><div class="inwrap"><input id="sh-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
@@ -457,13 +466,6 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       <div class="field" id="st-customf" hidden><label for="st-rw">عرض الرول</label><div class="inwrap"><input id="st-rw" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
       <div class="field"><label for="st-side">الهامش الجانبي لكل جهة</label><div class="inwrap"><input id="st-side" inputmode="decimal" autocomplete="off" value="10"><span>mm</span></div></div>
 
-      <h3 class="mt">تسعيرة البيع الأولية</h3>
-      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
-      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
-      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
-      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
-      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
-      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
       <div class="seg full" id="st-pmode" role="group" aria-label="طريقة التسعير">
@@ -490,6 +492,18 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
   <div class="sechead"><h2 id="ac-title">حاسبة الأكريليك</h2><span class="muted sub">كم قطعة من اللوح أو من سرير الليزر، ووزنها وتكلفتها</span></div>
   <div class="calc-layout">
     <div class="panel side">
+      <h3 class="mt">الخامة والعميل</h3>
+      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
+      <div class="field"><label for="sale-search">ابحث عن خامة أو خدمة</label><input class="sel" id="sale-search" type="search" placeholder="مثال: سعودي شفاف ٦ ملم"></div>
+      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
+      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
+      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
+      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
+
+      <h3 class="mt">الكمية المطلوبة</h3>
+      <div class="field"><label for="ac-qty">عدد القطع</label><div class="inwrap"><input id="ac-qty" inputmode="numeric" autocomplete="off" value="100"><span>قطعة</span></div></div>
+
+<div class="chips qty-shortcuts" aria-label="كميات سريعة"><button type="button" class="chip" data-qty="10">10 قطع</button><button type="button" class="chip" data-qty="50">50 قطعة</button><button type="button" class="chip" data-qty="100">100 قطعة</button><button type="button" class="chip" data-qty="500">500 قطعة</button></div>
       <h3>القطعة</h3>
       <div class="seg full" id="ac-shape" role="group" aria-label="الشكل">
         <button type="button" data-v="rect" aria-pressed="true">مستطيل</button>
@@ -505,7 +519,7 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       </div>
       <div class="opts"><label class="check" id="ac-rotwrap"><input type="checkbox" id="ac-rot" checked> اختيار الاتجاه الأوفر</label></div>
 
-      <h3 class="mt">اللوح</h3>
+<details class="production-options"><summary>إعدادات اللوح والتكلفة الداخلية</summary>      <h3 class="mt">اللوح</h3>
       <div class="field"><label for="ac-sheet">مقاس اللوح أو سرير الليزر</label><select id="ac-sheet" class="sel"></select></div>
       <div class="pair" id="ac-custom" hidden>
         <div class="field"><label for="ac-sw">العرض</label><div class="inwrap"><input id="ac-sw" inputmode="decimal" autocomplete="off" value="100"><span>cm</span></div></div>
@@ -513,25 +527,25 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
       </div>
       <div class="field"><label for="ac-margin">هامش الحافة لكل جهة</label><div class="inwrap"><input id="ac-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
-      <h3 class="mt">تسعيرة البيع الأولية</h3>
-      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
-      <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
-      <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
-      <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
-      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
-      <div id="sale-result" role="status" aria-live="polite" class="note"></div>
-      <h3 class="mt">الكمية والتكلفة</h3>
-      <div class="field"><label for="ac-qty">عدد القطع</label><div class="inwrap"><input id="ac-qty" inputmode="numeric" autocomplete="off" value="100"><span>قطعة</span></div></div>
-      <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div></details>
       <div class="errors" id="ac-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
-      <div class="kpis" id="ac-kpis"></div>
+<section class="quote-card" aria-label="ملخص سعر البيع">
+<div class="quote-heading"><span class="quote-eyebrow">ASBARIX / عرض السعر</span><span class="quote-tag">تسعيرة أولية</span></div>
+<p id="quote-material" class="quote-material"></p>
+<div class="quote-prices"><div class="quote-total"><span>الإجمالي</span><strong id="quote-total">—</strong><small>ريال سعودي</small></div><div class="quote-piece"><span>سعر الحبة</span><strong id="quote-piece">—</strong><small>ريال سعودي</small></div></div>
+<p id="sale-result" role="status" aria-live="polite"></p>
+<p class="quote-disclaimer">قبل أي ضريبة أو خدمات إضافية. الدائرة تُسعّر على مساحة القطر × القطر.</p>
+<button class="btn btn-dl" id="quote-copy" type="button" disabled>نسخ عرض السعر</button><p id="quote-copy-status" role="status"></p>
+<textarea id="quote-text" class="copybox" aria-label="نص عرض السعر" readonly hidden></textarea>
+</section>
+<details class="production-options"><summary>مخطط القص واستغلال اللوح</summary>      <div class="kpis" id="ac-kpis"></div>
       <div class="layouthead"><span id="ac-cap"></span><span class="lkey"><i class="k-a"></i>القطعة <i class="k-m"></i>هامش</span></div>
       <div class="layoutbox" id="ac-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="ac-dl">تنزيل ملف القص SVG</button><span class="fname" id="ac-fname"></span></div>
-      <h3 class="mt">كل مقاسات الألواح لهذه القطعة</h3>
-      <div class="tablewrap"><table class="cmp"><thead><tr><th>اللوح</th><th>المقاس</th><th>قطعة في اللوح</th><th>الاستغلال</th><th>ألواح للكمية</th><th>التكلفة</th></tr></thead><tbody id="ac-cmp"></tbody></table></div>
+      <h3 class="mt">مقارنة مقاسات الألواح</h3>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>اللوح</th><th>المقاس</th><th>قطعة في اللوح</th><th>الاستغلال</th><th>ألواح للكمية</th><th>التكلفة</th></tr></thead><tbody id="ac-cmp"></tbody></table></div></details>
     </div>
   </div>
 </section>
@@ -1432,6 +1446,8 @@ const sm=document.getElementById('sale-material');
 sm.innerHTML=SALE_MATERIALS.map(m=>`<option value="${m.id}">${m.name}${m.rate===null?' — السعر غير محدد':''}</option>`).join('');
 function updateSale(){
  const m=SALE_MATERIALS.find(x=>x.id===sm.value);if(!m)return;
+ document.getElementById('quote-material').textContent=m.name;
+ document.getElementById('quote-total').textContent='—';document.getElementById('quote-piece').textContent='—';document.getElementById('quote-copy').disabled=true;document.getElementById('quote-text').value='';
  const rateInput=document.getElementById('sale-rate');
  const out=document.getElementById('sale-result');
  const rate=rateInput.value.trim()===''?null:Number(rateInput.value);
@@ -1443,12 +1459,21 @@ function updateSale(){
  if(rate===null){out.textContent='سعر هذه الخامة غير محدد. أدخل سعر الوحدة لإظهار الإجمالي.';return;}
  if(!Number.isFinite(rate)||rate<0||!Number.isInteger(qty)||qty<=0||(m.unit==='cm2'&&(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0))){out.textContent='أدخل سعرًا ومقاسات وكمية صحيحة.';return;}
  const per=rate*(m.unit==='cm2'?width*height:1)*factor;
- out.textContent=`سعر البيع: ${(per*qty).toFixed(2)} ر.س · القطعة: ${per.toFixed(2)} ر.س · ${qty} قطعة · لا يشمل خدمات إضافية أو ضريبة غير مذكورة في المرجع`;
+ const moneyFormat=new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+ document.getElementById('quote-total').textContent=moneyFormat.format(per*qty);
+ document.getElementById('quote-piece').textContent=moneyFormat.format(per);
+ out.textContent=`${qty} قطعة · ${factor===2?'سعر الأفراد':'سعر محلات الدعاية'}${m.unit==='cm2'?` · ${width} × ${height} سم`:''}`;
+ document.getElementById('quote-text').value=`Asbarix\n${m.name}\n${out.textContent}\nسعر الحبة: ${per.toFixed(2)} ر.س\nالإجمالي: ${(per*qty).toFixed(2)} ر.س\nقبل الضريبة والخدمات الإضافية. تسعيرة أولية.`;
+ document.getElementById('quote-copy').disabled=false;
 }
 function selectSale(){const m=SALE_MATERIALS.find(x=>x.id===sm.value);document.getElementById('sale-rate').value=m.rate===null?'':m.rate;document.getElementById('sale-unit').textContent=m.unit==='piece'?'ر.س / قطعة':'ر.س / سم²';updateSale();}
 sm.addEventListener('change',selectSale);
 ['sale-rate','sale-client','ac-qty','ac-w','ac-h'].forEach(id=>document.getElementById(id).addEventListener('input',updateSale));
 selectSale();
 
+
+document.querySelectorAll('[data-qty]').forEach(b=>b.addEventListener('click',()=>{const input=document.getElementById('ac-qty');input.value=b.dataset.qty;input.dispatchEvent(new Event('input',{bubbles:true}));}));
+document.getElementById('sale-search').addEventListener('input',e=>{const q=e.target.value.trim();let count=0;Array.from(sm.options).forEach(o=>{o.hidden=!o.textContent.includes(q);if(!o.hidden)count++;});document.getElementById('quote-copy-status').textContent=count?'': 'لا توجد خامة مطابقة. جرّب اسمًا أقصر.';});
+document.getElementById('quote-copy').addEventListener('click',async()=>{const box=document.getElementById('quote-text'),status=document.getElementById('quote-copy-status');try{await navigator.clipboard.writeText(box.value);status.textContent='تم نسخ عرض السعر';}catch(e){box.hidden=false;box.select();status.textContent='يمكنك نسخ النص من المربع أدناه';}});
 window.asbarixSaleReady=true;
 </script>
