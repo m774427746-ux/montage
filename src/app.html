@@ -1514,7 +1514,8 @@ function updateSale(){
  const factor=Number(document.getElementById('sale-client').value);
  if(rate===null){out.textContent='سعر هذه الخامة غير محدد. أدخل سعر الوحدة لإظهار الإجمالي.';return;}
  if(!Number.isFinite(rate)||rate<0||!Number.isInteger(qty)||qty<=0||(m.unit==='cm2'&&(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0))){out.textContent='أدخل سعرًا ومقاسات وكمية صحيحة.';return;}
- const per=rate*(m.unit==='cm2'?width*height:1)*factor;
+ const unitPrice=factor===2&&m.individual!=null?m.individual:rate*factor;
+ const per=unitPrice*(m.unit==='cm2'?width*height:1);
  const moneyFormat=new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
  document.getElementById('quote-total').textContent=moneyFormat.format(per*qty);
  document.getElementById('quote-piece').textContent=moneyFormat.format(per);
@@ -1527,6 +1528,8 @@ sm.addEventListener('change',selectSale);
 ['sale-rate','sale-client','ac-qty','ac-w','ac-h'].forEach(id=>document.getElementById(id).addEventListener('input',updateSale));
 restoreLastInputs();
 selectSale();
+// Saved prices (shared, set by admin). Without them the reference values above stay in use.
+fetch('/api/prices').then(r=>r.ok?r.json():null).then(d=>{const items=d&&d.prices&&d.prices.items;if(!items)return;items.forEach(p=>{const m=SALE_MATERIALS.find(x=>x.id===p.id);if(!m)return;m.rate=p.retail;m.individual=p.individual;});selectSale();}).catch(()=>{});
 
 
 document.querySelectorAll('[data-qty]').forEach(b=>b.addEventListener('click',()=>{const input=document.getElementById('ac-qty');input.value=b.dataset.qty;input.dispatchEvent(new Event('input',{bubbles:true}));}));

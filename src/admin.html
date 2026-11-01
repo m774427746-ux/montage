@@ -4,76 +4,174 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="robots" content="noindex,nofollow">
-<title>Asbarix — المستخدمون</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+<title>Asbarix — الإدارة</title>
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
 <style>
-:root{--bg:#F1F3F6;--surface:#fff;--sunk:#E8EBF0;--ink:#15233F;--muted:#5A6479;--line:#D7DCE4;--accent:#F29A1E;--err:#C92A2A;
-  --fd:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;--fb:"IBM Plex Sans Arabic",Tahoma,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0E1524;--surface:#162036;--sunk:#111A2C;--ink:#E7ECF5;--muted:#9BA6BC;--line:#2A3654;--err:#FF8A8A;color-scheme:dark}}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Medium.ttf") format("truetype");font-weight:500}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-SemiBold.ttf") format("truetype");font-weight:600}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Black.ttf") format("truetype");font-weight:800 900}
+:root{--bg:#FAF7F2;--surface:#FFFFFF;--sunk:#F1EBE3;--ink:#2B1A20;--muted:#6E5E63;--line:#E2D6CC;--accent:#7C1E33;--accent-ink:#FFFFFF;--gold:#C5A777;--err:#B42335;--ok:#2B7A4B}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#1A1215;--surface:#241A1E;--sunk:#1F1619;--ink:#F3ECE6;--muted:#B9A9AC;--line:#3D2F34;--accent:#C5A777;--accent-ink:#1A1215;--err:#FF8A8A;--ok:#69DB7C;color-scheme:dark}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px}
-.wrap{max-width:1100px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
-h1{font-family:var(--fd);font-size:28px;margin:0 0 4px}
-.muted{color:var(--muted)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Jali Arabic",Tahoma,sans-serif;font-size:16px;line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:24px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
+h1{font-size:28px;margin:0 0 4px}
+h2{font-size:20px;margin:28px 0 10px}
+.muted{color:var(--muted);font-size:14px;margin:0}
 .n{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
-form{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-input{flex:1 1 240px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--surface);color:var(--ink);direction:ltr}
-button{border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:700;background:var(--accent);color:#15233F;cursor:pointer}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px;max-width:420px;margin:24px auto;display:grid;gap:12px}
+label{font-weight:600;font-size:14px}
+input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--surface);color:var(--ink);direction:ltr;text-align:left}
+input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+button{min-height:44px;border:0;border-radius:10px;padding:10px 18px;font:inherit;font-weight:600;background:var(--accent);color:var(--accent-ink);cursor:pointer}
 button.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:8px 0 18px}
+button:disabled{opacity:.6}
+.msg{min-height:20px;margin:0;font-size:14px;font-weight:600;color:var(--err)}
+.msg.ok{color:var(--ok)}
+.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 10px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:8px 0 14px}
 .kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
-.kpi.hero{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.kpi b{display:block;font-family:var(--fd);font-size:34px;line-height:1.2}
-.kpi span{font-size:13px;opacity:.8}
+.kpi.hero{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.kpi b{display:block;font-size:30px;line-height:1.2}
+.kpi span{font-size:13px;opacity:.85}
 .tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
-table{border-collapse:collapse;width:100%;min-width:620px}
-th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
+table{border-collapse:collapse;width:100%;min-width:560px}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
 th{background:var(--sunk);color:var(--muted);font-size:13px}
 tr:last-child td{border-bottom:0}
 td.e{direction:ltr;text-align:right}
-#msg{color:var(--err);font-weight:600;min-height:20px}
-.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+td input{min-width:110px;padding:8px 10px}
+.hint{font-size:13px;color:var(--muted)}
+[hidden]{display:none!important}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>المستخدمون</h1>
-  <p class="muted">كل من دخل «Asbarix» بالإيميل.</p>
-  <form id="f"><input id="k" type="password" placeholder="مفتاح الإدارة" autocomplete="current-password" aria-label="مفتاح الإدارة"><button type="submit">عرض</button></form>
-  <p id="msg" role="alert"></p>
-  <div id="out" hidden>
-    <div class="kpis" id="kpis"></div>
-    <div class="bar"><b>القائمة</b><span><button class="ghost" id="refresh" type="button">تحديث</button> <button id="csv" type="button">تنزيل CSV</button></span></div>
-    <div class="tw"><table><thead><tr><th>البريد</th><th>أول دخول</th><th>آخر دخول</th><th>عدد الزيارات</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <h1>الإدارة</h1>
+
+  <section id="login" class="card" aria-labelledby="loginTitle">
+    <h2 id="loginTitle" style="margin:0;font-size:18px">دخول الإدارة</h2>
+    <form id="loginForm" novalidate style="display:grid;gap:12px">
+      <label for="pw">كلمة المرور</label>
+      <input id="pw" type="password" autocomplete="current-password">
+      <p id="loginMsg" class="msg" role="alert"></p>
+      <button id="loginBtn" type="submit">دخول</button>
+    </form>
+  </section>
+
+  <div id="panel" hidden>
+    <div class="bar">
+      <span class="muted">جلسة الإدارة نشطة لمدة 8 ساعات.</span>
+      <button class="ghost" id="logout" type="button">خروج</button>
+    </div>
+
+    <h2>المستخدمون</h2>
+    <p id="statsMsg" class="msg" role="alert"></p>
+    <div id="statsBox" hidden>
+      <div class="kpis" id="kpis"></div>
+      <div class="bar"><span></span><button id="csv" type="button" class="ghost">تنزيل CSV</button></div>
+      <div class="tw"><table><thead><tr><th>البريد</th><th>أول دخول</th><th>آخر دخول</th><th>الزيارات</th></tr></thead><tbody id="rows"></tbody></table></div>
+    </div>
+
+    <h2>الأسعار</h2>
+    <p class="hint">سعر محلات الدعاية هو السعر الأساسي. سعر الأفراد يُترك فارغًا لاستخدام ضعف سعر الدعاية. الحقل الفارغ يعني «غير محدد». الأسعار الحالية تجريبية حتى تراجعها.</p>
+    <p id="priceMsg" class="msg" role="alert"></p>
+    <div class="bar"><span id="priceMeta" class="muted"></span><button id="savePrices" type="button">حفظ الأسعار</button></div>
+    <div class="tw"><table><thead><tr><th>الخامة أو الخدمة</th><th>محلات الدعاية</th><th>الأفراد</th></tr></thead><tbody id="priceRows"></tbody></table></div>
   </div>
 </div>
 <script>
 (function(){
-  var data=null, $=function(id){return document.getElementById(id)};
-  var fmt=function(iso){ if(!iso) return "—"; var d=new Date(iso); return d.toLocaleString("ar-SA-u-nu-latn",{dateStyle:"medium",timeStyle:"short"}); };
+  var $=function(id){return document.getElementById(id)};
   var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
-  function load(){
-    var key=$("k").value.trim(); if(!key){ $("msg").textContent="اكتب مفتاح الإدارة."; return; }
-    $("msg").textContent="";
-    fetch("/api/stats",{headers:{"x-admin-key":key}}).then(function(r){return r.json().then(function(j){return {s:r.status,j:j}})}).then(function(x){
-      if(x.s===401){ $("msg").textContent="المفتاح غير صحيح."; return; }
-      if(!x.j.ok){ $("msg").textContent= x.j.error==="storage_not_configured"?"قاعدة البيانات غير مربوطة بالمشروع بعد.":x.j.error==="admin_key_not_configured"?"لم يُضبط ADMIN_KEY في إعدادات Vercel.":"تعذّر جلب البيانات."; return; }
-      try{ sessionStorage.setItem("montage_admin",key); }catch(e){}
-      data=x.j; $("out").hidden=false;
-      var k=function(l,v,h){return '<div class="kpi'+(h?' hero':'')+'"><b class="n">'+v.toLocaleString("en-US")+'</b><span>'+l+'</span></div>'};
-      $("kpis").innerHTML=k("إجمالي المستخدمين",data.total,1)+k("جدد اليوم",data.newToday)+k("جدد آخر 7 أيام",data.new7d)+k("نشطون آخر 7 أيام",data.active7d)+k("إجمالي الزيارات",data.visits);
-      $("rows").innerHTML=data.users.map(function(u){return '<tr><td class="e">'+esc(u.email)+'</td><td>'+fmt(u.first)+'</td><td>'+fmt(u.last)+'</td><td class="n">'+u.visits+'</td></tr>'}).join("")||'<tr><td colspan="4" class="muted">لا يوجد مستخدمون بعد.</td></tr>';
-    }).catch(function(){ $("msg").textContent="تعذّر الاتصال بالخادم."; });
+  var fmt=function(iso){ if(!iso) return "—"; return new Date(iso).toLocaleString("ar-SA-u-nu-latn",{dateStyle:"medium",timeStyle:"short"}); };
+  var materials=[], users=null;
+
+  function showPanel(on){ $("login").hidden=on; $("panel").hidden=!on; }
+  function setMsg(el,text,ok){ el.textContent=text; el.className="msg"+(ok?" ok":""); }
+
+  function loadStats(){
+    fetch("/api/stats").then(function(r){ return r.json().then(function(j){ return {s:r.status,j:j}; }); }).then(function(x){
+      if(x.s===401){ showPanel(false); setMsg($("loginMsg"),"انتهت الجلسة. سجّل الدخول مرة أخرى."); return; }
+      if(!x.j.ok){ setMsg($("statsMsg"), x.j.error==="storage_not_configured"?"الحفظ المشترك غير مربوط بعد، فالإحصاءات غير متاحة.":"تعذّر جلب البيانات."); return; }
+      users=x.j; $("statsBox").hidden=false; setMsg($("statsMsg"),"");
+      var k=function(l,v,h){return '<div class="kpi'+(h?' hero':'')+'"><b class="n">'+Number(v).toLocaleString("en-US")+'</b><span>'+l+'</span></div>'};
+      $("kpis").innerHTML=k("إجمالي المستخدمين",users.total,1)+k("جدد اليوم",users.newToday)+k("جدد آخر 7 أيام",users.new7d)+k("نشطون آخر 7 أيام",users.active7d)+k("إجمالي الزيارات",users.visits);
+      $("rows").innerHTML=users.users.map(function(u){return '<tr><td class="e">'+esc(u.email)+'</td><td>'+fmt(u.first)+'</td><td>'+fmt(u.last)+'</td><td class="n">'+u.visits+'</td></tr>'}).join("")||'<tr><td colspan="4" class="muted">لا يوجد مستخدمون بعد.</td></tr>';
+    }).catch(function(){ setMsg($("statsMsg"),"تعذّر الاتصال بالخادم."); });
   }
-  $("f").addEventListener("submit",function(e){e.preventDefault();load();});
-  $("refresh").addEventListener("click",load);
-  $("csv").addEventListener("click",function(){
-    if(!data) return;
-    var lines=[["email","first_seen","last_seen","visits"]].concat(data.users.map(function(u){return [u.email,u.first||"",u.last||"",u.visits]}));
-    var csv="﻿"+lines.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
-    var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="montage-users.csv"; document.body.appendChild(a); a.click(); a.remove();
+
+  function loadPrices(){
+    Promise.all([fetch("/assets/materials.json").then(function(r){return r.json()}), fetch("/api/prices").then(function(r){return r.ok?r.json():{prices:null}})]).then(function(a){
+      materials=a[0]; var saved=(a[1].prices&&a[1].prices.items)||[]; var byId={};
+      saved.forEach(function(p){ byId[p.id]=p; });
+      $("priceRows").innerHTML=materials.map(function(m){
+        var s=byId[m.id]||{}; var retail=("retail" in s)?s.retail:m.rate; var indiv=("individual" in s)?s.individual:null;
+        return '<tr data-id="'+esc(m.id)+'"><td>'+esc(m.name)+'</td>'+
+          '<td><input type="number" min="0" step="any" data-k="retail" value="'+(retail==null?"":retail)+'" placeholder="غير محدد"></td>'+
+          '<td><input type="number" min="0" step="any" data-k="individual" value="'+(indiv==null?"":indiv)+'" placeholder="×2 تلقائيًا"></td></tr>';
+      }).join("");
+      $("priceMeta").textContent = a[1].prices&&a[1].prices.updatedAt ? "آخر حفظ: "+fmt(a[1].prices.updatedAt) : "لم تُحفظ أسعار بعد، والمعروض هو المرجع.";
+    }).catch(function(){ setMsg($("priceMsg"),"تعذّر تحميل الأسعار."); });
+  }
+
+  function readPrices(){
+    var out=[]; var bad=null;
+    document.querySelectorAll("#priceRows tr").forEach(function(tr){
+      var item={id:tr.getAttribute("data-id")};
+      tr.querySelectorAll("input").forEach(function(inp){
+        var v=inp.value.trim(); var n=v===""?null:Number(v);
+        if(n!==null&&(!isFinite(n)||n<0)) bad=bad||tr.querySelector("td").textContent;
+        item[inp.getAttribute("data-k")]=n;
+      });
+      out.push(item);
+    });
+    return {items:out,bad:bad};
+  }
+
+  $("loginForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    var pw=$("pw").value; if(!pw){ setMsg($("loginMsg"),"اكتب كلمة المرور."); return; }
+    $("loginBtn").disabled=true; setMsg($("loginMsg"),"");
+    fetch("/api/admin-login",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({password:pw})})
+      .then(function(r){ return r.json().then(function(j){ return {s:r.status,j:j}; }); })
+      .then(function(x){
+        $("pw").value="";
+        if(!x.j.ok){ setMsg($("loginMsg"), x.j.message||"تعذّر الدخول."); return; }
+        showPanel(true); loadStats(); loadPrices();
+      })
+      .catch(function(){ setMsg($("loginMsg"),"تعذّر الاتصال بالخادم."); })
+      .finally(function(){ $("loginBtn").disabled=false; });
   });
-  try{ var s=sessionStorage.getItem("montage_admin"); if(s){ $("k").value=s; load(); } }catch(e){}
+
+  $("logout").addEventListener("click",function(){
+    fetch("/api/admin-logout",{method:"POST"}).finally(function(){ showPanel(false); setMsg($("loginMsg"),""); });
+  });
+
+  $("savePrices").addEventListener("click",function(){
+    var r=readPrices();
+    if(r.bad){ setMsg($("priceMsg"),"القيمة في «"+r.bad+"» غير صالحة."); return; }
+    $("savePrices").disabled=true; setMsg($("priceMsg"),"");
+    fetch("/api/prices",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify({prices:r.items})})
+      .then(function(res){ return res.json().then(function(j){ return {s:res.status,j:j}; }); })
+      .then(function(x){
+        if(x.s===401){ showPanel(false); setMsg($("loginMsg"),"انتهت الجلسة. سجّل الدخول مرة أخرى."); return; }
+        if(!x.j.ok){ setMsg($("priceMsg"), x.j.message||"تعذّر حفظ الأسعار."); return; }
+        setMsg($("priceMsg"),"تم حفظ الأسعار.",true); $("priceMeta").textContent="آخر حفظ: "+fmt(x.j.updatedAt);
+      })
+      .catch(function(){ setMsg($("priceMsg"),"تعذّر الاتصال بالخادم."); })
+      .finally(function(){ $("savePrices").disabled=false; });
+  });
+
+  $("csv").addEventListener("click",function(){
+    if(!users) return;
+    var lines=[["email","first_seen","last_seen","visits"]].concat(users.users.map(function(u){return [u.email,u.first||"",u.last||"",u.visits]}));
+    var csv="﻿"+lines.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
+    var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="asbarix-users.csv"; document.body.appendChild(a); a.click(); a.remove();
+  });
+
+  // Restore an existing session (cookie) without asking again.
+  fetch("/api/stats").then(function(r){ if(r.ok){ showPanel(true); loadStats(); loadPrices(); } }).catch(function(){});
 })();
 </script>
 </body>
