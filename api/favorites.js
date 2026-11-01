@@ -7,7 +7,7 @@ const PREFIXES = { sheets: 'sh-', stickers: 'st-', acrylic: 'ac-' };
 
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
-  if (!isTeam(req) && !isAdmin(req)) return res.status(401).json({ ok: false, error: 'unauthorized' });
+  if (!(await isTeam(req)) && !(await isAdmin(req))) return res.status(401).json({ ok: false, error: 'unauthorized' });
   if (!['GET', 'POST', 'DELETE'].includes(req.method)) return res.status(405).json({ ok: false });
   if (!configured()) return res.status(503).json({ ok: false, message: 'المفضلة المشتركة غير متاحة؛ تحقق من اتصال الحفظ.' });
   try {

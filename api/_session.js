@@ -1,36 +1,22 @@
-import { createHash, timingSafeEqual } from "node:crypto";
-
-export const same = (a, b) => {
-  const x = Buffer.from(String(a)), y = Buffer.from(String(b));
-  return x.length === y.length && timingSafeEqual(x, y);
-};
-
-export const tokenFor = (role, secret) => createHash("sha256").update(role + "|" + secret).digest("hex");
-
+import { configured, pipeline } from './_redis.js';
 export const readCookie = (req, name) => {
-  const header = req.headers.cookie || "";
-  const hit = header.split(";").map((s) => s.trim()).find((s) => s.startsWith(name + "="));
-  return hit ? hit.slice(name.length + 1) : "";
+ const header=typeof req.headers.get==='function'?req.headers.get('cookie')||'':req.headers.cookie||'';
+ return header.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1)||'';
 };
-
-// True when the request carries a valid admin session cookie issued by /api/admin-login.
-export const isAdmin = (req) => {
-  const key = process.env.ADMIN_KEY;
-  if (!key) return false;
-  const token = readCookie(req, "asb_admin");
-  return Boolean(token) && same(token, tokenFor("admin", key));
-};
-
-export const parseBody = (req) => {
-  let body = req.body;
-  if (typeof body === "string") { try { body = JSON.parse(body); } catch { body = {}; } }
-  return body || {};
-};
-
-// True when the request carries the team session cookie issued by /api/login.
-export const isTeam = (req) => {
-  const team = process.env.TEAM_CODE;
-  if (!team) return false;
-  const token = readCookie(req, "asb_session");
-  return Boolean(token) && same(token, tokenFor("team", team));
-};
+export const parseBody=req=>{try{return typeof req.body==='string'?JSON.parse(req.body):req.body||{};}catch{return {};}};
+export async function session(req, onlyRole) {
+ if(!configured()) return null;
+ const candidates=['admin','team'].filter(role=>!onlyRole||onlyRole===role).map(role=>({role,token:readCookie(req,role==='admin'?'asb_admin':'asb_session')})).filter(x=>/^[a-f0-9]{64}$/.test(x.token));
+ if(!candidates.length)return null;
+ const values=await pipeline(candidates.map(x=>['GET','montage:session:'+x.token]));
+ for(let i=0;i<values.length;i++){
+  const value=values[i]?JSON.parse(values[i]):null;
+  if(!value||value.role!==candidates[i].role||value.expires<=Date.now())continue;
+  const [raw]=await pipeline([['GET','montage:auth:'+value.role]]);
+  const version=raw?JSON.parse(raw).version:'initial';
+  if(value.version===version)return {...value,token:candidates[i].token};
+ }
+ return null;
+}
+export const isAdmin=async req=>Boolean(await session(req,'admin'));
+export const isTeam=async req=>Boolean(await session(req,'team'));

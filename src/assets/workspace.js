@@ -20,7 +20,7 @@
     const root = document.getElementById('tab-' + tab);
     const side = root.querySelector('.side');
     const main = root.querySelector('.main');
-    const fields = () => [...side.querySelectorAll('input[id],select[id]')].filter(n => n.id !== prefix + '-favorite-name' && n.id !== 'sale-search');
+    const fields = () => [...side.querySelectorAll('input[id],select[id]')].filter(n => n.id !== prefix + '-favorite-name' && !['sale-search','sale-margin','custom-rate','sale-rate'].includes(n.id));
     const segments = () => [...side.querySelectorAll('.seg[id]')];
     const capture = () => {
       const data = Object.fromEntries(fields().map(n => [n.id, n.type === 'checkbox' ? n.checked : n.value]));
@@ -39,7 +39,7 @@
       }
       // Material selection refreshes its reference price; reapply a saved per-job rate afterwards.
       const material = document.getElementById('sale-material');
-      if (tab === 'acrylic') { material.dispatchEvent(new Event('change', { bubbles: true })); if ('sale-rate' in data) document.getElementById('sale-rate').value = data['sale-rate']; }
+      if (tab === 'acrylic') material.dispatchEvent(new Event('change', { bubbles: true }));
       fields()[0].dispatchEvent(new Event('input', { bubbles: true }));
     }
     const box = el('section', undefined, 'saved-workspace');

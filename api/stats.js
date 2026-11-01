@@ -1,20 +1,12 @@
 import { configured, pipeline } from "./_redis.js";
-import { timingSafeEqual } from "node:crypto";
 import { isAdmin } from "./_session.js";
 
-const same = (a, b) => {
-  const x = Buffer.from(String(a)), y = Buffer.from(String(b));
-  return x.length === y.length && timingSafeEqual(x, y);
-};
 const toObj = (arr) => { const o = {}; for (let i = 0; arr && i < arr.length; i += 2) o[arr[i]] = arr[i + 1]; return o; };
 
-// GET with admin session cookie or header x-admin-key — users list and counts for the owner only.
+// GET with an active admin session — users list and counts for the owner only.
 export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store");
-  const admin = process.env.ADMIN_KEY;
-  const key = req.headers["x-admin-key"] || "";
-  if (!admin) return res.status(503).json({ ok: false, error: "admin_key_not_configured" });
-  if (!isAdmin(req) && (!key || !same(key, admin))) return res.status(401).json({ ok: false, error: "unauthorized" });
+  if (!(await isAdmin(req))) return res.status(401).json({ ok: false, error: "unauthorized" });
   if (!configured()) return res.status(503).json({ ok: false, error: "storage_not_configured" });
 
   try {
