@@ -20,7 +20,7 @@
     const root = document.getElementById('tab-' + tab);
     const side = root.querySelector('.side');
     const main = root.querySelector('.main');
-    const fields = () => [...side.querySelectorAll('input[id],select[id]')].filter(n => n.id !== prefix + '-favorite-name');
+    const fields = () => [...side.querySelectorAll('input[id],select[id]')].filter(n => n.id !== prefix + '-favorite-name' && n.id !== 'sale-search');
     const segments = () => [...side.querySelectorAll('.seg[id]')];
     const capture = () => {
       const data = Object.fromEntries(fields().map(n => [n.id, n.type === 'checkbox' ? n.checked : n.value]));
@@ -94,6 +94,7 @@
       const state = capture();
       card.append(el('h4', document.getElementById(prefix + '-cap').textContent));
       const summary = el('dl');
+      for (const group of segments()) summary.append(el('dt', group.getAttribute('aria-label') || 'الخيار'), el('dd', group.querySelector('[aria-pressed="true"]')?.textContent || ''));
       for (const n of fields().filter(n => !n.closest('[hidden]') && !n.disabled)) {
         const caption = root.querySelector('label[for="' + n.id + '"]')?.textContent;
         if (!caption) continue;
