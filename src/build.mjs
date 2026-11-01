@@ -20,7 +20,7 @@ ${icon}
 `;
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, "assets"), join(OUT, "assets"), { recursive: true });
-writeFileSync(join(OUT, "index.html"), head + read("app.html") + "\n" + "\n</body>\n</html>\n");
+writeFileSync(join(OUT, "index.html"), head + read("app.html") + '\n<link rel="stylesheet" href="/assets/workspace.css">\n<script src="/assets/workspace.js" defer></script>\n</body>\n</html>\n');
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
 writeFileSync(join(OUT, "login.html"), read("login.html"));
 console.log("built public/index.html and public/admin.html");
