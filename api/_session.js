@@ -3,7 +3,7 @@ export const readCookie = (req, name) => {
  const header=typeof req.headers.get==='function'?req.headers.get('cookie')||'':req.headers.cookie||'';
  return header.split(';').map(s=>s.trim()).find(s=>s.startsWith(name+'='))?.slice(name.length+1)||'';
 };
-export const parseBody=req=>{try{return typeof req.body==='string'?JSON.parse(req.body):req.body||{};}catch{return {};}};
+export const parseBody=req=>{try{const body=typeof req.body==='string'?JSON.parse(req.body):req.body;return body&&typeof body==='object'&&!Array.isArray(body)?body:{};}catch{return {};}};
 export async function session(req, onlyRole) {
  if(!configured()) return null;
  const candidates=['admin','team'].filter(role=>!onlyRole||onlyRole===role).map(role=>({role,token:readCookie(req,role==='admin'?'asb_admin':'asb_session')})).filter(x=>/^[a-f0-9]{64}$/.test(x.token));
