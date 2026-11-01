@@ -540,7 +540,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 <button class="btn btn-dl" id="quote-copy" type="button" disabled>نسخ عرض السعر</button><p id="quote-copy-status" role="status"></p>
 <textarea id="quote-text" class="copybox" aria-label="نص عرض السعر" readonly hidden></textarea>
 </section>
-<details class="production-options"><summary>مخطط القص واستغلال اللوح</summary>      <div class="kpis" id="ac-kpis"></div>
+<section class="quote-card ai-card" aria-labelledby="ai-title"><div class="quote-heading"><h3 id="ai-title">مساعد Asbarix</h3><span class="quote-tag">Google Gemini</span></div><p class="hint">اسأل عن الخامة أو اطلب شرح تسعيرتك. الإجابات إرشادية.</p><div class="chips" style="margin:14px 0"><button class="chip" type="button" data-ai-question="اشرح لي السعر الحالي وما الذي لا يشمله">اشرح تسعيرتي</button><button class="chip" type="button" data-ai-question="ما المعلومات الناقصة لاختيار خامة مناسبة لهذا الطلب؟">ساعدني أختار الخامة</button></div><form id="ai-form"><label for="ai-question">سؤالك</label><textarea id="ai-question" class="sel" rows="3" maxlength="1500" required placeholder="مثال: ما الفرق بين الأكريليك الشفاف والمرايا؟"></textarea><label class="check" style="margin:10px 0"><input id="ai-context" type="checkbox" checked>إرفاق مقاسات وتسعيرة الحاسبة مع السؤال</label><p class="hint">يُرسل السؤال والبيانات المرفقة إلى Google لمعالجة الإجابة.</p><button class="btn btn-dl" id="ai-send" type="submit" style="margin-top:12px">اسأل المساعد</button></form><p id="ai-status" role="status" aria-live="polite"></p><div id="ai-answer" role="region" aria-label="إجابة المساعد" style="white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9"></div></section><details class="production-options"><summary>مخطط القص واستغلال اللوح</summary>      <div class="kpis" id="ac-kpis"></div>
       <div class="layouthead"><span id="ac-cap"></span><span class="lkey"><i class="k-a"></i>القطعة <i class="k-m"></i>هامش</span></div>
       <div class="layoutbox" id="ac-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="ac-dl">تنزيل ملف القص SVG</button><span class="fname" id="ac-fname"></span></div>
@@ -1476,4 +1476,16 @@ document.querySelectorAll('[data-qty]').forEach(b=>b.addEventListener('click',()
 document.getElementById('sale-search').addEventListener('input',e=>{const q=e.target.value.trim();let count=0;Array.from(sm.options).forEach(o=>{o.hidden=!o.textContent.includes(q);if(!o.hidden)count++;});document.getElementById('quote-copy-status').textContent=count?'': 'لا توجد خامة مطابقة. جرّب اسمًا أقصر.';});
 document.getElementById('quote-copy').addEventListener('click',async()=>{const box=document.getElementById('quote-text'),status=document.getElementById('quote-copy-status');try{await navigator.clipboard.writeText(box.value);status.textContent='تم نسخ عرض السعر';}catch(e){box.hidden=false;box.select();status.textContent='يمكنك نسخ النص من المربع أدناه';}});
 window.asbarixSaleReady=true;
+</script>
+
+<script>
+(()=>{
+ const form=document.getElementById('ai-form'),input=document.getElementById('ai-question'),button=document.getElementById('ai-send'),status=document.getElementById('ai-status'),answer=document.getElementById('ai-answer');let busy=false;
+ fetch('/api/assistant').then(r=>r.json()).then(d=>{if(!d.configured)status.textContent='المساعد بانتظار تفعيل الاتصال بخدمة Google.';}).catch(()=>{});
+ document.querySelectorAll('[data-ai-question]').forEach(b=>b.addEventListener('click',()=>{input.value=b.dataset.aiQuestion;input.focus();}));
+ form.addEventListener('submit',async e=>{e.preventDefault();if(busy||!input.value.trim())return;busy=true;button.disabled=true;button.textContent='جارٍ التفكير…';status.textContent='';answer.textContent='';
+ let context='';if(document.getElementById('ai-context').checked){const m=document.getElementById('sale-material');context=JSON.stringify({material:m.selectedOptions[0]?.textContent,quote:document.getElementById('quote-text').value,widthCm:document.getElementById('ac-w').value,heightCm:document.getElementById('ac-h').value,quantity:document.getElementById('ac-qty').value,shape:document.querySelector('#ac-shape [aria-pressed="true"]').dataset.v});}
+ try{const r=await fetch('/api/assistant',{method:'POST',headers:{'Content-Type':'application/json'},signal:AbortSignal.timeout(25000),body:JSON.stringify({question:input.value.trim(),context})});const d=await r.json();if(!r.ok)throw new Error(d.message||'تعذّر الحصول على الإجابة.');answer.textContent=d.answer;status.textContent='إجابة المساعد';}catch(err){status.textContent=err.name==='TimeoutError'?'انتهت مهلة الاتصال. حاول مجددًا.':err.message;}finally{busy=false;button.disabled=false;button.textContent='اسأل المساعد';}
+ });
+})();
 </script>
