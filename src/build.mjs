@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const SRC = dirname(fileURLToPath(import.meta.url)), OUT = join(SRC, "..", "public");
 const read = (f) => readFileSync(join(SRC, f), "utf8");
 const icon = `<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">`;
+const socialMeta="<meta name=\"description\" content=\"مساحة أسبار للمصممين: قوالب الأكواب، توزيع الأفرخ والاستيكرات، وتسعير الأكريليك بالسنتيمتر.\"><meta name=\"theme-color\" content=\"#7C1E33\"><meta property=\"og:type\" content=\"website\"><meta property=\"og:locale\" content=\"ar_SA\"><meta property=\"og:site_name\" content=\"Asbarix | أسبار\"><meta property=\"og:title\" content=\"أسبار — مساحة المصممين\"><meta property=\"og:description\" content=\"من أول مقاس إلى عرض سعر مضبوط. قوالب، توزيع وتسعير في مساحة واحدة.\"><meta property=\"og:url\" content=\"https://asbarix.vercel.app/\"><meta property=\"og:image\" content=\"https://asbarix.vercel.app/assets/social-card.png\"><meta property=\"og:image:secure_url\" content=\"https://asbarix.vercel.app/assets/social-card.png\"><meta property=\"og:image:type\" content=\"image/png\"><meta property=\"og:image:width\" content=\"1200\"><meta property=\"og:image:height\" content=\"630\"><meta property=\"og:image:alt\" content=\"أسبار — مساحة المصممين، قوالب وتوزيع وتسعير\"><meta name=\"twitter:card\" content=\"summary_large_image\"><meta name=\"twitter:title\" content=\"أسبار — مساحة المصممين\"><meta name=\"twitter:description\" content=\"من أول مقاس إلى عرض سعر مضبوط.\"><meta name=\"twitter:image\" content=\"https://asbarix.vercel.app/assets/social-card.png\"><link rel=\"canonical\" href=\"https://asbarix.vercel.app/\">";
 const head = `<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
@@ -22,5 +23,5 @@ mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, "assets"), join(OUT, "assets"), { recursive: true });
 writeFileSync(join(OUT, "index.html"), head + read("app.html") + '\n<link rel="stylesheet" href="/assets/workspace.css">\n<script src="/assets/workspace.js" defer></script>\n</body>\n</html>\n');
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
-writeFileSync(join(OUT, "login.html"), read("login.html"));
+writeFileSync(join(OUT, "login.html"), read("login.html").replace("</head>",socialMeta+"</head>"));
 console.log("built public/index.html and public/admin.html");
