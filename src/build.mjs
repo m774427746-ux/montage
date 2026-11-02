@@ -26,7 +26,10 @@ ${icon}
 `;
 mkdirSync(OUT, { recursive: true });
 cpSync(join(SRC, "assets"), join(OUT, "assets"), { recursive: true });
-writeFileSync(join(OUT, "index.html"), head + read("app.html") + '\n<link rel="stylesheet" href="/assets/workspace.css">\n<script src="/assets/workspace.js" defer></script>\n</body>\n</html>\n');
+// The acrylic section lives inside <main>, right before its closing tag.
+const withSection = (app) => app.replace("</main>", read("acrylic-tools.html") + "\n</main>");
+const workspace = '\n<link rel="stylesheet" href="/assets/workspace.css">\n<script src="/assets/workspace.js" defer></script>\n</body>\n</html>\n';
+writeFileSync(join(OUT, "index.html"), head + withSection(read("app.html")) + workspace);
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
 writeFileSync(join(OUT, "login.html"), read("login.html"));
-console.log("built public/index.html and public/admin.html");
+console.log("built public/index.html, admin.html and login.html");
