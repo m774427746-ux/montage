@@ -21,6 +21,6 @@ ${icon}
 <body>
 `;
 mkdirSync(OUT, { recursive: true });
-writeFileSync(join(OUT, "index.html"), head + read("app.html") + "\n" + read("gate.html") + "\n</body>\n</html>\n");
+writeFileSync(join(OUT, "index.html"), head + read("app.html").replace("<!-- ACRYLIC_TOOLS -->", () => read("acrylic-tools.html")) + "\n" + read("gate.html") + "\n</body>\n</html>\n");
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
 console.log("built public/index.html and public/admin.html");
