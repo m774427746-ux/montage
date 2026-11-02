@@ -26,4 +26,32 @@ for(const [,script] of app.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))new vm
 assert(app.includes('id="tab-acrylic-tools"'));
 assert(app.includes('data-tab="acrylic-tools"'));
 assert(!app.includes("<!-- ACRYLIC_TOOLS -->"));
-console.log("PASS: five generators, invalid geometries, SVG units, build integration and script syntax");
+
+const {categories}=context.window.AcrylicTools;
+assert.equal(Object.keys(modes).length,10);
+assert.equal(Object.keys(categories).length,3);
+assert.equal(Object.values(modes).filter(m=>m.category==="gifts").length,5);
+for(const m of Object.values(modes))assert(Object.hasOwn(categories,m.category));
+for(const [mode,patch] of [
+ ["medal",{strapW:70}],["medal",{edge:1}],["luggage",{strapH:20,strapW:5}],
+ ["coaster",{w:4}],["magnet",{shape:"unknown"}],["stand",{baseW:50}],
+ ["stand",{baseT:150}],["stand",{clearance:-0.2}],["stand",{h:5,baseT:6}]
+])assert.throws(()=>generate(mode,{...modes[mode].defaults,...patch}));
+for(const mode of ["coaster","medal","magnet"]){
+ const a=generate(mode,{...modes[mode].defaults,shape:"circle"});assert.equal(a.h,a.w);
+ const b=generate(mode,{...modes[mode].defaults,shape:"rect"});assert.equal(b.h,modes[mode].defaults.h);
+}
+assert.throws(()=>generate("__proto__",{}));
+const stand=generate("stand",{...modes.stand.defaults});
+assert.equal(stand.parts,2);
+assert.equal(stand.slotWidth,3.2);
+assert.equal(stand.h,210);
+assert(stand.svg.includes('id="FACE"'));
+assert(stand.svg.includes('id="BASE"'));
+assert(stand.faceSVG.includes('width="90mm"'));
+assert(stand.baseSVG.includes('width="140mm"'));
+assert(stand.baseSVG.includes('width="90.2"'));
+assert(app.includes('id="ag-categories"'));
+assert(app.includes('id="ag-face-download"'));
+console.log("PASS: 10 generators, 3 categories, 18 invalid geometries, gift shapes, two-part stand, SVG units and build integration");
+
