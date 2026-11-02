@@ -242,6 +242,7 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
+      <button type="button" role="tab" data-tab="acrylic-tools" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="7" cy="8" r="1"/><circle cx="17" cy="8" r="1"/><circle cx="7" cy="16" r="1"/><circle cx="17" cy="16" r="1"/></svg>أدوات مصمم الأكريليك</button>
     </div>
   </div>
 </nav>
@@ -516,6 +517,7 @@ table.cmp tbody tr.none{cursor:default;color:var(--muted)}
 </section>
 </div>
 
+<!-- ACRYLIC_TOOLS -->
 </main>
 <footer class="sitefoot">
   <div class="wrap footin">
@@ -1380,7 +1382,7 @@ $("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), 
 $("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
 
 /* ---------- Tabs (hash routed) ---------- */
-const TABS=["cups","sheets","stickers","acrylic"]; const rendered={};
+const TABS=["cups","sheets","stickers","acrylic","acrylic-tools"]; const rendered={};
 function showTab(t){
   if(!TABS.includes(t)) t="cups";
   TABS.forEach(x=>{ $("tab-"+x).hidden=x!==t; const b=document.querySelector(`[data-tab="${x}"]`); b.setAttribute("aria-selected",String(x===t)); b.tabIndex= x===t?0:-1; });
