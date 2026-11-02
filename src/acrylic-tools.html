@@ -4,10 +4,12 @@
 #ag-stage{background:#fff;border:1px solid var(--line);min-height:340px;border-radius:10px;display:grid;place-items:center;padding:24px}#ag-stage svg{width:100%;max-height:480px;display:block;direction:ltr}
 .ag-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.ag-wide{grid-column:1/-1}.ag-preview{position:sticky;top:76px}.ag-note{font-size:13px;color:var(--muted);margin:12px 0}.ag-status{min-height:26px;color:var(--ok);font-size:13px}
 @media(max-width:900px){.ag-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.ag-preview{position:static}}@media(max-width:440px){.ag-fields{grid-template-columns:1fr}.ag-intro{display:block}}
+.ag-lib{margin:0 0 22px}.ag-lib-group{font-size:17px;margin:14px 0 8px}.ag-lib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.ag-lib-item{text-align:start;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}.ag-lib-item b,.ag-lib-item small{display:block}.ag-lib-item small{color:var(--muted);margin-top:3px}.ag-lib-item:hover{border-color:var(--gold)}
 </style>
 <div class="tabpanel" id="tab-acrylic-tools" hidden>
 <section class="wrap" aria-labelledby="ag-title">
 <div class="ag-intro"><div><h2 id="ag-title">أدوات مصمم الأكريليك</h2><p>من المقاس إلى ملف القص. اختر المولد واضبط قطعتك بالمليمتر.</p></div><span class="tag">SVG بالحجم الفعلي · 1:1</span></div>
+<section class="ag-lib" aria-labelledby="ag-lib-title"><h3 id="ag-lib-title">مكتبة جاهزة: دروع واستاندات وهدايا</h3><p class="ag-note">مقاسات شائعة مرجعية من المواصفات المنشورة لدى الموردين. اضغط المقاس لتحميله في المولد، ثم عدّل ما تحتاجه.</p><div id="ag-library"></div></section>
 <div class="ag-categories" id="ag-categories" role="group" aria-label="الأقسام الفرعية"></div><p id="ag-category-description" class="ag-note"></p>
 <div class="ag-tools" id="ag-tools" role="group" aria-label="مولدات الأكريليك"></div>
 <div class="calc-layout"><div class="panel"><h3 id="ag-form-title">إعدادات القطعة</h3><p class="hint" id="ag-description"></p>
@@ -117,6 +119,21 @@ function generate(mode,p){
  return {w,h,t,body,svg,area,length,holes:holes.length,slotWidth};
 }
 window.AcrylicTools={generate,modes,categories};
+const LIBRARY=[
+ {group:"دروع وألواح تكريم",title:"درع 150 × 100 مم",note:"لوح مكتبي، سماكة 10 مم",mode:"panel",values:{w:150,h:100,t:10,r:4,holes:"none"}},
+ {group:"دروع وألواح تكريم",title:"درع 200 × 150 مم",note:"لوح مكتبي، سماكة 10 مم",mode:"panel",values:{w:200,h:150,t:10,r:4,holes:"none"}},
+ {group:"دروع وألواح تكريم",title:"درع 250 × 200 مم",note:"لوح تكريم كبير، سماكة 10 مم",mode:"panel",values:{w:250,h:200,t:10,r:4,holes:"none"}},
+ {group:"استاندات",title:"ستاند مكتبي 100 × 150 مم",note:"واجهة 3 مم وقاعدة 10 مم",mode:"stand",values:{w:100,h:150,t:3,baseW:150,baseH:60,baseT:10,baseR:6,clearance:0.2}},
+ {group:"استاندات",title:"ستاند مكتبي 80 × 140 مم",note:"واجهة 2 مم وقاعدة 6 مم",mode:"stand",values:{w:80,h:140,t:2,baseW:140,baseH:60,baseT:6,baseR:6,clearance:0.2}},
+ {group:"استاندات",title:"قاعدة بشق 180 × 70 مم",note:"حامل لوحة سماكة 3 مم",mode:"base",values:{w:180,h:70,t:8,r:8,insert:3,clearance:0.2,slot:100}},
+ {group:"هدايا دعائية",title:"ميدالية مفاتيح دائرية 50 مم",note:"سماكة 3 مم، فتحة تعليق",mode:"tag",values:{w:50,h:50,t:3,r:0,d:4,edge:6,shape:"circle"}},
+ {group:"هدايا دعائية",title:"ميدالية مفاتيح مستطيلة 43 × 65 مم",note:"سماكة 3 مم، فتحة تعليق",mode:"tag",values:{w:43,h:65,t:3,r:6,d:4,edge:6,shape:"rect"}},
+ {group:"هدايا دعائية",title:"قاعدة كوب دائرية 95 مم",note:"سماكة 3 مم",mode:"coaster",values:{w:95,h:95,t:3,r:10,shape:"circle"}},
+ {group:"هدايا دعائية",title:"ميدالية تذكارية 70 × 80 مم",note:"فتحة شريط",mode:"medal",values:{}},
+ {group:"هدايا دعائية",title:"بطاقة أمتعة 55 × 90 مم",note:"فتحة رباط",mode:"luggage",values:{}},
+ {group:"هدايا دعائية",title:"قطعة مغناطيس 70 × 50 مم",note:"المغناطيس يُلصق خلفها",mode:"magnet",values:{}}
+];
+window.AcrylicTools.library=LIBRARY;
 let mode="panel",values=Object.fromEntries(Object.entries(modes).map(([k,v])=>[k,{...v.defaults}])),current=null;
 let category=modes[mode].category;
 const lastMode={signs:"panel",stands:"base",gifts:"tag"};
@@ -168,6 +185,17 @@ $("ag-load").addEventListener("change",async e=>{
  }catch(err){$("ag-status").textContent="تعذر الاستيراد: "+err.message;}finally{e.target.value="";}
 });
 fields();
+ const grid=document.getElementById("ag-library");
+ const groups=[...new Set(LIBRARY.map(i=>i.group))];
+ grid.innerHTML=groups.map(g=>'<h4 class="ag-lib-group">'+g+'</h4><div class="ag-lib-grid">'+LIBRARY.map((i,idx)=>i.group===g?'<button class="ag-lib-item" type="button" data-lib="'+idx+'"><b>'+i.title+'</b><small>'+i.note+'</small></button>':"").join("")+'</div>').join("");
+ grid.addEventListener("click",e=>{
+  const b=e.target.closest("[data-lib]"); if(!b) return;
+  const item=LIBRARY[+b.dataset.lib];
+  values[item.mode]={...modes[item.mode].defaults,...item.values};
+  mode=item.mode; document.getElementById("ag-status").textContent="تم تحميل: "+item.title;
+  fields(); document.getElementById("ag-stage").scrollIntoView({behavior:"smooth",block:"center"});
+ });
 })();
+
 if(window.asbarixShowTab&&location.hash==="#acrylic-tools")window.asbarixShowTab("acrylic-tools");
 </script>

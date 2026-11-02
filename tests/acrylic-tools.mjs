@@ -21,6 +21,15 @@ assert.equal(generate("base",{...modes.base.defaults}).slotWidth,3.2);
 assert.equal(generate("panel",{...modes.panel.defaults,holes:"none"}).holes,0);
 assert.equal(generate("tag",{...modes.tag.defaults,shape:"circle"}).h,50);
 assert.equal(generate("grid",{...modes.grid.defaults,cols:1,rows:1}).holes,1);
+// Ready library: every preset must generate a valid cut file.
+const library=context.window.AcrylicTools.library;
+assert(library.length>=10);
+for(const item of library){
+ const r=generate(item.mode,{...modes[item.mode].defaults,...item.values});
+ assert(r.svg.includes('width="'+r.w+'mm"'),item.title);
+ assert(!r.svg.includes("<text"),item.title);
+ assert(r.area>0,item.title);
+}
 const app=readFileSync(new URL("../public/index.html",import.meta.url),"utf8");
 for(const [,script] of app.matchAll(/<script[^>]*>([\s\S]*?)<\/script>/g))new vm.Script(script);
 assert(app.includes('id="tab-acrylic-tools"'));
