@@ -11,10 +11,16 @@ const head = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Asbarix: قوالب أكواب SVG بالأبعاد الفعلية، وحاسبات توزيع الأفرخ والاستيكرات والأكريليك للمصممين والمطابع.">
+<meta name="description" content="Asbarix — أدوات الطباعة للمصممين والمطابع: قوالب الأكواب، وتوزيع الأفرخ والكروت، والاستيكر، والأكريليك، مع أسعار قابلة للتعديل.">
 <meta name="theme-color" content="#7C1E33">
-<meta property="og:title" content="Asbarix — أدوات المصمم للمطبعة">
-<meta property="og:description" content="قوالب الأكواب، وحاسبات الأفرخ والاستيكرات والأكريليك.">
+<meta property="og:title" content="Asbarix — أدوات الطباعة للمصممين والمطابع">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Asbarix">
+<meta property="og:image" content="https://asbarix.vercel.app/assets/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:description" content="مساحة واحدة تجمع حسابات المصمم وتسعير الإدارة: قوالب الأكواب، وتوزيع الأفرخ والكروت، والاستيكر، والأكريليك.">
 ${icon}
 </head>
 <body>
