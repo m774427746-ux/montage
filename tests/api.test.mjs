@@ -112,3 +112,16 @@ test('admin password change rotates current session and logout revokes it server
  assert.equal((await call(manage,{cookie:admin,action:'logout',method:'POST'})).code,200);
  assert.equal((await call(manage,{cookie:admin})).code,401);
 });
+test('supplier price list is admin-only and every price gets 15% VAT',async()=>{
+ const {default:supplier}=await import('../api/supplier-prices.js');
+ assert.equal((await call(supplier,{cookie:team})).code,401);
+ assert.equal((await call(supplier,{})).code,401);
+ const l=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});assert.equal(l.code,200);
+ const r=await call(supplier,{cookie:l.headers['Set-Cookie'].split(';')[0]});
+ assert.equal(r.code,200);assert.equal(r.body.vat,0.15);assert.deepEqual(r.body.sheetCm,[122,244]);
+ const items=r.body.groups.flatMap(g=>g.items);
+ assert.ok(items.length>500);
+ for(const it of items)assert.ok(Number.isFinite(it.price)&&it.price>0&&it.name&&it.spec);
+ const clear3=r.body.groups.find(g=>g.id==='acr-clear').items.find(i=>i.spec==='3 mm');
+ assert.equal(clear3.price,150);assert.equal(Math.round(clear3.price*1.15*100)/100,172.5);
+});
