@@ -39,6 +39,7 @@ let team='',admin='';
 test('unified login validates role passwords and issues random protected sessions',async()=>{
  for(const body of ['null','[]','{'])assert.equal((await call(login,{method:'POST',body})).code,401);
  for(const password of ['','wrong'])assert.equal((await call(login,{method:'POST',body:{role:'team',password}})).code,401);
+ for(const [role,password] of [['team',process.env.ADMIN_KEY],['admin',process.env.TEAM_CODE]])assert.equal((await call(login,{method:'POST',body:{role,password}})).code,401);
  for(const role of ['team','admin']){
   const r=await call(login,{method:'POST',body:{role,password:role==='admin'?process.env.ADMIN_KEY:process.env.TEAM_CODE}});
   assert.equal(r.code,200);assert.match(r.headers['Set-Cookie'],/HttpOnly; Secure; SameSite=Strict/);

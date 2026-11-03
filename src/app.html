@@ -245,7 +245,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 <header class="top wrap">
   <div class="brandrow">
     <div>
-      <div class="brand"><img class="logo" src="/assets/asbarix.svg" alt="Asbarix"><div><h1>Asbarix</h1><p class="lede">أدوات المصمم للمطبعة: قوالب الأكواب، وتوزيع الأفرخ والاستيكرات والأكريليك.</p></div></div>
+      <div class="brand"><img class="logo" src="/assets/asbarix.svg" alt="Asbarix"><div><h1>Asbarix</h1><p class="lede">أدوات المصمم للمطبعة: قوالب الأكواب، وتوزيع الأوراق والاستيكرات والأكريليك.</p></div></div>
     </div>
   </div>
 </header>
@@ -255,7 +255,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <button type="button" role="tab" data-tab="cups" aria-selected="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14l-2 16H7z"/><path d="M5.5 8h13"/></svg>قوالب الأكواب</button>
       <button type="button" role="tab" data-tab="sheets" aria-selected="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأفرخ</button>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأوراق</button>
       <button type="button" role="tab" data-tab="stickers" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
@@ -399,7 +399,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 </div>
 <div class="tabpanel" id="tab-sheets" hidden>
 <section class="wrap" aria-labelledby="sh-title">
-  <div class="sechead"><h2 id="sh-title">حاسبة الأفرخ</h2><span class="muted sub">كم قطعة تطلع من الفرخ، وكم فرخ تحتاج للكمية</span></div>
+  <div class="sechead"><h2 id="sh-title">حاسبة الأوراق</h2><span class="muted sub">كم قطعة تطلع من الورقة، وكم ورقة تحتاج للكمية</span></div>
   <div class="calc-layout">
     <div class="panel side">
       <h3>القطعة</h3>
@@ -417,11 +417,11 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <label class="check"><input type="checkbox" id="sh-circle"> قطعة دائرية</label>
       </div>
 
-      <h3 class="mt">الفرخ</h3>
+      <h3 class="mt">الورقة</h3>
       <div class="field"><label for="sh-paper">مقاس الورق</label><select id="sh-paper" class="sel"></select></div>
       <div class="pair" id="sh-custom" hidden>
-        <div class="field"><label for="sh-pw">عرض الفرخ</label><div class="inwrap"><input id="sh-pw" inputmode="decimal" autocomplete="off" value="33"><span>cm</span></div></div>
-        <div class="field"><label for="sh-ph">طول الفرخ</label><div class="inwrap"><input id="sh-ph" inputmode="decimal" autocomplete="off" value="48"><span>cm</span></div></div>
+        <div class="field"><label for="sh-pw">عرض الورقة</label><div class="inwrap"><input id="sh-pw" inputmode="decimal" autocomplete="off" value="33"><span>cm</span></div></div>
+        <div class="field"><label for="sh-ph">طول الورقة</label><div class="inwrap"><input id="sh-ph" inputmode="decimal" autocomplete="off" value="48"><span>cm</span></div></div>
       </div>
       <div class="field"><label for="sh-margin">الهامش غير المطبوع لكل جهة</label><div class="inwrap"><input id="sh-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
@@ -430,7 +430,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <div class="field"><label for="sh-qty">عدد الحبات</label><div class="inwrap"><input id="sh-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
         <div class="field"><label for="sh-spare">زيادة للتالف</label><div class="inwrap"><input id="sh-spare" inputmode="decimal" autocomplete="off" value="0"><span>%</span></div></div>
       </div>
-      <div class="field"><label for="sh-price">سعر طباعة الفرخ</label><div class="inwrap"><input id="sh-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="field"><label for="sh-price">سعر طباعة الورقة</label><div class="inwrap"><input id="sh-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
       <div class="errors" id="sh-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
@@ -439,7 +439,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <div class="layoutbox" id="sh-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="sh-dl">تنزيل المونتاج SVG</button><span class="fname" id="sh-fname"></span></div>
       <h3 class="mt">كل مقاسات الورق لهذه القطعة</h3>
-      <div class="tablewrap"><table class="cmp"><thead><tr><th>الورق</th><th>المقاس</th><th>حبة في الفرخ</th><th>الاستغلال</th><th>أفرخ للكمية</th><th>التكلفة</th></tr></thead><tbody id="sh-cmp"></tbody></table></div>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>الورق</th><th>المقاس</th><th>حبة في الورقة</th><th>الاستغلال</th><th>أوراق للكمية</th><th>التكلفة</th></tr></thead><tbody id="sh-cmp"></tbody></table></div>
     </div>
   </div>
 </section>
@@ -1259,8 +1259,8 @@ const PAPERS=[
     {v:"SRA4",t:"SRA4 — 22.5 × 32",w:225,h:320},{v:"SRA3",t:"SRA3 — 32 × 45",w:320,h:450},
     {v:"33x48",t:"33 × 48",w:330,h:480},{v:"13x19",t:"13 × 19 إنش — 33 × 48.3",w:330,h:483},
     {v:"12x18",t:"12 × 18 إنش — 30.5 × 45.7",w:305,h:457},{v:"35x50",t:"35 × 50",w:350,h:500},
-    {v:"32x46",t:"32 × 46",w:320,h:460},{v:"33x66",t:"33 × 66 (فرخ طويل)",w:330,h:660},{v:"33x70",t:"33 × 70 (فرخ طويل)",w:330,h:700}]},
-  {label:"أفرخ الأوفست",g:"أوفست",items:[
+    {v:"32x46",t:"32 × 46",w:320,h:460},{v:"33x66",t:"33 × 66 (ورقة طويلة)",w:330,h:660},{v:"33x70",t:"33 × 70 (ورقة طويلة)",w:330,h:700}]},
+  {label:"ورق الأوفست",g:"أوفست",items:[
     {v:"50x70",t:"50 × 70",w:500,h:700},{v:"64x90",t:"64 × 90",w:640,h:900},
     {v:"70x100",t:"70 × 100",w:700,h:1000},{v:"72x102",t:"72 × 102",w:720,h:1020}]}
 ];
@@ -1275,34 +1275,34 @@ function sheetsCalc(){
   const custom=$("sh-paper").value==="custom"; $("sh-custom").hidden=!custom;
   const circle=$("sh-circle").checked; $("sh-h").disabled=circle; if(circle) $("sh-h").value=$("sh-w").value;
   const spec=[{id:"sh-w",name:"عرض القطعة",max:200},{id:"sh-h",name:"طول القطعة",max:200},{id:"sh-bleed",name:"النزف",max:10,zeroOk:1},{id:"sh-gap",name:"المسافة بين القطع",max:50,zeroOk:1},
-    {id:"sh-margin",name:"الهامش غير المطبوع",max:50,zeroOk:1},{id:"sh-qty",name:"عدد الحبات",max:1e8,int:1},{id:"sh-spare",name:"زيادة التالف",max:100,zeroOk:1},{id:"sh-price",name:"سعر الفرخ",optional:1,zeroOk:1,max:1e6}];
-  if(custom) spec.push({id:"sh-pw",name:"عرض الفرخ",max:300},{id:"sh-ph",name:"طول الفرخ",max:300});
+    {id:"sh-margin",name:"الهامش غير المطبوع",max:50,zeroOk:1},{id:"sh-qty",name:"عدد الحبات",max:1e8,int:1},{id:"sh-spare",name:"زيادة التالف",max:100,zeroOk:1},{id:"sh-price",name:"سعر الورقة",optional:1,zeroOk:1,max:1e6}];
+  if(custom) spec.push({id:"sh-pw",name:"عرض الورقة",max:300},{id:"sh-ph",name:"طول الورقة",max:300});
   const c=check(spec);
   document.querySelectorAll("#sh-presets .chip").forEach(ch=>ch.setAttribute("aria-pressed", String(+ch.dataset.w===c.v["sh-w"] && +ch.dataset.h===c.v["sh-h"] && !!+ch.dataset.c===circle)));
   if(c.errs.length){ showErrs("sh",c.errs,c.bad); $("sh-dl").disabled=true; return; }
   const v=c.v, P=shSheet();
   const base={w:v["sh-w"]*10,h:v["sh-h"]*10,bleed:v["sh-bleed"],gap:v["sh-gap"],margin:v["sh-margin"],rot:$("sh-rot").checked,circle};
   const r=impose({...base,sheetW:P.w,sheetH:P.h});
-  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذا الفرخ. اختر فرخًا أكبر أو قلّل الهامش."],{"sh-w":"القطعة أكبر من الفرخ","sh-h":"القطعة أكبر من الفرخ"}); $("sh-dl").disabled=true; return; }
+  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذه الورقة. اختر ورقة أكبر أو قلّل الهامش."],{"sh-w":"القطعة أكبر من الورقة","sh-h":"القطعة أكبر من الورقة"}); $("sh-dl").disabled=true; return; }
   showErrs("sh",[],{}); $("sh-dl").disabled=false;
   const need=Math.ceil(v["sh-qty"]*(1+v["sh-spare"]/100)), sheets=Math.ceil(need/r.n);
   const pieceA = circle? Math.PI*(base.w/2)**2 : base.w*base.h;
   const util=r.n*pieceA/(P.w*P.h)*100, price=v["sh-price"];
   const area={x:base.margin,y:base.margin,w:P.w-2*base.margin,h:P.h-2*base.margin};
-  let html=kpi("حبة في الفرخ",fmtN(r.n),`الترتيب ${r.desc}`,true)
-    + kpi("أفرخ للكمية",fmtN(sheets),`لـ ${fmtN(need)} حبة${sheets*r.n>need?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
-    + kpi("استغلال الفرخ",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`);
+  let html=kpi("حبة في الورقة",fmtN(r.n),`الترتيب ${r.desc}`,true)
+    + kpi("أوراق للكمية",fmtN(sheets),`لـ ${fmtN(need)} حبة${sheets*r.n>need?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
+    + kpi("استغلال الورقة",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`);
   if(price!=null) html+=kpi("التكلفة",money(sheets*price),`الحبة ${money(sheets*price/need)}`);
   $("sh-kpis").innerHTML=html;
-  $("sh-cap").innerHTML=`فرخ ${num(`${cmTxt(P.w)} × ${cmTxt(P.h)}`,"cm")} · القطعة ${num(`${fx(v["sh-w"])} × ${fx(v["sh-h"])}`,"cm")}`;
+  $("sh-cap").innerHTML=`ورقة ${num(`${cmTxt(P.w)} × ${cmTxt(P.h)}`,"cm")} · القطعة ${num(`${fx(v["sh-w"])} × ${fx(v["sh-h"])}`,"cm")}`;
   shCur={W:P.w,H:P.h,area,items:r.items,bleed:base.bleed,circle,n:r.n,P,v};
-  $("sh-stage").innerHTML=layoutPreview({...shCur,label:`توزيع ${r.n} قطعة على الفرخ`});
+  $("sh-stage").innerHTML=layoutPreview({...shCur,label:`توزيع ${r.n} قطعة على الورقة`});
   $("sh-fname").innerHTML=`<span class="n">${shName()}</span>`;
   // comparison across all papers
   const rows=ALLPAPERS.map(p=>{ const q=impose({...base,sheetW:p.w,sheetH:p.h}); const s=q.n?Math.ceil(need/q.n):null; return {p,n:q.n,u:q.n*pieceA/(p.w*p.h)*100,s}; });
   const bestU=Math.max(...rows.map(x=>x.n?x.u:0));
   $("sh-cmp").innerHTML=rows.map(x=>`<tr data-v="${x.p.v}" class="${x.p.v===P.v?"cur":""}${x.n?"":" none"}" tabindex="0">
-    <td>${/^(A|SRA)/.test(x.p.v)?x.p.v:/x1[89]$/.test(x.p.v)?num(x.p.t.split(" — ")[0].replace(" إنش",""),"")+" إنش":x.p.v.startsWith("33x6")||x.p.v==="33x70"?"فرخ طويل":x.p.g}${x.n&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td><td>${num(`${cmTxt(x.p.w)} × ${cmTxt(x.p.h)}`,"")}</td>
+    <td>${/^(A|SRA)/.test(x.p.v)?x.p.v:/x1[89]$/.test(x.p.v)?num(x.p.t.split(" — ")[0].replace(" إنش",""),"")+" إنش":x.p.v.startsWith("33x6")||x.p.v==="33x70"?"ورقة طويلة":x.p.g}${x.n&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td><td>${num(`${cmTxt(x.p.w)} × ${cmTxt(x.p.h)}`,"")}</td>
     <td><b>${x.n?fmtN(x.n):"—"}</b></td><td>${x.n?fmtN(x.u,1)+"%":"—"}</td><td>${x.s?fmtN(x.s):"—"}</td><td>${x.s&&price!=null?money(x.s*price):"—"}</td></tr>`).join("");
 }
 function shName(){ const v=shCur.v; return `imposition-${safeName(fx(v["sh-w"]))}x${safeName(fx(v["sh-h"]))}cm-on-${safeName(cmTxt(shCur.W))}x${safeName(cmTxt(shCur.H))}cm-${shCur.n}up.svg`; }
