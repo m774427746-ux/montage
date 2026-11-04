@@ -14,6 +14,7 @@ globalThis.fetch=async(url,options)=>{
   else if(cmd==='DEL')result=store.delete(a[0])?1:0;
   else if(cmd==='INCR'){result=Number(store.get(a[0])||0)+1;store.set(a[0],result);}
   else if(cmd==='EXPIRE')result=1;
+  else if(cmd==='HSET'){let map=hashes.get(a[0]);if(!map){map=new Map();hashes.set(a[0],map);}map.set(a[1],a[2]);result=1;}
   else if(cmd==='HVALS')result=[...(hashes.get(a[0])||new Map()).values()];
   else if(cmd==='HDEL')result=hashes.get(a[0])?.delete(a[1])?1:0;
   else if(cmd==='EVAL'){let map=hashes.get(a[2]);if(!map){map=new Map();hashes.set(a[2],map);}if(map.size>=100&&!map.has(a[3]))result=0;else {map.set(a[3],a[4]);result=1;}}
@@ -125,4 +126,45 @@ test('supplier price list is admin-only and every price gets 15% VAT',async()=>{
  for(const it of items)assert.ok(Number.isFinite(it.price)&&it.price>0&&it.name&&it.spec);
  const clear3=r.body.groups.find(g=>g.id==='acr-clear').items.find(i=>i.spec==='3 mm');
  assert.equal(clear3.price,150);assert.equal(Math.round(clear3.price*1.15*100)/100,172.5);
+});
+
+test('team supplier catalog exposes Creative products while only admins can save suppliers and offers',async()=>{
+ const {default:suppliers}=await import('../api/suppliers.js');
+ assert.equal((await call(suppliers)).code,401);
+ const list=await call(suppliers,{cookie:team});
+ assert.equal(list.code,200);assert.equal(list.headers['Cache-Control'],'no-store');assert.equal(list.body.canEdit,false);
+ assert.equal(list.body.suppliers[0].name,'كريتيف');assert.equal(list.body.offers.length,511);
+ const foam=list.body.offers.find(o=>o.name==='لوح فلين'&&o.spec==='5 mm');
+ assert.equal(foam.price,30);assert.equal(foam.tax,4.5);assert.equal(foam.total,34.5);assert.equal(foam.sourcePage,7);
+ const sticker=list.body.offers.find(o=>o.name==='ستيكر أبيض مطفي'&&o.spec==='1.07 m');
+ assert.equal(sticker.price,161);assert.equal(sticker.total,185.15);assert.equal(sticker.sourcePage,14);assert.equal(sticker.packageSpec,'');assert.ok(sticker.unitNote);
+ assert.equal((await call(suppliers,{cookie:team,method:'POST',body:{action:'supplier',name:'forbidden'}})).code,403);
+ const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});
+ const cookie=signed.headers['Set-Cookie'].split(';')[0];
+ assert.equal((await call(suppliers,{cookie,method:'DELETE'})).code,405);
+ const created=await call(suppliers,{cookie,method:'POST',body:{action:'supplier',name:'مورد الاختبار',source:'قائمة اختبار'}});
+ assert.equal(created.code,201);
+ assert.equal((await call(suppliers,{cookie,method:'POST',body:{action:'supplier',name:'مورد الاختبار'}})).code,409);
+ const offer={action:'offer',supplierId:created.body.supplier.id,referenceId:foam.id,spec:'5 mm',unit:'لوح',packageSpec:'122 × 244 cm',price:28,vat:.15,source:'عرض اختبار'};
+ for(const change of [{price:-1},{price:null},{price:'28'},{vat:2},{supplierId:'missing'},{referenceId:'missing'},{unit:''}]){
+  assert.equal((await call(suppliers,{cookie,method:'POST',body:{...offer,...change}})).code,400);
+ }
+ const saved=await call(suppliers,{cookie,method:'POST',body:offer});assert.equal(saved.code,201);
+ assert.equal(saved.body.offer.productKey,foam.productKey);assert.equal(saved.body.offer.name,'لوح فلين');
+ let fresh=await call(suppliers,{cookie:team});
+ const visible=fresh.body.offers.find(o=>o.id===saved.body.offer.id);
+ assert.equal(visible.total,32.2);assert.equal(fresh.body.suppliers.length,2);
+ assert.equal((await call(suppliers,{cookie:team,method:'PUT',body:{...offer,id:visible.id,price:1}})).code,403);
+ assert.equal((await call(suppliers,{cookie,method:'PUT',body:{...offer,id:visible.id,supplierId:'creative'}})).code,400);
+ assert.equal((await call(suppliers,{cookie,method:'PUT',body:{...offer,id:visible.id,price:29}})).code,200);
+ fresh=await call(suppliers,{cookie:team});assert.equal(fresh.body.offers.find(o=>o.id===visible.id).total,33.35);
+ const mismatch=await call(suppliers,{cookie,method:'POST',body:{...offer,spec:'10 mm'}});
+ assert.equal(mismatch.body.offer.spec,'10 mm'); // Never silently claim a supplier has the reference specification.
+ const request=(path,cookie)=>new Request('https://test.invalid'+path,{headers:{cookie}});
+ assert.equal((await middleware(request('/suppliers',team))).headers.get('x-middleware-next'),'1');
+ assert.equal((await middleware(request('/suppliers',''))).status,307);
+ const fetchBefore=globalThis.fetch;try{
+  globalThis.fetch=async()=>{throw Error('offline');};
+  const failure=await call(suppliers,{cookie});assert.equal(failure.code,503);assert.equal('offers' in failure.body,false);
+ }finally{globalThis.fetch=fetchBefore;}
 });

@@ -25,3 +25,5 @@ writeFileSync(join(OUT, "index.html"), head + withSection(read("app.html")) + wo
 writeFileSync(join(OUT, "admin.html"), read("admin.html").replace("</title>", "</title>\n" + icon));
 writeFileSync(join(OUT, "login.html"), read("login.html").replace("</head>", socialMeta + "</head>"));
 console.log("built public/index.html, admin.html and login.html");
+
+writeFileSync(join(OUT, 'suppliers.html'), read('suppliers.html'));
