@@ -2,4 +2,11 @@ node_modules/
 .vercel/
 .env*
 .DS_Store
-public/
+/public/
+
+*.dump
+*.backup
+production-data/
+logs/
+production/config.local.env
+
