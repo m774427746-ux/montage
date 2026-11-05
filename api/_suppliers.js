@@ -5,7 +5,8 @@ export const supplierKey='montage:suppliers:v1', offerKey='montage:supplier-offe
 const pageFor=(id,i)=>({forex:7,foam:7,zincore:7,corrugated:7,'led-strip':8,'led-module':9,neon:11,wires:12,letters3d:12,solder:13,bending:13,'print-acc':23,rods:24}[id]|| (id==='power'?(i<17?10:11):id==='vinyl'?(i<20?14:i<36||i>=41&&i<47?15:i<61?16:17):id==='banner'?(i<9?17:18):id==='display'?(i<26?19:20):id==='adhesive'?(i<20?21:22):id==='hardware'?(i<20?25:26):null));
 function unitFor(g,it) {
  if(g.sheet||['sandwich','forex','foam','zincore','corrugated'].includes(g.id))return {unit:'لوح',packageSpec:'',unitNote:'تأكد من طول اللوح وعرضه لدى المورد.'};
- if(['vinyl','banner'].includes(g.id))return {unit:'رول',packageSpec:'',unitNote:'المذكور عرض الرول فقط؛ طوله غير مذكور في القائمة.'};
+ if(g.id==='vinyl')return {unit:'رول',packageSpec:it.spec.replace(' m','')+' × 50 m',unitNote:''};
+ if(g.id==='banner')return {unit:'رول',packageSpec:'',unitNote:'المذكور عرض الرول فقط؛ طوله غير مذكور في القائمة.'};
  if(g.id==='rods')return {unit:'عامود',packageSpec:'',unitNote:'طول العامود غير مذكور.'};
  if(g.id==='led-strip')return {unit:'لفة',packageSpec:it.name.includes('50')?'50 m':'',unitNote:'راجع طول اللفة قبل المقارنة.'};
  if(g.id==='led-module')return {unit:'حسب القائمة',packageSpec:'',unitNote:'تأكد من كون السعر للحبة أو العبوة؛ القائمة تتضمن 100 حبة لبعض الموديلات.'};

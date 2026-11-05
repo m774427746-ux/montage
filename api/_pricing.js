@@ -20,14 +20,14 @@ export function calculateQuote(body,item,policy){
   rate=body.customRate!==undefined?Number(body.customRate):item.cost/(1-margin/100);
  }else rate=body.client==='individual'?(item.individual??(item.retail===null?null:item.retail*2)):item.retail;
  if(rate===null||!Number.isFinite(rate)||rate<=0)return {ok:false,error:'price_missing',message:'سعر هذه الخامة غير معتمد بعد. تواصل مع الإدارة.'};
- // Round upwards so a displayed/sent rate cannot fall below the required margin.
- rate=Math.ceil(rate*1000000-1e-9)/1000000;
+ // Keep the exact rate until the final total; rounding unit rates inflates large orders.
  const actualMargin=(rate-item.cost)/rate*100;
  if(actualMargin<0)return {ok:false,error:'loss',message:policy.funMessages?'السعر أقل من التكلفة… كذا أنت خسران، والعميل أخذ الربح مع الطلب 😅':'السعر أقل من التكلفة. لا يمكن اعتماد عرض بخسارة.'};
  if(actualMargin+1e-7<policy.minMargin||(editable&&actualMargin>policy.maxMargin+1e-7))return {ok:false,error:'margin_limit',message:policy.funMessages?'لا تبيع الربح مع الطلب هدية 😅 السعر خارج حدود الإدارة.':'السعر خارج حدود الربح المعتمدة.'};
  const area=item.unit==='cm2'?w*h:1,totalCost=item.cost*area*qty;
  const total=Math.ceil(rate*area*qty*100-1e-8)/100,per=total/qty;
  const finalMargin=(total-totalCost)/total*100;
- if(editable&&finalMargin>policy.maxMargin+1e-7)return {ok:false,error:'rounding_limit',message:'تقريب المبلغ للهللة يتجاوز حد الربح لهذه الكمية. زِد الكمية أو خفّض النسبة قليلًا.'};
+ // The final total rounds up by less than one halala to protect the selected margin.
+
  return {ok:true,name:item.name,unit:item.unit,rate,per:Number(per.toFixed(6)),total,margin:Number(finalMargin.toFixed(2)),qty,width:w,height:h,editable};
 }

@@ -15,6 +15,7 @@ globalThis.fetch=async(url,options)=>{
   else if(cmd==='INCR'){result=Number(store.get(a[0])||0)+1;store.set(a[0],result);}
   else if(cmd==='EXPIRE')result=1;
   else if(cmd==='HSET'){let map=hashes.get(a[0]);if(!map){map=new Map();hashes.set(a[0],map);}map.set(a[1],a[2]);result=1;}
+  else if(cmd==='HGET')result=hashes.get(a[0])?.get(a[1])??null;
   else if(cmd==='HVALS')result=[...(hashes.get(a[0])||new Map()).values()];
   else if(cmd==='HDEL')result=hashes.get(a[0])?.delete(a[1])?1:0;
   else if(cmd==='EVAL'){let map=hashes.get(a[2]);if(!map){map=new Map();hashes.set(a[2],map);}if(map.size>=100&&!map.has(a[3]))result=0;else {map.set(a[3],a[4]);result=1;}}
@@ -137,7 +138,7 @@ test('team supplier catalog exposes Creative products while only admins can save
  const foam=list.body.offers.find(o=>o.name==='لوح فلين'&&o.spec==='5 mm');
  assert.equal(foam.price,30);assert.equal(foam.tax,4.5);assert.equal(foam.total,34.5);assert.equal(foam.sourcePage,7);
  const sticker=list.body.offers.find(o=>o.name==='ستيكر أبيض مطفي'&&o.spec==='1.07 m');
- assert.equal(sticker.price,161);assert.equal(sticker.total,185.15);assert.equal(sticker.sourcePage,14);assert.equal(sticker.packageSpec,'');assert.ok(sticker.unitNote);
+ assert.equal(sticker.price,161);assert.equal(sticker.total,185.15);assert.equal(sticker.sourcePage,14);assert.equal(sticker.packageSpec,'1.07 × 50 m');
  assert.equal((await call(suppliers,{cookie:team,method:'POST',body:{action:'supplier',name:'forbidden'}})).code,403);
  const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});
  const cookie=signed.headers['Set-Cookie'].split(';')[0];
@@ -168,3 +169,25 @@ test('team supplier catalog exposes Creative products while only admins can save
   const failure=await call(suppliers,{cookie});assert.equal(failure.code,503);assert.equal('offers' in failure.body,false);
  }finally{globalThis.fetch=fetchBefore;}
 });
+
+test('product quotes default to maximum margin, require admin approval for final prices and reject forged costs',async()=>{
+ const {default:product}=await import('../api/product-quote.js');
+ assert.equal((await call(product,{method:'POST',body:{id:'creative-vinyl-0',qty:1000,widthCm:5,heightCm:5}})).code,401);
+ let result=await call(product,{cookie:team,method:'POST',body:{id:'creative-vinyl-0',qty:1000,widthCm:5,heightCm:5}});
+ assert.equal(result.code,200);assert.equal(result.body.provisional,true);assert.equal(result.body.margin,70);assert.equal(result.body.total,29.64);
+ const {provisionalProfile}=await import('../api/_product-pricing.js');
+ const {baseOffers}=await import('../api/_suppliers.js');
+ const profile={...provisionalProfile(baseOffers.find(o=>o.id==='creative-vinyl-0')),costPerPiece:.2,setupCost:10};
+ const body={id:'creative-vinyl-0',profile};
+ assert.equal((await call(product,{cookie:team,method:'PUT',body})).code,403);
+ const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});
+ const cookie=signed.headers['Set-Cookie'].split(';')[0];
+ assert.equal((await call(product,{cookie,method:'PUT',body})).code,200);
+ result=await call(product,{cookie:team,method:'POST',body:{id:body.id,qty:1000,widthCm:5,heightCm:5,price:0,profile:{setupCost:0}}});
+ assert.equal(result.body.provisional,false);assert.equal(result.body.cost,218.89);assert.equal(result.body.total,729.64);
+ assert.equal((await call(product,{cookie:team,method:'POST',body:{id:body.id,qty:1000,widthCm:5,heightCm:5,margin:19}})).code,422);
+ const unavailable=await call(product,{cookie:team,method:'POST',body:{id:'creative-foam-0',qty:1000,widthCm:5,heightCm:5}});
+ assert.equal(unavailable.code,422);
+});
+
+test('retail list requires login; only admin approves costs and server enforces minimum',async()=>{const {default:retail}=await import('../api/retail-prices.js');assert.equal((await call(retail)).code,401);const list=await call(retail,{cookie:team});assert.equal(list.body.items.length,250);assert.equal(list.body.canEdit,false);const body={id:'list-42',cost:100,confirmed:true};assert.equal((await call(retail,{cookie:team,method:'PUT',body})).code,403);const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});const cookie=signed.headers['Set-Cookie'].split(';')[0];assert.equal((await call(retail,{cookie,method:'PUT',body})).code,200);const result=await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:100,cost:1,minimum:1}});assert.equal(result.body.total,125);assert.equal(result.body.profit,25);assert.equal((await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:101}})).code,422);});

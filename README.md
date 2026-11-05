@@ -71,3 +71,14 @@ node src/build.mjs
 تضيف الإدارة الموردين والأسعار أو تحدّثها من الصفحة نفسها. تحفظ البيانات في Redis بمفتاحي `montage:suppliers:v1` و`montage:supplier-offers:v1`؛ تبقى قائمة كريتيف الأصلية أساسًا وتطبق التعديلات المحفوظة فوقها. تبويب المورد القديم يعرض المصدر الأصلي، والصفحة الجديدة تعرض التحديثات.
 
 للمقارنة: اربط سعر المورد بمنتج موجود، وسجّل مواصفاته ووحدة البيع وحجمها. لا يظهر تفضيل سعري عند اختلاف المواصفات أو نقص طول الرول أو أبعاد اللوح أو وجود ملاحظات تحتاج تأكيدًا. الضريبة المضافة لقائمة كريتيف 15% وفق إعداد الموقع، وتظهر منفصلة عن سعر المصدر. لا تُنشر البيانات كملف عام.
+
+
+## تسعير كل صنف
+
+زر «تسعير الكمية» في الموردين يفتح `/product-pricing?id=...`. يبدأ الهامش بأقصى حد من سياسة الإدارة، مع منزلق داخل قسم مطوي؛ الخادم يرفض الهامش خارج الحدود. رولات استيكر كريتيف بطول 50 مترًا وفق توجيه المالك: التكلفة من طول الخامة المستخدم بعد توزيع الحبات، بما في ذلك العرض غير المستغل والتالف المعتمد، وليست سعر رول كامل. الألواح والعبوات تُحسب كوحدات شراء كاملة.
+
+قبل اعتماد الإنتاج، تظهر رولات الاستيكر كتقدير للخامة والربح فقط ولا يمكن نسخها كعرض نهائي. تعتمد الإدارة أبعاد وحدة الشراء والتجهيز وتكلفة الحبة أو المتر المربع والتالف والفواصل لكل صنف. تُحفظ في `montage:product-pricing:v1`؛ يؤخذ سعر المورد وسياسة الربح من الخادم عند كل حساب. تغيير مواصفات المورد يُبطل اعتماد التكلفة. إجمالي العرض قبل ضريبة البيع ويتضمن ضريبة شراء الخامة في التكلفة. إرشادات أول زيارة محفوظة محليًا في المتصفح، ويمكن إعادة فتحها بزر المساعدة.
+
+
+### Imported retail minimums
+`src/data/retail-prices.json` preserves 250 described workbook rows (129 numeric minimum sale prices, all cost cells empty). This internal sale list is separate from Creative supplier material costs. `/retail-prices` requires an authenticated API session; only admins can approve complete per-listed-unit costs. Bundle quantities round up to full bundles, with charged quantity displayed. Server minimum is the greater of workbook minimum and cost-derived minimum margin; initial quote uses maximum policy margin. Unknown prices and tax basis remain explicit. Source metre descriptions are not silently converted to square metres.
