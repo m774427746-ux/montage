@@ -1,6 +1,6 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
-import {basis,provisionalProfile,calculateProductQuote,validateProfile} from '../api/_product-pricing.js';
+import {basis,provisionalProfile,calculateProductQuote,validateProfile} from '../server/_product-pricing.js';
 const offer={id:'creative-vinyl-0',name:'ستيكر أبيض مطفي',spec:'1.07 m',unit:'رول',packageSpec:'',price:161,vat:.15};
 const policy={minMargin:20,maxMargin:70};
 const profile=provisionalProfile(offer);

@@ -1,3 +1,5 @@
+import productQuote from '../server/product-quote.js';
+import retailPrices from '../server/retail-prices.js';
 import { configured, pipeline } from "./_redis.js";
 import { isAdmin, isTeam, parseBody } from "./_session.js";
 
@@ -8,6 +10,8 @@ const valid = (v) => v === null || (Number.isFinite(v) && v >= 0 && v < 1e6);
 // GET — team reads prices. Returns prices:null when nothing was saved yet (site falls back to reference values).
 // PUT — admin only. Body: {prices:[{id, retail, individual}]}; null means "غير محدد".
 export default async function handler(req, res) {
+  if(req.query?.resource==='product-quote')return productQuote(req,res);
+  if(req.query?.resource==='retail-prices')return retailPrices(req,res);
   res.setHeader("Cache-Control", "no-store");
   if (!configured()) return res.status(503).json({ ok: false, error: "storage_not_configured", message: "الحفظ المشترك غير مُفعَّل بعد. التعديلات لن تُحفظ." });
 

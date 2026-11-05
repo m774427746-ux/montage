@@ -1,7 +1,7 @@
 import {readFileSync} from 'node:fs';
-import {session,parseBody} from './_session.js';
-import {pipeline} from './_redis.js';
-import {catalog} from './_pricing.js';
+import {session,parseBody} from '../api/_session.js';
+import {pipeline} from '../api/_redis.js';
+import {catalog} from '../api/_pricing.js';
 import {retailQuote} from './_retail-pricing.js';
 const source=JSON.parse(readFileSync(new URL('../src/data/retail-prices.json',import.meta.url),'utf8'));
 const key='montage:retail-costs:v1';

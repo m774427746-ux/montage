@@ -1,7 +1,7 @@
-import { session,parseBody } from './_session.js';
-import { pipeline } from './_redis.js';
-import { supplierCatalog } from './_suppliers.js';
-import { catalog } from './_pricing.js';
+import { session,parseBody } from '../api/_session.js';
+import { pipeline } from '../api/_redis.js';
+import { supplierCatalog } from '../api/_suppliers.js';
+import { catalog } from '../api/_pricing.js';
 import { basis,pricingKey,validateProfile,calculateProductQuote,provisionalProfile } from './_product-pricing.js';
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store');

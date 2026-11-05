@@ -33,9 +33,9 @@ const {default:stats}=await import('../api/stats.js');
 const {default:signup}=await import('../api/signup.js');
 const {default:middleware}=await import('../middleware.js');
 const {calculateQuote}=await import('../api/_pricing.js');
-async function call(handler,{method='GET',body,cookie='',action='session'}={}){
+async function call(handler,{method='GET',body,cookie='',action='session',query={}}={}){
  const res={code:200,headers:{},setHeader(k,v){this.headers[k]=v;},status(v){this.code=v;return this;},json(v){this.body=v;return this;}};
- await handler({method,body,headers:{cookie},query:{action}},res);return res;
+ await handler({method,body,headers:{cookie},query:{action,...query}},res);return res;
 }
 let team='',admin='';
 test('unified login validates role passwords and issues random protected sessions',async()=>{
@@ -171,11 +171,11 @@ test('team supplier catalog exposes Creative products while only admins can save
 });
 
 test('product quotes default to maximum margin, require admin approval for final prices and reject forged costs',async()=>{
- const {default:product}=await import('../api/product-quote.js');
+ const {default:product}=await import('../server/product-quote.js');
  assert.equal((await call(product,{method:'POST',body:{id:'creative-vinyl-0',qty:1000,widthCm:5,heightCm:5}})).code,401);
  let result=await call(product,{cookie:team,method:'POST',body:{id:'creative-vinyl-0',qty:1000,widthCm:5,heightCm:5}});
  assert.equal(result.code,200);assert.equal(result.body.provisional,true);assert.equal(result.body.margin,70);assert.equal(result.body.total,29.64);
- const {provisionalProfile}=await import('../api/_product-pricing.js');
+ const {provisionalProfile}=await import('../server/_product-pricing.js');
  const {baseOffers}=await import('../api/_suppliers.js');
  const profile={...provisionalProfile(baseOffers.find(o=>o.id==='creative-vinyl-0')),costPerPiece:.2,setupCost:10};
  const body={id:'creative-vinyl-0',profile};
@@ -190,4 +190,6 @@ test('product quotes default to maximum margin, require admin approval for final
  assert.equal(unavailable.code,422);
 });
 
-test('retail list requires login; only admin approves costs and server enforces minimum',async()=>{const {default:retail}=await import('../api/retail-prices.js');assert.equal((await call(retail)).code,401);const list=await call(retail,{cookie:team});assert.equal(list.body.items.length,250);assert.equal(list.body.canEdit,false);const body={id:'list-42',cost:100,confirmed:true};assert.equal((await call(retail,{cookie:team,method:'PUT',body})).code,403);const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});const cookie=signed.headers['Set-Cookie'].split(';')[0];assert.equal((await call(retail,{cookie,method:'PUT',body})).code,200);const result=await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:100,cost:1,minimum:1}});assert.equal(result.body.total,125);assert.equal(result.body.profit,25);assert.equal((await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:101}})).code,422);});
+test('retail list requires login; only admin approves costs and server enforces minimum',async()=>{const {default:retail}=await import('../server/retail-prices.js');assert.equal((await call(retail)).code,401);const list=await call(retail,{cookie:team});assert.equal(list.body.items.length,250);assert.equal(list.body.canEdit,false);const body={id:'list-42',cost:100,confirmed:true};assert.equal((await call(retail,{cookie:team,method:'PUT',body})).code,403);const signed=await call(login,{method:'POST',body:{role:'admin',password:'new-local-admin-pass'}});const cookie=signed.headers['Set-Cookie'].split(';')[0];assert.equal((await call(retail,{cookie,method:'PUT',body})).code,200);const result=await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:100,cost:1,minimum:1}});assert.equal(result.body.total,125);assert.equal(result.body.profit,25);assert.equal((await call(retail,{cookie:team,method:'POST',body:{id:'list-42',qty:1000,discount:101}})).code,422);});
+
+test('consolidated pricing routes retain authentication and minimum protection',async()=>{assert.equal((await call(prices,{query:{resource:'retail-prices'}})).code,401);const list=await call(prices,{cookie:team,query:{resource:'retail-prices'}});assert.equal(list.body.items.length,250);const quote=await call(prices,{cookie:team,method:'POST',query:{resource:'retail-prices'},body:{id:'list-42',qty:1000,discount:100,cost:1}});assert.equal(quote.body.total,125);const product=await call(prices,{cookie:team,method:'POST',query:{resource:'product-quote'},body:{id:'creative-vinyl-0',qty:1000,widthCm:5,heightCm:5}});assert.equal(product.body.total,729.64);assert.equal((await call(prices,{cookie:team,method:'PUT',query:{resource:'retail-prices'},body:{id:'list-42',cost:1,confirmed:true}})).code,403);});

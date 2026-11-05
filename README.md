@@ -82,3 +82,5 @@ node src/build.mjs
 
 ### Imported retail minimums
 `src/data/retail-prices.json` preserves 250 described workbook rows (129 numeric minimum sale prices, all cost cells empty). This internal sale list is separate from Creative supplier material costs. `/retail-prices` requires an authenticated API session; only admins can approve complete per-listed-unit costs. Bundle quantities round up to full bundles, with charged quantity displayed. Server minimum is the greater of workbook minimum and cost-derived minimum margin; initial quote uses maximum policy margin. Unknown prices and tax basis remain explicit. Source metre descriptions are not silently converted to square metres.
+
+Deployment: the public product-quote and retail-prices API URLs rewrite to the existing prices function. Handlers and calculation helpers live under server/ to stay within the current hosting function limit.
