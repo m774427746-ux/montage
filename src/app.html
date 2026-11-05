@@ -1,26 +1,27 @@
 <title>Asbarix</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a calm drafting-table tool — size shelf first, then a two-pane workspace (controls | flat-pattern stage). */
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Medium.ttf") format("truetype");font-weight:500;font-display:swap}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-SemiBold.ttf") format("truetype");font-weight:600;font-display:swap}
+@font-face{font-family:"Jali Arabic";src:url("/assets/fonts/JaliArabic-Black.ttf") format("truetype");font-weight:800 900;font-display:swap}
 :root{
-  --bg:#F1F3F6; --surface:#FFFFFF; --sunk:#E8EBF0; --ink:#15233F; --muted:#5A6479; --line:#D7DCE4;
-  --accent:#F29A1E; --accent-ink:#15233F; --accent-soft:#FDF0DC; --focus:#2E6BE6;
-  --paper:#FFFFFF; --grid:#E4E8EE; --err:#C92A2A; --err-soft:#FDECEC; --ok:#2B8A3E;
-  --cut:#15233F; --bleed:#E03131; --safe:#2F9E44; --glue:#7048E8; --guides:#1C7ED6;
-  --font-display:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;
-  --font-body:"IBM Plex Sans Arabic",Tahoma,"Segoe UI",sans-serif;
+  --bg:#FAF7F2; --surface:#FFFFFF; --sunk:#F1EBE3; --ink:#2B1A20; --muted:#6E5E63; --line:#E2D6CC;
+  --accent:#7C1E33; --accent-ink:#FFFFFF; --accent-soft:#F3E7E9; --focus:#C5A777;
+  --paper:#FFFFFF; --grid:#ECE4DA; --err:#B42335; --err-soft:#FBE9EB; --ok:#2B7A4B;
+  --cut:#2B1A20; --bleed:#E03131; --safe:#2F9E44; --glue:#7048E8; --guides:#1C7ED6;
+  --gold:#C5A777;
+  --font-display:"Jali Arabic",Tahoma,"Segoe UI",sans-serif;
+  --font-body:"Jali Arabic",Tahoma,"Segoe UI",sans-serif;
   --r:10px;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
-  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
-  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --bg:#1A1215; --surface:#241A1E; --sunk:#1F1619; --ink:#F3ECE6; --muted:#B9A9AC; --line:#3D2F34;
+  --accent:#C5A777; --accent-ink:#1A1215; --accent-soft:#3A2A2E; --focus:#C5A777;
   --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }}
 :root[data-theme="dark"]{
-  --bg:#0E1524; --surface:#162036; --sunk:#111A2C; --ink:#E7ECF5; --muted:#9BA6BC; --line:#2A3654;
-  --accent:#F4A53A; --accent-ink:#15233F; --accent-soft:#3A2C17; --focus:#7AA2FF;
+  --bg:#1A1215; --surface:#241A1E; --sunk:#1F1619; --ink:#F3ECE6; --muted:#B9A9AC; --line:#3D2F34;
+  --accent:#C5A777; --accent-ink:#1A1215; --accent-soft:#3A2A2E; --focus:#C5A777;
   --paper:#FBFBFC; --grid:#E6E9EE; --err:#FF8A8A; --err-soft:#3A1E24; --ok:#69DB7C; color-scheme:dark }
 
 *{box-sizing:border-box}
@@ -170,7 +171,7 @@ details.help ol{margin:0;padding-inline-start:22px;display:grid;gap:8px;max-widt
 .toast div.err{background:var(--err);color:#fff}
 textarea.copybox{width:100%;height:120px;margin-top:10px;font-family:ui-monospace,Menlo,monospace;font-size:11px;direction:ltr;border:1px solid var(--line);border-radius:8px;background:var(--sunk);color:var(--ink)}
 /* tabs + calculators */
-:root{ --pc-a:#FCE3BF; --pc-b:#D8E4FA; --pc-line:#15233F; --margin-fill:#E9ECF1; }
+:root{ --pc-a:#FCE3BF; --pc-b:#D8E4FA; --pc-line:#2B1A20; --margin-fill:#E9ECF1; }
 [hidden]{display:none!important}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:16;background:var(--bg)}
 .tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:15;background:var(--bg);border-bottom:1px solid var(--line);margin-bottom:8px}
@@ -244,7 +245,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 <header class="top wrap">
   <div class="brandrow">
     <div>
-      <div class="brand"><img class="logo" src="/assets/asbarix.svg" alt="Asbarix"><div><h1>Asbarix</h1><p class="lede">أدوات المصمم للمطبعة: قوالب الأكواب، وتوزيع الأفرخ والاستيكرات والأكريليك.</p></div></div>
+      <div class="brand"><img class="logo" src="/assets/asbarix.svg" alt="Asbarix"><div><h1>Asbarix</h1><p class="lede">أدوات المصمم للمطبعة: قوالب الأكواب، وتوزيع الأوراق والاستيكرات والأكريليك.</p></div></div>
     </div>
   </div>
 </header>
@@ -254,11 +255,13 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <button type="button" role="tab" data-tab="cups" aria-selected="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14l-2 16H7z"/><path d="M5.5 8h13"/></svg>قوالب الأكواب</button>
       <button type="button" role="tab" data-tab="sheets" aria-selected="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأفرخ</button>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأوراق</button>
       <button type="button" role="tab" data-tab="stickers" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
+      <button type="button" role="tab" data-tab="acrylic-tools" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M9 4v16M4 12h16"/></svg>أدوات مصمم الأكريليك</button>
     </div>
   </div>
 </nav>
@@ -396,7 +399,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 </div>
 <div class="tabpanel" id="tab-sheets" hidden>
 <section class="wrap" aria-labelledby="sh-title">
-  <div class="sechead"><h2 id="sh-title">حاسبة الأفرخ</h2><span class="muted sub">كم قطعة تطلع من الفرخ، وكم فرخ تحتاج للكمية</span></div>
+  <div class="sechead"><h2 id="sh-title">حاسبة الأوراق</h2><span class="muted sub">كم قطعة تطلع من الورقة، وكم ورقة تحتاج للكمية</span></div>
   <div class="calc-layout">
     <div class="panel side">
       <h3>القطعة</h3>
@@ -414,11 +417,11 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <label class="check"><input type="checkbox" id="sh-circle"> قطعة دائرية</label>
       </div>
 
-      <h3 class="mt">الفرخ</h3>
+      <h3 class="mt">الورقة</h3>
       <div class="field"><label for="sh-paper">مقاس الورق</label><select id="sh-paper" class="sel"></select></div>
       <div class="pair" id="sh-custom" hidden>
-        <div class="field"><label for="sh-pw">عرض الفرخ</label><div class="inwrap"><input id="sh-pw" inputmode="decimal" autocomplete="off" value="33"><span>cm</span></div></div>
-        <div class="field"><label for="sh-ph">طول الفرخ</label><div class="inwrap"><input id="sh-ph" inputmode="decimal" autocomplete="off" value="48"><span>cm</span></div></div>
+        <div class="field"><label for="sh-pw">عرض الورقة</label><div class="inwrap"><input id="sh-pw" inputmode="decimal" autocomplete="off" value="33"><span>cm</span></div></div>
+        <div class="field"><label for="sh-ph">طول الورقة</label><div class="inwrap"><input id="sh-ph" inputmode="decimal" autocomplete="off" value="48"><span>cm</span></div></div>
       </div>
       <div class="field"><label for="sh-margin">الهامش غير المطبوع لكل جهة</label><div class="inwrap"><input id="sh-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
@@ -427,7 +430,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <div class="field"><label for="sh-qty">عدد الحبات</label><div class="inwrap"><input id="sh-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
         <div class="field"><label for="sh-spare">زيادة للتالف</label><div class="inwrap"><input id="sh-spare" inputmode="decimal" autocomplete="off" value="0"><span>%</span></div></div>
       </div>
-      <div class="field"><label for="sh-price">سعر طباعة الفرخ</label><div class="inwrap"><input id="sh-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="field"><label for="sh-price">سعر طباعة الورقة</label><div class="inwrap"><input id="sh-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
       <div class="errors" id="sh-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
@@ -436,7 +439,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <div class="layoutbox" id="sh-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="sh-dl">تنزيل المونتاج SVG</button><span class="fname" id="sh-fname"></span></div>
       <h3 class="mt">كل مقاسات الورق لهذه القطعة</h3>
-      <div class="tablewrap"><table class="cmp"><thead><tr><th>الورق</th><th>المقاس</th><th>حبة في الفرخ</th><th>الاستغلال</th><th>أفرخ للكمية</th><th>التكلفة</th></tr></thead><tbody id="sh-cmp"></tbody></table></div>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>الورق</th><th>المقاس</th><th>حبة في الورقة</th><th>الاستغلال</th><th>أوراق للكمية</th><th>التكلفة</th></tr></thead><tbody id="sh-cmp"></tbody></table></div>
     </div>
   </div>
 </section>
@@ -444,7 +447,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 
 <div class="tabpanel" id="tab-stickers" hidden>
 <section class="wrap" aria-labelledby="st-title">
-  <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><span class="muted sub">كم استيكر في المتر الطولي والمربع، وكم متر تحتاج</span></div>
+  <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><a class="btn" href="/retail-prices">اختيار الصنف وتسعير الكمية مع الربح ↗</a><span class="muted sub">كم استيكر في المتر الطولي والمربع، وكم متر تحتاج</span></div>
   <div class="calc-layout">
     <div class="panel side">
       <h3>الاستيكر</h3>
@@ -495,12 +498,12 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
   <div class="calc-layout">
     <div class="panel side">
       <h3 class="mt">الخامة والعميل</h3>
-      <p class="hint">مرجع آفاق · أسعار بيع قابلة للتعديل، وليست تكلفة شراء الخام. أسعار الأفراد ضعف أسعار الدعاية حسب المرجع.</p>
+      <p class="hint">الأسعار الرسمية والصلاحيات تعتمدها الإدارة. أبعاد الأكريليك بالسنتيمتر، والتسعير على مساحة سم².</p>
       <div class="field"><label for="sale-search">ابحث عن خامة أو خدمة</label><input class="sel" id="sale-search" type="search" placeholder="مثال: سعودي شفاف ٦ ملم"></div>
       <div class="field"><label for="sale-material">الخامة أو الخدمة</label><select class="sel" id="sale-material"></select></div>
       <div class="field"><label for="sale-client">نوع العميل</label><select class="sel" id="sale-client"><option value="1">محلات الدعاية</option><option value="2">الأفراد</option></select></div>
       <div class="field"><label for="sale-rate">سعر الوحدة لمحلات الدعاية</label><div class="inwrap"><input id="sale-rate" type="number" min="0" step="any" placeholder="غير محدد"><span id="sale-unit">ر.س / سم²</span></div></div>
-      <p class="hint">التعديل لهذه العملية فقط. تسعير الدائرة على المستطيل المحيط (القطر × القطر). خدمات القطعة تستخدم العدد فقط.</p>
+      <p class="hint">تعديل السعر لهذه العملية فقط وضمن الحدود المعتمدة. الدائرة تُسعّر على القطر × القطر بالسنتيمتر. خدمات القطعة تستخدم العدد فقط.</p>
 
       <h3 class="mt">الكمية المطلوبة</h3>
       <div class="field"><label for="ac-qty">عدد القطع</label><div class="inwrap"><input id="ac-qty" inputmode="numeric" autocomplete="off" value="100"><span>قطعة</span></div></div>
@@ -704,7 +707,7 @@ function geom(p, checkOnly){
 }
 
 /* ---------- SVG export (single source for preview and files) ---------- */
-const COL={cut:"#15233F",bleed:"#E03131",safe:"#2F9E44",glue:"#7048E8",guides:"#1C7ED6"};
+const COL={cut:"#2B1A20",bleed:"#E03131",safe:"#2F9E44",glue:"#7048E8",guides:"#1C7ED6"};
 const FONT='Arial, Helvetica, sans-serif';
 
 function buildGuides(G,label){
@@ -1191,7 +1194,7 @@ function layoutExport(o){
     out.push(`<g id="SHEET" fill="none" stroke="#9AA3B5" stroke-width="0.2"><rect x="0" y="0" width="${W}" height="${H}"/></g>`);
     out.push(`<g id="PRINT-AREA" fill="none" stroke="#9AA3B5" stroke-width="0.15" stroke-dasharray="2 1"><rect x="${P4(o.area.x)}" y="${P4(o.area.y)}" width="${P4(o.area.w)}" height="${P4(o.area.h)}"/></g>`);
     if(o.bleed>0){ out.push(`<g id="BLEED" fill="none" stroke="#E03131" stroke-width="0.15" stroke-dasharray="1.5 0.8">`); for(const it of o.items) out.push(shape(it.x,it.y,it.w,it.h)); out.push(`</g>`); }
-    out.push(`<g id="TRIM" fill="none" stroke="#15233F" stroke-width="0.2">`);
+    out.push(`<g id="TRIM" fill="none" stroke="#2B1A20" stroke-width="0.2">`);
     for(const it of o.items){ const k=o.bleed||0; out.push(shape(it.x+k,it.y+k,it.w-2*k,it.h-2*k)); }
     out.push(`</g>`);
   } else if(o.kind==="roll"){
@@ -1256,8 +1259,8 @@ const PAPERS=[
     {v:"SRA4",t:"SRA4 — 22.5 × 32",w:225,h:320},{v:"SRA3",t:"SRA3 — 32 × 45",w:320,h:450},
     {v:"33x48",t:"33 × 48",w:330,h:480},{v:"13x19",t:"13 × 19 إنش — 33 × 48.3",w:330,h:483},
     {v:"12x18",t:"12 × 18 إنش — 30.5 × 45.7",w:305,h:457},{v:"35x50",t:"35 × 50",w:350,h:500},
-    {v:"32x46",t:"32 × 46",w:320,h:460},{v:"33x66",t:"33 × 66 (فرخ طويل)",w:330,h:660},{v:"33x70",t:"33 × 70 (فرخ طويل)",w:330,h:700}]},
-  {label:"أفرخ الأوفست",g:"أوفست",items:[
+    {v:"32x46",t:"32 × 46",w:320,h:460},{v:"33x66",t:"33 × 66 (ورقة طويلة)",w:330,h:660},{v:"33x70",t:"33 × 70 (ورقة طويلة)",w:330,h:700}]},
+  {label:"ورق الأوفست",g:"أوفست",items:[
     {v:"50x70",t:"50 × 70",w:500,h:700},{v:"64x90",t:"64 × 90",w:640,h:900},
     {v:"70x100",t:"70 × 100",w:700,h:1000},{v:"72x102",t:"72 × 102",w:720,h:1020}]}
 ];
@@ -1272,34 +1275,34 @@ function sheetsCalc(){
   const custom=$("sh-paper").value==="custom"; $("sh-custom").hidden=!custom;
   const circle=$("sh-circle").checked; $("sh-h").disabled=circle; if(circle) $("sh-h").value=$("sh-w").value;
   const spec=[{id:"sh-w",name:"عرض القطعة",max:200},{id:"sh-h",name:"طول القطعة",max:200},{id:"sh-bleed",name:"النزف",max:10,zeroOk:1},{id:"sh-gap",name:"المسافة بين القطع",max:50,zeroOk:1},
-    {id:"sh-margin",name:"الهامش غير المطبوع",max:50,zeroOk:1},{id:"sh-qty",name:"عدد الحبات",max:1e8,int:1},{id:"sh-spare",name:"زيادة التالف",max:100,zeroOk:1},{id:"sh-price",name:"سعر الفرخ",optional:1,zeroOk:1,max:1e6}];
-  if(custom) spec.push({id:"sh-pw",name:"عرض الفرخ",max:300},{id:"sh-ph",name:"طول الفرخ",max:300});
+    {id:"sh-margin",name:"الهامش غير المطبوع",max:50,zeroOk:1},{id:"sh-qty",name:"عدد الحبات",max:1e8,int:1},{id:"sh-spare",name:"زيادة التالف",max:100,zeroOk:1},{id:"sh-price",name:"سعر الورقة",optional:1,zeroOk:1,max:1e6}];
+  if(custom) spec.push({id:"sh-pw",name:"عرض الورقة",max:300},{id:"sh-ph",name:"طول الورقة",max:300});
   const c=check(spec);
   document.querySelectorAll("#sh-presets .chip").forEach(ch=>ch.setAttribute("aria-pressed", String(+ch.dataset.w===c.v["sh-w"] && +ch.dataset.h===c.v["sh-h"] && !!+ch.dataset.c===circle)));
   if(c.errs.length){ showErrs("sh",c.errs,c.bad); $("sh-dl").disabled=true; return; }
   const v=c.v, P=shSheet();
   const base={w:v["sh-w"]*10,h:v["sh-h"]*10,bleed:v["sh-bleed"],gap:v["sh-gap"],margin:v["sh-margin"],rot:$("sh-rot").checked,circle};
   const r=impose({...base,sheetW:P.w,sheetH:P.h});
-  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذا الفرخ. اختر فرخًا أكبر أو قلّل الهامش."],{"sh-w":"القطعة أكبر من الفرخ","sh-h":"القطعة أكبر من الفرخ"}); $("sh-dl").disabled=true; return; }
+  if(r.n===0){ showErrs("sh",["القطعة أكبر من المساحة المطبوعة في هذه الورقة. اختر ورقة أكبر أو قلّل الهامش."],{"sh-w":"القطعة أكبر من الورقة","sh-h":"القطعة أكبر من الورقة"}); $("sh-dl").disabled=true; return; }
   showErrs("sh",[],{}); $("sh-dl").disabled=false;
   const need=Math.ceil(v["sh-qty"]*(1+v["sh-spare"]/100)), sheets=Math.ceil(need/r.n);
   const pieceA = circle? Math.PI*(base.w/2)**2 : base.w*base.h;
   const util=r.n*pieceA/(P.w*P.h)*100, price=v["sh-price"];
   const area={x:base.margin,y:base.margin,w:P.w-2*base.margin,h:P.h-2*base.margin};
-  let html=kpi("حبة في الفرخ",fmtN(r.n),`الترتيب ${r.desc}`,true)
-    + kpi("أفرخ للكمية",fmtN(sheets),`لـ ${fmtN(need)} حبة${sheets*r.n>need?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
-    + kpi("استغلال الفرخ",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`);
+  let html=kpi("حبة في الورقة",fmtN(r.n),`الترتيب ${r.desc}`,true)
+    + kpi("أوراق للكمية",fmtN(sheets),`لـ ${fmtN(need)} حبة${sheets*r.n>need?` · يطلع ${fmtN(sheets*r.n)}`:""}`)
+    + kpi("استغلال الورقة",fmtN(util,1)+"%",`الهدر ${fmtN(100-util,1)}%`);
   if(price!=null) html+=kpi("التكلفة",money(sheets*price),`الحبة ${money(sheets*price/need)}`);
   $("sh-kpis").innerHTML=html;
-  $("sh-cap").innerHTML=`فرخ ${num(`${cmTxt(P.w)} × ${cmTxt(P.h)}`,"cm")} · القطعة ${num(`${fx(v["sh-w"])} × ${fx(v["sh-h"])}`,"cm")}`;
+  $("sh-cap").innerHTML=`ورقة ${num(`${cmTxt(P.w)} × ${cmTxt(P.h)}`,"cm")} · القطعة ${num(`${fx(v["sh-w"])} × ${fx(v["sh-h"])}`,"cm")}`;
   shCur={W:P.w,H:P.h,area,items:r.items,bleed:base.bleed,circle,n:r.n,P,v};
-  $("sh-stage").innerHTML=layoutPreview({...shCur,label:`توزيع ${r.n} قطعة على الفرخ`});
+  $("sh-stage").innerHTML=layoutPreview({...shCur,label:`توزيع ${r.n} قطعة على الورقة`});
   $("sh-fname").innerHTML=`<span class="n">${shName()}</span>`;
   // comparison across all papers
   const rows=ALLPAPERS.map(p=>{ const q=impose({...base,sheetW:p.w,sheetH:p.h}); const s=q.n?Math.ceil(need/q.n):null; return {p,n:q.n,u:q.n*pieceA/(p.w*p.h)*100,s}; });
   const bestU=Math.max(...rows.map(x=>x.n?x.u:0));
   $("sh-cmp").innerHTML=rows.map(x=>`<tr data-v="${x.p.v}" class="${x.p.v===P.v?"cur":""}${x.n?"":" none"}" tabindex="0">
-    <td>${/^(A|SRA)/.test(x.p.v)?x.p.v:/x1[89]$/.test(x.p.v)?num(x.p.t.split(" — ")[0].replace(" إنش",""),"")+" إنش":x.p.v.startsWith("33x6")||x.p.v==="33x70"?"فرخ طويل":x.p.g}${x.n&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td><td>${num(`${cmTxt(x.p.w)} × ${cmTxt(x.p.h)}`,"")}</td>
+    <td>${/^(A|SRA)/.test(x.p.v)?x.p.v:/x1[89]$/.test(x.p.v)?num(x.p.t.split(" — ")[0].replace(" إنش",""),"")+" إنش":x.p.v.startsWith("33x6")||x.p.v==="33x70"?"ورقة طويلة":x.p.g}${x.n&&Math.abs(x.u-bestU)<1e-9?` <span class="best">الأوفر</span>`:""}</td><td>${num(`${cmTxt(x.p.w)} × ${cmTxt(x.p.h)}`,"")}</td>
     <td><b>${x.n?fmtN(x.n):"—"}</b></td><td>${x.n?fmtN(x.u,1)+"%":"—"}</td><td>${x.s?fmtN(x.s):"—"}</td><td>${x.s&&price!=null?money(x.s*price):"—"}</td></tr>`).join("");
 }
 function shName(){ const v=shCur.v; return `imposition-${safeName(fx(v["sh-w"]))}x${safeName(fx(v["sh-h"]))}cm-on-${safeName(cmTxt(shCur.W))}x${safeName(cmTxt(shCur.H))}cm-${shCur.n}up.svg`; }
@@ -1441,7 +1444,8 @@ $("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), 
 $("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
 
 /* ---------- Tabs (hash routed) ---------- */
-const TABS=["cups","sheets","stickers","acrylic"]; const rendered={};
+const TABS=["cups","sheets","stickers","acrylic","acrylic-tools"]; const rendered={};
+window.asbarixShowTab=(t)=>showTab(t);
 function showTab(t){
   if(!TABS.includes(t)) t="cups";
   TABS.forEach(x=>{ $("tab-"+x).hidden=x!==t; const b=document.querySelector(`[data-tab="${x}"]`); b.setAttribute("aria-selected",String(x===t)); b.tabIndex= x===t?0:-1; });
@@ -1493,43 +1497,5 @@ showTab((location.hash||"").slice(1));
 })();
 </script>
 
-<script>
-
-// Sale reference is independent of sheet purchase cost and PMMA weight.
-const SALE_MATERIALS=[{"id": "2", "name": "اكريلك سعودي شفاف ١ ملم", "rate": 0.012, "unit": "cm2"}, {"id": "3", "name": "اكريلك سعودي شفاف ٢ ملم", "rate": 0.014, "unit": "cm2"}, {"id": "4", "name": "اكريلك سعودي شفاف ٣ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "5", "name": "اكريلك سعودي شفاف ٤ ملم", "rate": 0.025, "unit": "cm2"}, {"id": "6", "name": "اكريلك سعودي شفاف ٦ ملم", "rate": 0.036, "unit": "cm2"}, {"id": "7", "name": "اكريلك سعودي شفاف ٨ ملم", "rate": 0.06, "unit": "cm2"}, {"id": "8", "name": "اكريلك سعودي شفاف ١٠ملم", "rate": 0.07, "unit": "cm2"}, {"id": "9", "name": "اكريلك سعودي شفاف ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "10", "name": "اكريلك سعودي ملون ١ ملم", "rate": null, "unit": "cm2"}, {"id": "11", "name": "اكريلك سعودي ملون ٢ ملم", "rate": null, "unit": "cm2"}, {"id": "12", "name": "اكريلك سعودي ملون ٣ ملم", "rate": null, "unit": "cm2"}, {"id": "13", "name": "اكريلك سعودي ملون ٤ ملم", "rate": null, "unit": "cm2"}, {"id": "14", "name": "اكريلك سعودي ملون ٦ ملم", "rate": null, "unit": "cm2"}, {"id": "15", "name": "اكريلك سعودي ملون ٨ ملم", "rate": null, "unit": "cm2"}, {"id": "16", "name": "اكريلك سعودي ملون ١٠ملم", "rate": null, "unit": "cm2"}, {"id": "17", "name": "اكريلك سعودي ملون ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "18", "name": "اكريلك تايلندي شفاف ١ ملم", "rate": 0.014, "unit": "cm2"}, {"id": "19", "name": "اكريلك تايلندي شفاف ٢ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "20", "name": "اكريلك تايلندي شفاف ٣ ملم", "rate": 0.023, "unit": "cm2"}, {"id": "21", "name": "اكريلك تايلندي شفاف ٤ ملم", "rate": 0.03, "unit": "cm2"}, {"id": "22", "name": "اكريلك تايلندي شفاف ٦ ملم", "rate": 0.042, "unit": "cm2"}, {"id": "23", "name": "اكريلك تايلندي شفاف ٨ ملم", "rate": 0.062, "unit": "cm2"}, {"id": "24", "name": "اكريلك تايلندي شفاف ١٠ملم", "rate": 0.075, "unit": "cm2"}, {"id": "25", "name": "اكريلك تايلندي شفاف ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "26", "name": "اكريلك تايلندي ملون ١ ملم", "rate": null, "unit": "cm2"}, {"id": "27", "name": "اكريلك تايلندي ملون ٢ ملم", "rate": null, "unit": "cm2"}, {"id": "28", "name": "اكريلك تايلندي ملون ٣ ملم", "rate": 0.022, "unit": "cm2"}, {"id": "29", "name": "اكريلك تايلندي ملون ٤ ملم", "rate": null, "unit": "cm2"}, {"id": "30", "name": "اكريلك تايلندي ملون ٦ ملم", "rate": null, "unit": "cm2"}, {"id": "31", "name": "اكريلك تايلندي ملون ٨ ملم", "rate": null, "unit": "cm2"}, {"id": "32", "name": "اكريلك تايلندي ملون ١٠ملم", "rate": null, "unit": "cm2"}, {"id": "33", "name": "اكريلك تايلندي ملون ١٢ملم", "rate": null, "unit": "cm2"}, {"id": "34", "name": "لوح خشبي جهة واحدة ٣ ملم", "rate": 0.003, "unit": "cm2"}, {"id": "35", "name": "لوح خشبي جهتين ٣ ملم", "rate": 0.02, "unit": "cm2"}, {"id": "36", "name": "اكريلك مرايه ذهبي", "rate": 0.04, "unit": "cm2"}, {"id": "37", "name": "اكريلك مرايه فضي", "rate": 0.04, "unit": "cm2"}, {"id": "38", "name": "اكريلك ساندوتش ذهبي", "rate": 0.03, "unit": "cm2"}, {"id": "39", "name": "اكريلك سانندوتش فضي", "rate": 0.03, "unit": "cm2"}, {"id": "40", "name": "حفر اكريلك", "rate": 0.1, "unit": "cm2"}, {"id": "41", "name": "صبغ لون", "rate": 0.1, "unit": "cm2"}, {"id": "42", "name": "تجميع اكريلك صغير", "rate": 5.0, "unit": "piece"}, {"id": "43", "name": "تجميع اكريلك وسط", "rate": 10.0, "unit": "piece"}, {"id": "44", "name": "تجميع اكريلك كبير", "rate": 15.0, "unit": "piece"}, {"id": "45", "name": "قاعدة خشب ١٠ سم", "rate": 10.0, "unit": "piece"}, {"id": "46", "name": "قاعدة خشب ١٥ سم", "rate": 25.0, "unit": "piece"}, {"id": "47", "name": "قاعدة خشب ٢١ سم", "rate": 35.0, "unit": "piece"}, {"id": "48", "name": "قاعدة خشب ٣٠ سم", "rate": 45.0, "unit": "piece"}, {"id": "49", "name": "ستكر أبيض", "rate": null, "unit": "cm2"}];
-const sm=document.getElementById('sale-material');
-sm.innerHTML=SALE_MATERIALS.map(m=>`<option value="${m.id}">${m.name}${m.rate===null?' — السعر غير محدد':''}</option>`).join('');
-function updateSale(){
- const m=SALE_MATERIALS.find(x=>x.id===sm.value);if(!m)return;
- document.getElementById('quote-material').textContent=m.name;
- document.getElementById('quote-total').textContent='—';document.getElementById('quote-piece').textContent='—';document.getElementById('quote-copy').disabled=true;document.getElementById('quote-text').value='';
- const rateInput=document.getElementById('sale-rate');
- const out=document.getElementById('sale-result');
- const rate=rateInput.value.trim()===''?null:Number(rateInput.value);
- const qty=Number(document.getElementById('ac-qty').value);
- const width=Number(document.getElementById('ac-w').value);
- const circle=document.querySelector('#ac-shape [aria-pressed="true"]').dataset.v==='circle';
- const height=circle?width:Number(document.getElementById('ac-h').value);
- const factor=Number(document.getElementById('sale-client').value);
- if(rate===null){out.textContent='سعر هذه الخامة غير محدد. أدخل سعر الوحدة لإظهار الإجمالي.';return;}
- if(!Number.isFinite(rate)||rate<0||!Number.isInteger(qty)||qty<=0||(m.unit==='cm2'&&(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0))){out.textContent='أدخل سعرًا ومقاسات وكمية صحيحة.';return;}
- const per=rate*(m.unit==='cm2'?width*height:1)*factor;
- const moneyFormat=new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
- document.getElementById('quote-total').textContent=moneyFormat.format(per*qty);
- document.getElementById('quote-piece').textContent=moneyFormat.format(per);
- out.textContent=`${qty} قطعة · ${factor===2?'سعر الأفراد':'سعر محلات الدعاية'}${m.unit==='cm2'?` · ${width} × ${height} سم`:''}`;
- document.getElementById('quote-text').value=`Asbarix\n${m.name}\n${out.textContent}\nسعر الحبة: ${per.toFixed(2)} ر.س\nالإجمالي: ${(per*qty).toFixed(2)} ر.س\nقبل الضريبة والخدمات الإضافية. تسعيرة أولية.`;
- document.getElementById('quote-copy').disabled=false;
-}
-function selectSale(){const m=SALE_MATERIALS.find(x=>x.id===sm.value);document.getElementById('sale-rate').value=m.rate===null?'':m.rate;document.getElementById('sale-unit').textContent=m.unit==='piece'?'ر.س / قطعة':'ر.س / سم²';updateSale();}
-sm.addEventListener('change',selectSale);
-['sale-rate','sale-client','ac-qty','ac-w','ac-h'].forEach(id=>document.getElementById(id).addEventListener('input',updateSale));
-restoreLastInputs();
-selectSale();
-
-
-document.querySelectorAll('[data-qty]').forEach(b=>b.addEventListener('click',()=>{const input=document.getElementById('ac-qty');input.value=b.dataset.qty;input.dispatchEvent(new Event('input',{bubbles:true}));}));
-document.getElementById('sale-search').addEventListener('input',e=>{const q=e.target.value.trim();let count=0;Array.from(sm.options).forEach(o=>{o.hidden=!o.textContent.includes(q);if(!o.hidden)count++;});document.getElementById('quote-copy-status').textContent=count?'': 'لا توجد خامة مطابقة. جرّب اسمًا أقصر.';});
-document.getElementById('quote-copy').addEventListener('click',async()=>{const box=document.getElementById('quote-text'),status=document.getElementById('quote-copy-status');try{await navigator.clipboard.writeText(box.value);status.textContent='تم نسخ عرض السعر';}catch(e){box.hidden=false;box.select();status.textContent='يمكنك نسخ النص من المربع أدناه';}});
-window.asbarixSaleReady=true;
-</script>
+<link rel="stylesheet" href="/assets/designer.css">
+<script src="/assets/designer.js" defer></script>

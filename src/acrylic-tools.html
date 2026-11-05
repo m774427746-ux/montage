@@ -1,0 +1,206 @@
+<style>
+.ag-intro{display:flex;justify-content:space-between;gap:18px;align-items:center;margin-bottom:18px}.ag-intro p{margin:8px 0;color:var(--muted)}
+.ag-categories{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}.ag-category[aria-pressed="true"]{background:var(--ink);color:var(--bg)}.ag-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:20px}.ag-tool{padding:15px 12px;text-align:start;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer}.ag-tool b,.ag-tool small{display:block}.ag-tool small{color:var(--muted);margin-top:5px}.ag-tool[aria-pressed="true"]{border-color:var(--accent);box-shadow:inset 0 3px var(--accent);background:var(--accent-soft)}
+#ag-stage{background:#fff;border:1px solid var(--line);min-height:340px;border-radius:10px;display:grid;place-items:center;padding:24px}#ag-stage svg{width:100%;max-height:480px;display:block;direction:ltr}
+.ag-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}.ag-wide{grid-column:1/-1}.ag-preview{position:sticky;top:76px}.ag-note{font-size:13px;color:var(--muted);margin:12px 0}.ag-status{min-height:26px;color:var(--ok);font-size:13px}
+@media(max-width:900px){.ag-tools{grid-template-columns:repeat(2,minmax(0,1fr))}.ag-preview{position:static}}@media(max-width:440px){.ag-fields{grid-template-columns:1fr}.ag-intro{display:block}}
+.ag-lib{margin:0 0 22px}.ag-lib-group{font-size:17px;margin:14px 0 8px}.ag-lib-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}.ag-lib-thumb{display:block;height:130px;background:#fff;border:1px solid var(--line);border-radius:8px;margin-bottom:10px;padding:8px}.ag-lib-thumb svg{display:block;width:100%;height:100%}.ag-lib-section{margin-bottom:18px}.ag-lib-group small{color:var(--muted);font-weight:400}.ag-lib-item{text-align:start;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}.ag-lib-item b,.ag-lib-item small{display:block}.ag-lib-item small{color:var(--muted);margin-top:3px}.ag-lib-item:hover{border-color:var(--gold)}
+</style>
+<div class="tabpanel" id="tab-acrylic-tools" hidden>
+<section class="wrap" aria-labelledby="ag-title">
+<div class="ag-intro"><div><h2 id="ag-title">أدوات مصمم الأكريليك</h2><p>من المقاس إلى ملف القص. اختر المولد واضبط قطعتك بالمليمتر.</p></div><span class="tag">SVG بالحجم الفعلي · 1:1</span></div>
+<section class="ag-lib" aria-labelledby="ag-lib-title"><h3 id="ag-lib-title">مكتبة جاهزة: دروع واستاندات وهدايا</h3><p class="ag-note">مقاسات شائعة مرجعية من المواصفات المنشورة لدى الموردين. اضغط المقاس لتحميله في المولد، ثم عدّل ما تحتاجه.</p><div id="ag-library"></div></section>
+<div class="ag-categories" id="ag-categories" role="group" aria-label="الأقسام الفرعية"></div><p id="ag-category-description" class="ag-note"></p>
+<div class="ag-tools" id="ag-tools" role="group" aria-label="مولدات الأكريليك"></div>
+<div class="calc-layout"><div class="panel"><h3 id="ag-form-title">إعدادات القطعة</h3><p class="hint" id="ag-description"></p>
+<div class="ag-fields" id="ag-fields"></div>
+<div class="errors" id="ag-errors" role="alert" hidden></div>
+<div class="row2"><button class="btn" id="ag-reset" type="button">استعادة مقاس البداية</button></div>
+<p class="ag-note">إزاحة الفتحة تُقاس من حافة اللوح إلى مركزها. السماكة وصف للخامة ولا تغيّر أبعاد القص المسطح.</p>
+</div><div class="ag-preview"><div class="panel">
+<div class="stagehead"><h3 id="ag-preview-title">لوح بفتحات تثبيت</h3><label class="check"><input type="checkbox" id="ag-guides" checked>عرض الأبعاد</label></div>
+<div id="ag-stage" role="img" aria-label="معاينة قطعة الأكريليك"></div>
+<p class="hint" style="margin-top:10px">الأسود: مسار القص · الأزرق: أبعاد المعاينة فقط</p>
+<div class="kpis" id="ag-stats" style="margin-top:16px"></div>
+<div class="dlbar"><button type="button" class="btn btn-dl" id="ag-download">تنزيل ملف القص SVG</button><button type="button" class="btn" id="ag-face-download" hidden>تنزيل الواجهة SVG</button><button type="button" class="btn" id="ag-base-download" hidden>تنزيل القاعدة SVG</button><button type="button" class="btn" id="ag-save">حفظ الإعدادات JSON</button><label class="btn" for="ag-load">استيراد إعدادات<input id="ag-load" type="file" accept=".json,application/json" hidden></label></div>
+<div class="ag-status" id="ag-status" role="status"></div>
+<p class="ag-note">استورد SVG بنسبة 100% وبوحدة mm. الملف يحتوي مسارات القص فقط، بدون نصوص أو خطوط قياس. لا يتضمن تعويض عرض حرق الليزر؛ اضبطه في برنامج الماكينة. جرّب وصلة صغيرة للتأكد من ملاءمة الشق للخامة الفعلية.</p>
+</div></div></div>
+</section></div>
+<script>
+(()=>{
+"use strict";
+const $=id=>document.getElementById(id);
+const modes={
+panel:{name:"لوح بفتحات تثبيت",sub:"لوحات جدارية وستاند أوف",description:"لوح مستطيل بزوايا اختيارية وفتحات تثبيت موزعة بدقة.",defaults:{w:600,h:400,t:3,r:0,d:6,edge:15,holes:"four"}},
+door:{name:"لوحة باب",sub:"فتحتان وزوايا ناعمة",description:"لوحة اسم للباب بفتحتين جانبيتين أو أربع فتحات.",defaults:{w:250,h:80,t:3,r:8,d:5,edge:15,holes:"sides"}},
+base:{name:"قاعدة بشق",sub:"حامل لوحة أو بطاقة",description:"قاعدة أفقية بشق مركزي. عرض الشق = سماكة القطعة المركبة + سماحية الملاءمة.",defaults:{w:180,h:70,t:8,r:8,insert:3,clearance:0.2,slot:100}},
+grid:{name:"شبكة فتحات",sub:"منظمات وعروض منتجات",description:"شبكة فتحات دائرية موزعة بالتساوي بين هوامش الحواف.",defaults:{w:240,h:160,t:3,r:5,d:8,edge:20,cols:6,rows:4}},
+tag:{name:"ميدالية وتعليقة",sub:"دائرية أو مستطيلة",description:"قطعة صغيرة مع فتحة تعليق علوية؛ الإزاحة من الحافة العليا إلى مركز الفتحة.",defaults:{w:50,h:70,t:3,r:8,d:4,edge:8,shape:"rect"}}
+};
+Object.assign(modes,{"coaster":{"category":"gifts","name":"قاعدة كوب","sub":"دائرية أو مربعة بزوايا ناعمة","description":"قالب قاعدة كوب للطباعة أو الحفر. أضف الشعار في برنامج التصميم بعد التصدير.","defaults":{"w":95,"h":95,"t":3,"r":10,"shape":"circle"}},"medal":{"category":"gifts","name":"ميدالية تذكارية","sub":"فتحة شريط للتكريم والفعاليات","description":"ميدالية بفتحة مستطيلة مستديرة الأطراف لتمرير الشريط. الإزاحة إلى مركز الفتحة.","defaults":{"w":70,"h":80,"t":3,"r":10,"shape":"circle","strapW":20,"strapH":4,"edge":12}},"luggage":{"category":"gifts","name":"بطاقة أمتعة","sub":"تعليقة حقيبة بفتحة رباط","description":"بطاقة حقيبة بزوايا ناعمة وفتحة رباط. احتفظ بمساحة البيانات للطباعة أو الحفر بعد التصدير.","defaults":{"w":55,"h":90,"t":3,"r":7,"strapW":14,"strapH":4,"edge":10}},"magnet":{"category":"gifts","name":"قطعة مغناطيس دعائي","sub":"واجهة أكريليك لشعار أو تذكار","description":"قص واجهة دائرية أو مستطيلة لتثبيت مغناطيس لاصق خلفها. القالب لا يتضمن جيب تفريز للمغناطيس.","defaults":{"w":70,"h":50,"t":3,"r":8,"shape":"rect"}},"stand":{"category":"stands","name":"ستاند دعائي من قطعتين","sub":"واجهة وقاعدة متوافقتان","description":"واجهة مستطيلة مستقيمة القاعدة تدخل في شق قاعدة منفصلة. يُصدّر الملف القطعتين مفروشتين؛ سماكة القاعدة مستقلة عن سماكة الواجهة. نزّل كل قطعة منفردة عند استخدام خامتين مختلفتي السماكة.","defaults":{"w":90,"h":140,"t":3,"baseW":140,"baseH":60,"baseT":6,"baseR":6,"clearance":0.2}}});
+modes.panel.category="signs";modes.door.category="signs";modes.base.category="stands";modes.grid.category="stands";modes.tag.category="gifts";
+const categories={signs:{name:"اللوحات والتثبيت",description:"لوحات جدارية ولوحات أبواب مع فتحات تثبيت."},stands:{name:"القواعد والستاندات",description:"قواعد بشقوق، ستاندات من قطعتين، وشبكات عرض."},gifts:{name:"الهدايا الدعائية",description:"قوالب قص هدايا أكريليك: ميداليات، قواعد أكواب، تذكارات، بطاقات أمتعة وقطع مغناطيس. أضف الهوية والشعار في برنامج التصميم."}};
+const labels={w:"العرض",h:"الارتفاع / العمق",t:"سماكة الخامة",r:"نصف قطر الزوايا",d:"قطر الفتحة",edge:"إزاحة مركز الفتحة عن الحافة",insert:"سماكة القطعة المركبة",clearance:"سماحية الملاءمة (+ أوسع / − أضيق)",slot:"طول الشق",cols:"عدد الأعمدة",rows:"عدد الصفوف",strapW:"عرض فتحة الشريط",strapH:"ارتفاع فتحة الشريط",baseW:"عرض القاعدة",baseH:"عمق القاعدة",baseT:"سماكة القاعدة",baseR:"نصف قطر زوايا القاعدة"};
+const options={holes:[["four","أربع زوايا"],["sides","يمين ويسار"],["top","فتحتان علويتان"],["none","بدون فتحات"]],shape:[["rect","مستطيل"],["circle","دائرة (العرض = القطر)"]]};
+const round=n=>Number(n.toFixed(4));
+function generate(mode,p){
+ if(!Object.hasOwn(modes,mode))throw Error("نوع المولد غير معروف.");
+ const errors=[];
+ for(const key of Object.keys(modes[mode].defaults)){
+  if(options[key]){if(!options[key].some(o=>o[0]===p[key]))errors.push("اختيار غير صالح.");continue;}
+  if(!Number.isFinite(p[key]))errors.push((labels[key]||key)+": أدخل رقمًا صالحًا.");
+ }
+ if(errors.length)throw Error(errors.join("\n"));
+
+ if(mode==="stand"){
+  if(p.clearance<0)throw Error("استخدم سماحية صفر أو موجبة للستاند؛ عرض الشق يجب أن يستوعب الواجهة.");
+  if(p.h<=p.baseT)throw Error("ارتفاع الواجهة يجب أن يزيد على سماكة القاعدة.");
+  const face=generate("panel",{w:p.w,h:p.h,t:p.t,r:0,d:4,edge:10,holes:"none"});
+  const base=generate("base",{w:p.baseW,h:p.baseH,t:p.baseT,r:p.baseR,insert:p.t,clearance:p.clearance,slot:p.w+p.clearance});
+  const w=Math.max(face.w,base.w),h=face.h+10+base.h;
+  if(h>3000)throw Error("مجموع ارتفاع القطعتين يتجاوز 3000 مم.");
+  const body='<g transform="translate('+round((w-face.w)/2)+' 0)">'+face.body.replace('id="CUT"','id="FACE"')+'</g><g transform="translate('+round((w-base.w)/2)+' '+(face.h+10)+')">'+base.body.replace('id="CUT"','id="BASE"')+'</g>';
+  const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'mm" height="'+h+'mm" viewBox="0 0 '+w+' '+h+'"><title>Acrylic stand: face '+p.t+' mm, base '+p.baseT+' mm</title>'+body+'</svg>';
+  return {w,h,t:p.t,body,svg,area:face.area+base.area,length:face.length+base.length,holes:0,slotWidth:base.slotWidth,parts:2,baseT:p.baseT,faceSVG:face.svg,baseSVG:base.svg};
+ }
+ const w=p.w,h=p.shape==="circle"?w:p.h,t=p.t;
+ if(w<5||h<5||w>3000||h>3000)errors.push("الأبعاد يجب أن تكون بين 5 و3000 مم.");
+ if(t<=0||t>100)errors.push("السماكة يجب أن تكون أكبر من صفر وحتى 100 مم.");
+ const circle=p.shape==="circle",r=circle?0:p.r;
+ if(r<0||r>Math.min(w,h)/2)errors.push("نصف قطر الزوايا يتجاوز نصف البعد الأصغر.");
+ if(errors.length)throw Error(errors.join("\n"));
+ const cuts=[],holes=[];
+ let area=circle?Math.PI*w*w/4:w*h-(4-Math.PI)*r*r;
+ let length=circle?Math.PI*w:2*(w+h)-8*r+2*Math.PI*r;
+ const rect=(x,y,a,b,radius)=>'<rect x="'+round(x)+'" y="'+round(y)+'" width="'+round(a)+'" height="'+round(b)+'" rx="'+round(radius)+'"/>';
+ cuts.push(circle?'<circle cx="'+w/2+'" cy="'+h/2+'" r="'+w/2+'"/>':rect(0,0,w,h,r));
+ function inside(x,y,rad){
+  if(circle)return Math.hypot(x-w/2,y-h/2)+rad<w/2-0.01;
+  if(x-rad<=0.01||y-rad<=0.01||x+rad>=w-0.01||y+rad>=h-0.01)return false;
+  const dx=Math.max(r-x,0,x-(w-r)),dy=Math.max(r-y,0,y-(h-r));
+  return !(dx>0&&dy>0&&Math.hypot(dx,dy)+rad>=r-0.01);
+ }
+ function addHole(x,y){
+  const rad=p.d/2;
+  if(p.d<=0||p.d>1000||!inside(x,y,rad))throw Error("الفتحة تلامس حافة القطعة أو تقع خارجها. قلّل القطر أو عدّل الإزاحة والزوايا.");
+  if(holes.some(a=>Math.hypot(a.x-x,a.y-y)<=p.d+0.01))throw Error("الفتحات متداخلة أو متلامسة. قلّل العدد أو القطر أو زِد مساحة القطعة.");
+  holes.push({x,y});cuts.push('<circle cx="'+round(x)+'" cy="'+round(y)+'" r="'+round(rad)+'"/>');
+  area-=Math.PI*rad*rad;length+=Math.PI*p.d;
+ }
+ if(mode==="panel"||mode==="door"){
+  if(p.holes==="four")[[p.edge,p.edge],[w-p.edge,p.edge],[p.edge,h-p.edge],[w-p.edge,h-p.edge]].forEach(a=>addHole(...a));
+  if(p.holes==="sides")[[p.edge,h/2],[w-p.edge,h/2]].forEach(a=>addHole(...a));
+  if(p.holes==="top")[[p.edge,p.edge],[w-p.edge,p.edge]].forEach(a=>addHole(...a));
+ }
+ if(mode==="tag")addHole(w/2,p.edge);
+
+ if(mode==="medal"||mode==="luggage"){
+  const sw=p.strapW,sh=p.strapH,x=(w-sw)/2,y=p.edge-sh/2;
+  if(sw<=0||sh<=0||sw<sh||![[x,y],[x+sw,y],[x,y+sh],[x+sw,y+sh]].every(a=>inside(...a,0)))throw Error("فتحة الشريط لا تتسع داخل القطعة. عدّل عرضها وارتفاعها وإزاحتها.");
+  cuts.push(rect(x,y,sw,sh,sh/2));holes.push({x:w/2,y:p.edge});
+  area-=sw*sh-(4-Math.PI)*(sh/2)**2;length+=2*(sw-sh)+Math.PI*sh;
+ }
+ if(mode==="grid"){
+  if(!Number.isInteger(p.cols)||!Number.isInteger(p.rows)||p.cols<1||p.rows<1||p.cols>40||p.rows>40)throw Error("الصفوف والأعمدة أعداد صحيحة من 1 إلى 40.");
+  if(p.edge<=0||p.edge>=Math.min(w,h)/2)throw Error("هامش الشبكة يجب أن يكون أكبر من صفر وأقل من نصف البعد الأصغر.");
+  for(let y=0;y<p.rows;y++)for(let x=0;x<p.cols;x++)addHole(p.cols===1?w/2:p.edge+x*(w-2*p.edge)/(p.cols-1),p.rows===1?h/2:p.edge+y*(h-2*p.edge)/(p.rows-1));
+ }
+ let slotWidth=0;
+ if(mode==="base"){
+  slotWidth=p.insert+p.clearance;
+  if(p.insert<=0||p.insert>100||Math.abs(p.clearance)>5||slotWidth<=0||p.slot<=0)throw Error("راجع سماكة القطعة وسماحية الملاءمة وطول الشق (السماحية من −5 إلى +5 مم).");
+  const x=(w-p.slot)/2,y=(h-slotWidth)/2;
+  if(![[x,y],[x+p.slot,y],[x,y+slotWidth],[x+p.slot,y+slotWidth]].every(a=>inside(...a,0)))throw Error("الشق لا يتسع داخل القاعدة. كبّر القاعدة أو قلّل طول الشق وعرضه.");
+  cuts.push(rect(x,y,p.slot,slotWidth,0));area-=p.slot*slotWidth;length+=2*(p.slot+slotWidth);
+ }
+ const body='<g id="CUT" fill="none" stroke="#000000" stroke-width="0.1">'+cuts.join("")+'</g>';
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+w+'mm" height="'+h+'mm" viewBox="0 0 '+w+' '+h+'"><title>Acrylic '+mode+' — '+t+' mm material</title>'+body+'</svg>';
+ return {w,h,t,body,svg,area,length,holes:holes.length,slotWidth};
+}
+window.AcrylicTools={generate,modes,categories};
+const LIBRARY=[
+ {group:"دروع وألواح تكريم",title:"درع 150 × 100 مم",note:"لوح مكتبي، سماكة 10 مم",mode:"panel",values:{w:150,h:100,t:10,r:4,holes:"none"}},
+ {group:"دروع وألواح تكريم",title:"درع 200 × 150 مم",note:"لوح مكتبي، سماكة 10 مم",mode:"panel",values:{w:200,h:150,t:10,r:4,holes:"none"}},
+ {group:"دروع وألواح تكريم",title:"درع 250 × 200 مم",note:"لوح تكريم كبير، سماكة 10 مم",mode:"panel",values:{w:250,h:200,t:10,r:4,holes:"none"}},
+ {group:"استاندات",title:"ستاند مكتبي 100 × 150 مم",note:"واجهة 3 مم وقاعدة 10 مم",mode:"stand",values:{w:100,h:150,t:3,baseW:150,baseH:60,baseT:10,baseR:6,clearance:0.2}},
+ {group:"استاندات",title:"ستاند مكتبي 80 × 140 مم",note:"واجهة 2 مم وقاعدة 6 مم",mode:"stand",values:{w:80,h:140,t:2,baseW:140,baseH:60,baseT:6,baseR:6,clearance:0.2}},
+ {group:"استاندات",title:"قاعدة بشق 180 × 70 مم",note:"حامل لوحة سماكة 3 مم",mode:"base",values:{w:180,h:70,t:8,r:8,insert:3,clearance:0.2,slot:100}},
+ {group:"هدايا دعائية",title:"ميدالية مفاتيح دائرية 50 مم",note:"سماكة 3 مم، فتحة تعليق",mode:"tag",values:{w:50,h:50,t:3,r:0,d:4,edge:6,shape:"circle"}},
+ {group:"هدايا دعائية",title:"ميدالية مفاتيح مستطيلة 43 × 65 مم",note:"سماكة 3 مم، فتحة تعليق",mode:"tag",values:{w:43,h:65,t:3,r:6,d:4,edge:6,shape:"rect"}},
+ {group:"هدايا دعائية",title:"قاعدة كوب دائرية 95 مم",note:"سماكة 3 مم",mode:"coaster",values:{w:95,h:95,t:3,r:10,shape:"circle"}},
+ {group:"هدايا دعائية",title:"ميدالية تذكارية 70 × 80 مم",note:"فتحة شريط",mode:"medal",values:{}},
+ {group:"هدايا دعائية",title:"بطاقة أمتعة 55 × 90 مم",note:"فتحة رباط",mode:"luggage",values:{}},
+ {group:"هدايا دعائية",title:"قطعة مغناطيس 70 × 50 مم",note:"المغناطيس يُلصق خلفها",mode:"magnet",values:{}}
+];
+window.AcrylicTools.library=LIBRARY;
+let mode="panel",values=Object.fromEntries(Object.entries(modes).map(([k,v])=>[k,{...v.defaults}])),current=null;
+let category=modes[mode].category;
+const lastMode={signs:"panel",stands:"base",gifts:"tag"};
+function shelves(){
+ category=modes[mode].category;lastMode[category]=mode;
+ $("ag-categories").innerHTML=Object.entries(categories).map(([k,v])=>'<button class="btn ag-category" type="button" data-category="'+k+'" aria-pressed="'+(k===category)+'">'+v.name+' <small>('+Object.values(modes).filter(m=>m.category===k).length+')</small></button>').join("");
+ $("ag-category-description").textContent=categories[category].description;
+ $("ag-tools").innerHTML=Object.entries(modes).filter(([,v])=>v.category===category).map(([k,v])=>'<button class="ag-tool" type="button" data-mode="'+k+'" aria-pressed="'+(k===mode)+'"><b>'+v.name+'</b><small>'+v.sub+'</small></button>').join("");
+}
+$("ag-categories").addEventListener("click",e=>{const b=e.target.closest("[data-category]");if(b){mode=lastMode[b.dataset.category];$("ag-status").textContent="";fields();}});
+function fields(){
+ shelves();
+ const p=values[mode];
+ $("ag-form-title").textContent=modes[mode].name;$("ag-description").textContent=modes[mode].description;$("ag-preview-title").textContent=modes[mode].name;
+ document.querySelectorAll("#ag-tools button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.mode===mode)));
+ $("ag-fields").innerHTML=Object.keys(modes[mode].defaults).map(k=>{
+  if(options[k])return '<div class="field ag-wide"><label for="ag-'+k+'">'+(k==="holes"?"توزيع الفتحات":"شكل القطعة")+'</label><select class="sel" id="ag-'+k+'" data-key="'+k+'">'+options[k].map(([v,l])=>'<option value="'+v+'"'+(p[k]===v?' selected':'')+'>'+l+'</option>').join("")+'</select></div>';
+  return '<div class="field'+(k==="edge"||k==="clearance"?' ag-wide':'')+'"><label for="ag-'+k+'">'+labels[k]+'</label><div class="inwrap"><input type="number" step="'+(["cols","rows"].includes(k)?"1":"0.1")+'" id="ag-'+k+'" data-key="'+k+'" value="'+p[k]+'"><span>'+(["cols","rows"].includes(k)?"عدد":"mm")+'</span></div></div>';
+ }).join("");
+ update();
+}
+function update(){
+ current=null;["ag-face-download","ag-base-download"].forEach(id=>{$(id).hidden=mode!=="stand";$(id).disabled=true;});$("ag-download").disabled=true;$("ag-save").disabled=true;
+ const p=values[mode];
+ ["h","r"].forEach(k=>{const el=$("ag-"+k);if(el)el.closest(".field").hidden=p.shape==="circle";});
+ ["d","edge"].forEach(k=>{const el=$("ag-"+k);if(el)el.closest(".field").hidden=(mode==="panel"||mode==="door")&&p.holes==="none";});
+ try{
+  current=generate(mode,p);const a=current,pad=Math.max(a.w,a.h)*0.1,sz=Math.max(a.w,a.h)*0.025;
+  const guides=$("ag-guides").checked?'<g fill="#2563eb" font-size="'+sz+'" font-family="Arial" text-anchor="middle"><text x="'+a.w/2+'" y="'+(-pad*0.35)+'">'+a.w+' mm</text><text transform="translate('+(-pad*.35)+' '+a.h/2+') rotate(-90)">'+a.h+' mm</text></g>':"";
+  $("ag-stage").innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="'+(-pad)+' '+(-pad)+' '+(a.w+2*pad)+' '+(a.h+2*pad)+'" aria-hidden="true">'+a.body.replaceAll('stroke-width="0.1"','stroke-width="'+Math.max(a.w,a.h)/700+'"')+guides+'</svg>';
+  $("ag-stats").innerHTML=[[a.parts?"مساحة القطعتين":"المقاس",a.w+" × "+a.h,"mm"],["السماكة",a.baseT?a.t+" / "+a.baseT:a.t,a.baseT?"mm · الواجهة / القاعدة":"mm"],["الفتحات",a.holes+(a.slotWidth?1:0),"فتحة / شق"],[a.slotWidth?"عرض الشق":"طول مسار القص",a.slotWidth?round(a.slotWidth):round(a.length/1000),a.slotWidth?"mm":"m"]].map(([l,v,u])=>'<div class="kpi"><span class="l">'+l+'</span><span class="v" style="font-size:22px">'+v+'</span><span class="s">'+u+'</span></div>').join("");
+  $("ag-errors").hidden=true;["ag-face-download","ag-base-download"].forEach(id=>{$(id).disabled=!a.parts;});$("ag-download").disabled=false;$("ag-save").disabled=false;
+ }catch(e){$("ag-errors").textContent=e.message;$("ag-errors").hidden=false;$("ag-stage").textContent="عدّل المقاسات لعرض قطعة صالحة للقص.";$("ag-stats").replaceChildren();}
+}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type}));const a=document.createElement("a");a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+$("ag-tools").addEventListener("click",e=>{const b=e.target.closest("[data-mode]");if(b){mode=b.dataset.mode;$("ag-status").textContent="";fields();}});
+$("ag-fields").addEventListener("input",e=>{const k=e.target.dataset.key;if(!k)return;values[mode][k]=options[k]?e.target.value:(e.target.value.trim()===""?NaN:Number(e.target.value));update();});
+$("ag-guides").addEventListener("change",update);
+$("ag-reset").addEventListener("click",()=>{values[mode]={...modes[mode].defaults};fields();});
+$("ag-download").addEventListener("click",()=>{if(current)download("acrylic-"+mode+"-"+current.w+"x"+current.h+"mm-"+current.t+"mm.svg",current.svg,"image/svg+xml");});
+$("ag-face-download").addEventListener("click",()=>{if(current?.faceSVG)download("stand-face-"+current.t+"mm.svg",current.faceSVG,"image/svg+xml");});
+$("ag-base-download").addEventListener("click",()=>{if(current?.baseSVG)download("stand-base-"+current.baseT+"mm.svg",current.baseSVG,"image/svg+xml");});
+$("ag-save").addEventListener("click",()=>{if(current)download("acrylic-"+mode+".json",JSON.stringify({version:1,mode,parameters:values[mode]},null,2),"application/json");});
+$("ag-load").addEventListener("change",async e=>{
+ try{const file=e.target.files[0];if(!file)return;if(file.size>20000)throw Error("ملف الإعدادات أكبر من الحجم المسموح.");
+ const data=JSON.parse(await file.text());if(data.version!==1||!Object.hasOwn(modes,data.mode)||!data.parameters)throw Error("ملف إعدادات غير صالح.");
+ const p={};for(const k of Object.keys(modes[data.mode].defaults))p[k]=data.parameters[k];generate(data.mode,p);
+ mode=data.mode;values[mode]=p;fields();$("ag-status").textContent="تم استيراد الإعدادات.";
+ }catch(err){$("ag-status").textContent="تعذر الاستيراد: "+err.message;}finally{e.target.value="";}
+});
+fields();
+ const grid=document.getElementById("ag-library");
+ const groups=[...new Set(LIBRARY.map(i=>i.group))];
+ const card=(i,idx)=>{
+  const m=modes[i.mode], p={...m.defaults,...i.values};
+  const svg=generate(i.mode,p).svg;
+  return '<button class="ag-lib-item" type="button" data-lib="'+idx+'"><span class="ag-lib-thumb">'+svg+'</span><b>'+i.title+'</b><small>'+i.note+'</small></button>';
+ };
+ grid.innerHTML=groups.map(g=>'<section class="ag-lib-section"><h4 class="ag-lib-group">'+g+' <small>('+LIBRARY.filter(i=>i.group===g).length+')</small></h4><div class="ag-lib-grid">'+LIBRARY.map((i,idx)=>i.group===g?card(i,idx):"").join("")+'</div></section>').join("");
+ grid.addEventListener("click",e=>{
+  const b=e.target.closest("[data-lib]"); if(!b) return;
+  const item=LIBRARY[+b.dataset.lib];
+  values[item.mode]={...modes[item.mode].defaults,...item.values};
+  mode=item.mode; document.getElementById("ag-status").textContent="تم تحميل: "+item.title;
+  fields(); document.getElementById("ag-stage").scrollIntoView({behavior:"smooth",block:"center"});
+ });
+})();
+
+if(window.asbarixShowTab&&location.hash==="#acrylic-tools")window.asbarixShowTab("acrylic-tools");
+</script>

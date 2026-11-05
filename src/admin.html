@@ -1,80 +1,10 @@
-<!doctype html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="robots" content="noindex,nofollow">
-<title>Asbarix — المستخدمون</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
-<style>
-:root{--bg:#F1F3F6;--surface:#fff;--sunk:#E8EBF0;--ink:#15233F;--muted:#5A6479;--line:#D7DCE4;--accent:#F29A1E;--err:#C92A2A;
-  --fd:"Alexandria","IBM Plex Sans Arabic",Tahoma,sans-serif;--fb:"IBM Plex Sans Arabic",Tahoma,sans-serif}
-@media (prefers-color-scheme:dark){:root{--bg:#0E1524;--surface:#162036;--sunk:#111A2C;--ink:#E7ECF5;--muted:#9BA6BC;--line:#2A3654;--err:#FF8A8A;color-scheme:dark}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--fb);font-size:15px}
-.wrap{max-width:1100px;margin:0 auto;padding:28px max(16px,env(safe-area-inset-right,0px)) 40px max(16px,env(safe-area-inset-left,0px))}
-h1{font-family:var(--fd);font-size:28px;margin:0 0 4px}
-.muted{color:var(--muted)}
-.n{direction:ltr;unicode-bidi:isolate;font-variant-numeric:tabular-nums}
-form{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
-input{flex:1 1 240px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;font:inherit;background:var(--surface);color:var(--ink);direction:ltr}
-button{border:0;border-radius:10px;padding:10px 16px;font:inherit;font-weight:700;background:var(--accent);color:#15233F;cursor:pointer}
-button.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
-.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:8px 0 18px}
-.kpi{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
-.kpi.hero{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.kpi b{display:block;font-family:var(--fd);font-size:34px;line-height:1.2}
-.kpi span{font-size:13px;opacity:.8}
-.tw{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
-table{border-collapse:collapse;width:100%;min-width:620px}
-th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:start;white-space:nowrap}
-th{background:var(--sunk);color:var(--muted);font-size:13px}
-tr:last-child td{border-bottom:0}
-td.e{direction:ltr;text-align:right}
-#msg{color:var(--err);font-weight:600;min-height:20px}
-.bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <h1>المستخدمون</h1>
-  <p class="muted">كل من دخل «Asbarix» بالإيميل.</p>
-  <form id="f"><input id="k" type="password" placeholder="مفتاح الإدارة" autocomplete="current-password" aria-label="مفتاح الإدارة"><button type="submit">عرض</button></form>
-  <p id="msg" role="alert"></p>
-  <div id="out" hidden>
-    <div class="kpis" id="kpis"></div>
-    <div class="bar"><b>القائمة</b><span><button class="ghost" id="refresh" type="button">تحديث</button> <button id="csv" type="button">تنزيل CSV</button></span></div>
-    <div class="tw"><table><thead><tr><th>البريد</th><th>أول دخول</th><th>آخر دخول</th><th>عدد الزيارات</th></tr></thead><tbody id="rows"></tbody></table></div>
-  </div>
-</div>
-<script>
-(function(){
-  var data=null, $=function(id){return document.getElementById(id)};
-  var fmt=function(iso){ if(!iso) return "—"; var d=new Date(iso); return d.toLocaleString("ar-SA-u-nu-latn",{dateStyle:"medium",timeStyle:"short"}); };
-  var esc=function(s){return String(s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})};
-  function load(){
-    var key=$("k").value.trim(); if(!key){ $("msg").textContent="اكتب مفتاح الإدارة."; return; }
-    $("msg").textContent="";
-    fetch("/api/stats",{headers:{"x-admin-key":key}}).then(function(r){return r.json().then(function(j){return {s:r.status,j:j}})}).then(function(x){
-      if(x.s===401){ $("msg").textContent="المفتاح غير صحيح."; return; }
-      if(!x.j.ok){ $("msg").textContent= x.j.error==="storage_not_configured"?"قاعدة البيانات غير مربوطة بالمشروع بعد.":x.j.error==="admin_key_not_configured"?"لم يُضبط ADMIN_KEY في إعدادات Vercel.":"تعذّر جلب البيانات."; return; }
-      try{ sessionStorage.setItem("montage_admin",key); }catch(e){}
-      data=x.j; $("out").hidden=false;
-      var k=function(l,v,h){return '<div class="kpi'+(h?' hero':'')+'"><b class="n">'+v.toLocaleString("en-US")+'</b><span>'+l+'</span></div>'};
-      $("kpis").innerHTML=k("إجمالي المستخدمين",data.total,1)+k("جدد اليوم",data.newToday)+k("جدد آخر 7 أيام",data.new7d)+k("نشطون آخر 7 أيام",data.active7d)+k("إجمالي الزيارات",data.visits);
-      $("rows").innerHTML=data.users.map(function(u){return '<tr><td class="e">'+esc(u.email)+'</td><td>'+fmt(u.first)+'</td><td>'+fmt(u.last)+'</td><td class="n">'+u.visits+'</td></tr>'}).join("")||'<tr><td colspan="4" class="muted">لا يوجد مستخدمون بعد.</td></tr>';
-    }).catch(function(){ $("msg").textContent="تعذّر الاتصال بالخادم."; });
-  }
-  $("f").addEventListener("submit",function(e){e.preventDefault();load();});
-  $("refresh").addEventListener("click",load);
-  $("csv").addEventListener("click",function(){
-    if(!data) return;
-    var lines=[["email","first_seen","last_seen","visits"]].concat(data.users.map(function(u){return [u.email,u.first||"",u.last||"",u.visits]}));
-    var csv="﻿"+lines.map(function(r){return r.map(function(c){return '"'+String(c).replace(/"/g,'""')+'"'}).join(",")}).join("\n");
-    var a=document.createElement("a"); a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"})); a.download="montage-users.csv"; document.body.appendChild(a); a.click(); a.remove();
-  });
-  try{ var s=sessionStorage.getItem("montage_admin"); if(s){ $("k").value=s; load(); } }catch(e){}
-})();
-</script>
-</body>
-</html>
+<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>Asbarix — إدارة مساحة العمل</title><link rel="stylesheet" href="/assets/portal.css"><style>.admin-layout>main{min-width:0}.sp-group th{background:#7c1e33;color:#fff;position:static;font-size:15px}.sp-num{direction:ltr;text-align:right;font-family:Arial,sans-serif;white-space:nowrap}select.sp-suggest{margin-top:6px;min-height:36px;padding:6px 8px;font-size:12px;max-width:240px}input.sp-filled{border-color:#26704b;background:#eef7f1}</style></head><body>
+<div class="admin-shell"><header class="admin-head"><div class="bar"><img class="logo" src="/assets/asbarix.svg" alt="Asbarix"><div><span class="eyebrow">CONTROL ROOM</span><h1>إدارة مساحة العمل</h1></div></div><div class="bar"><a href="/suppliers" class="ghost">الموردون والمقارنة ↗</a><a href="/login" class="ghost">الفريق والإدارة</a><a href="/" class="ghost">مساحة المصممين ↗</a><button class="ghost" id="logout">تسجيل الخروج</button></div></header>
+<p class="message" id="global-message" role="status">جارٍ التحقق من جلسة الإدارة…</p><div id="admin-content" class="admin-layout" hidden><nav class="admin-nav" role="tablist" aria-label="أقسام الإدارة"><button role="tab" id="tab-overview" data-panel="overview" aria-selected="true" aria-controls="overview">◈ نظرة عامة</button><button role="tab" id="tab-materials" data-panel="materials" aria-selected="false" aria-controls="materials">▧ الخامات والأسعار</button><button role="tab" id="tab-supplier" data-panel="supplier" aria-selected="false" aria-controls="supplier">▤ أسعار الموردين</button><button role="tab" id="tab-policy" data-panel="policy" aria-selected="false" aria-controls="policy">↗ الربح والصلاحيات</button><button role="tab" id="tab-users" data-panel="users" aria-selected="false" aria-controls="users">♧ الفريق والزيارات</button><button role="tab" id="tab-security" data-panel="security" aria-selected="false" aria-controls="security">⌘ الدخول والأمان</button><small>الإعدادات الرسمية تُعدّل هنا فقط.<br>المصمم يعمل ضمن الحدود التي تعتمدها.</small></nav><main>
+<section id="overview" role="tabpanel" aria-labelledby="tab-overview"><div class="section-card"><span class="eyebrow">A CLEARER VIEW</span><h2>كل التفاصيل، تحت عينك.</h2><p class="muted">اعتمد تكلفة الخامات وحدود الربح، ثم امنح المصمم مساحة يتحرك فيها بثقة.</p><div class="kpis" id="overview-kpis"></div><p class="notice">نسبة الربح = (سعر البيع − التكلفة) ÷ سعر البيع. مثال: تكلفة 80 ريال وهامش 20% تعني سعر بيع 100 ريال. الحدود الأولية 20%–70% قابلة للتعديل، والتكاليف الفارغة تمنع اعتماد العرض.</p><a class="btn" href="/#acrylic">تجربة تسعير المصمم ↗</a></div></section>
+<section id="materials" role="tabpanel" aria-labelledby="tab-materials" hidden><div class="section-card"><span class="eyebrow">THE OFFICIAL PRICE BOOK</span><h2>الخامات والأسعار الرسمية</h2><p class="hint">تكلفة الوحدة للإدارة فقط. الأكريليك بالسنتيمتر المربع (سم²)، وخدمات التجميع بالقطعة. اترك التكلفة فارغة إذا لم تُراجع بعد. لا نعتمد عرضًا لخامة بلا تكلفة.</p><div class="field"><label for="material-filter">بحث في الخامات</label><input id="material-filter" type="search" placeholder="اسم الخامة أو السماكة"></div><div class="table-wrap"><table><thead><tr><th>الخامة</th><th>الوحدة</th><th>تكلفة الوحدة</th><th>سعر الدعاية</th><th>سعر الأفراد</th><th>المصمم يعدّل السعر والربح</th></tr></thead><tbody id="material-rows"></tbody></table></div><div class="bar savebar"><p class="message" id="materials-message" role="status"></p><button class="primary" id="save-materials">اعتماد الأسعار والصلاحيات</button></div></div></section>
+<section id="supplier" role="tabpanel" aria-labelledby="tab-supplier" hidden><div class="section-card"><span class="eyebrow">SUPPLIER PRICE LIST</span><h2>أسعار الموردين شاملة الضريبة</h2><p class="hint">قائمة كريتيف الأصلية. أسعار الموردين متاحة للفريق في صفحة الموردين والمقارنة. كل سعر يظهر قبل الضريبة، ثم ضريبة القيمة المضافة، ثم السعر النهائي. تكلفة السنتيمتر المربع للأكريليك محسوبة من سعر اللوح شامل الضريبة على لوح <span id="sp-sheet"></span> سم.</p><div class="kpis" id="sp-kpis"></div><div class="form-grid"><div class="field"><label for="sp-search">بحث</label><input id="sp-search" type="search" placeholder="الصنف أو السماكة أو العرض"></div><div class="field"><label for="sp-cat">التصنيف</label><select id="sp-cat"></select></div></div><div class="bar"><span class="badge" id="sp-count"></span><button class="ghost" id="sp-export" type="button">تنزيل CSV شامل الضريبة</button></div><p class="message" id="sp-message" role="status">جارٍ تحميل القائمة…</p><div class="table-wrap"><table><thead><tr><th>الصنف</th><th>المواصفات</th><th>قبل الضريبة (ر.س)</th><th>الضريبة 15%</th><th>شامل الضريبة (ر.س)</th><th>تكلفة سم² شامل الضريبة</th></tr></thead><tbody id="sp-rows"></tbody></table></div></div></section>
+<section id="policy" role="tabpanel" aria-labelledby="tab-policy" hidden><div class="section-card"><span class="eyebrow">ROOM TO CREATE. LIMITS TO PROTECT.</span><h2>الربح والصلاحيات</h2><p class="hint">هامش من سعر البيع. المصمم لا يستطيع اعتماد سعر خارج هذه الحدود، حتى عند تعديل الطلب من خارج الواجهة.</p><form id="policy-form"><div class="form-grid"><div class="field"><label for="min-margin">أقل هامش ربح %</label><input id="min-margin" type="number" min="0" max="94" step="0.1" required></div><div class="field"><label for="default-margin">هامش المصمم الافتراضي %</label><input id="default-margin" type="number" min="0" max="94" step="0.1" required></div><div class="field"><label for="max-margin">أعلى هامش ربح %</label><input id="max-margin" type="number" min="0" max="94" step="0.1" required></div></div><label class="checkline"><input id="fun-messages" type="checkbox">تنبيهات خفيفة وفكاهية عند تجاوز حدود التسعير</label><p class="notice">الأسعار المقفلة تعتمدها الإدارة. لتفعيل حرية التسعير لخامة محددة، فعّل خيار «المصمم يعدّل» من تبويب الخامات.</p><p class="message" id="policy-message" role="status"></p><button class="primary">حفظ سياسة الربح</button></form></div></section>
+<section id="users" role="tabpanel" aria-labelledby="tab-users" hidden><div class="section-card"><h2>الفريق والزيارات</h2><p class="hint">هذه سجلات البريد المسجّلة سابقًا. رمز المصممين مشترك للفريق؛ لا يمثل حسابًا مستقلًا لكل مصمم.</p><p class="message" id="users-message" role="status"></p><div class="kpis" id="users-kpis"></div><button class="ghost" id="export-users">تنزيل CSV</button><div class="table-wrap"><table><thead><tr><th>البريد</th><th>أول دخول</th><th>آخر دخول</th><th>الزيارات</th></tr></thead><tbody id="user-rows"></tbody></table></div></div></section>
+<section id="security" role="tabpanel" aria-labelledby="tab-security" hidden><div class="section-card"><span class="eyebrow">ACCESS, IN YOUR HANDS</span><h2>كلمات المرور</h2><p class="hint">تغيير رمز قسم يُبطل جلساته القديمة. عند تغيير كلمة مرور الإدارة ستبقى جلستك الحالية نشطة بجلسة جديدة.</p><form id="password-form"><div class="field"><label for="password-role">القسم</label><select id="password-role"><option value="team">المصممون</option><option value="admin">الإدارة</option></select></div><div class="field"><label for="current-password">كلمة مرور الإدارة الحالية</label><div class="password-wrap"><input id="current-password" type="password" autocomplete="current-password" required maxlength="128"><button type="button" data-reveal="current-password">إظهار</button></div></div><div class="form-grid"><div class="field"><label for="new-password">كلمة المرور الجديدة</label><div class="password-wrap"><input id="new-password" type="password" autocomplete="new-password" required minlength="10" maxlength="128"><button type="button" data-reveal="new-password">إظهار</button></div></div><div class="field"><label for="confirm-password">تأكيد كلمة المرور</label><div class="password-wrap"><input id="confirm-password" type="password" autocomplete="new-password" required minlength="10" maxlength="128"><button type="button" data-reveal="confirm-password">إظهار</button></div></div></div><p class="message" id="password-message" role="status"></p><button class="primary">تغيير كلمة المرور</button></form></div></section>
+</main></div></div><script src="/assets/reveal.js"></script><script src="/assets/admin.js"></script><script src="/assets/admin-supplier.js"></script></body></html>
