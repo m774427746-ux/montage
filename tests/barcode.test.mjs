@@ -1,0 +1,15 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import vm from 'node:vm';
+const code=readFileSync(new URL('../src/assets/barcode.js',import.meta.url),'utf8');
+const window={};
+vm.runInNewContext(code,{window,Blob:class{},URL:{}});
+const {encode}=window.MontageBarcode;
+const svg=encode('GFT000016');
+assert(svg.includes('GFT000016'));
+assert(svg.includes('<svg '));
+assert(svg.includes('</svg>'));
+assert((svg.match(/<rect x="/g)||[]).length>20);
+assert.throws(()=>encode('bad lowercase'));
+assert.throws(()=>encode('GFT!000016'));
+console.log('Gift-only Code39 barcode SVG checks passed');
