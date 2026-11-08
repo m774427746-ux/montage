@@ -43,5 +43,10 @@
       "source": "/api/retail-prices",
       "destination": "/api/prices?resource=retail-prices"
     }
-  ]
+  ],
+  "git": {
+    "deploymentEnabled": {
+      "main": false
+    }
+  }
 }
