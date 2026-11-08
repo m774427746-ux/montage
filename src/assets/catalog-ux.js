@@ -10,7 +10,6 @@ const tools=[
  ['sheets','حاسبة الأفرخ والأوراق','كم قطعة في الفرخ؟ كم فرخ نحتاج؟','أفرخ ورق كروت طباعة'],
  ['stickers','حاسبة الاستيكرات','استيكرات بالمتر، استغلال الرولات','استكر ستكر رول متر'],
  ['acrylic','حاسبة الأكريليك','مساحة وتكلفة الأكريليك','الليزر تكلفة سم²'],
- ['offset-products','منتجات الأوفست الجاهزة','دفاتر فواتير وأكواب ورقية وكروت','أوفست'],
  ['offset-products','منتجات الأوفست الجاهزة','دفاتر فواتير، كروت، أكواب ورقية','طباعة جاهزة'],
  ['gifts','الهدايا الدعائية','أكواب وأقلام وأعلام','هدايا شعارات'],
  ['cups','قوالب الأكواب','ملفات SVG لقوالب الأكواب','قوالب كوب مخروط']
@@ -28,6 +27,9 @@ async function load(){
   const res=await fetch('/api/manage?action=products',{credentials:'same-origin'});
   const data=await res.json();if(!res.ok)throw Error(data.message||'تعذّر تحميل المنتجات');
   products=data.items||[];renderCatalog('offset');renderCatalog('gifts');
+  window.MontageCatalog={getProducts:()=>products.slice(),findProduct:(value)=>products.find(p=>p.sku===value||p.barcode===value)};
+  document.dispatchEvent(new CustomEvent('montage:catalog-ready'));
+
   if(searchOpen)renderSearch();
  }catch(e){for(const id of ['offset-products-status','gifts-status'])if($(id))$(id).textContent=e.message;}
 }
@@ -69,6 +71,11 @@ back.addEventListener('click',()=>{
  else{const current=location.hash.slice(1);if(current&&current!=='sheets')jump('sheets');else location.href='/';}
 });
 header.append(back);
+const scanLauncher=document.createElement('button');
+scanLauncher.type='button';scanLauncher.id='montage-scan-launcher';scanLauncher.className='global-back';scanLauncher.innerHTML='▥ مسح باركود';
+scanLauncher.setAttribute('aria-label','مسح باركود منتج أو البحث برقم المنتج');
+scanLauncher.addEventListener('click',()=>window.MontageScanner?.open());
+header.append(scanLauncher);
 const searchButton=document.createElement('button');
 searchButton.type='button';searchButton.id='global-search-button';searchButton.className='global-search-button';
 searchButton.setAttribute('aria-haspopup','dialog');
