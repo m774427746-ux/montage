@@ -84,12 +84,14 @@ export async function productsHandler(req,res){
     suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>user.role==='admin'?({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}):({supplierName:names.get(o.supplierId)||o.supplierId}))
    }))});
   }
-  if(user.role!=='admin')return res.status(403).json({message:'إضافة المنتجات والتسعير للإدارة فقط.'});
+  if(user.role!=='admin'&&req.method!=='POST')return res.status(403).json({message:'تعديل المنتجات والأسعار للإدارة فقط.'});
   if(!['POST','PUT'].includes(req.method))return res.status(405).json({message:'الطريقة غير مدعومة.'});
   const body=parseBody(req),items=await productsData(),old=body.id?items.find(x=>x.id===body.id):null;
   if(req.method==='PUT'&&!old)return res.status(404).json({message:'المنتج غير موجود.'});
   if(items.length>=2000&&req.method==='POST')return res.status(400).json({message:'الحد الأعلى 2000 منتج.'});
-  const item=validate(body,old);
+  if(user.role!=='admin'&&(old||body.id||body.price!==null||body.supplierOfferIds?.length||body.active!==true))
+   return res.status(403).json({message:'يمكن للمصمم إنشاء منتجات جديدة غير مسعّرة فقط، دون تعديل الأسعار أو الموردين.'});
+  const item=validate(user.role==='admin'?body:{...body,price:null,notes:String(body.notes||'').slice(0,500),active:true,supplierOfferIds:[]},old);
   const ids=new Set((await supplierCatalog()).offers.map(x=>x.id));
   if(item.supplierOfferIds.some(id=>!ids.has(id)))return res.status(400).json({message:'أحد عروض الموردين لم يعد موجودًا.'});
   if(!old){
