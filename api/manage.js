@@ -1,3 +1,4 @@
+import {ubcHandler} from '../server/unassigned-barcodes.js';
 import {productsHandler} from '../server/managed-products.js';
 import offsetHandler from '../server/offset.js';
 import excelHandler from '../server/admin-excel.js';
@@ -12,6 +13,7 @@ export default async function handler(req,res){
  if(action==='offset')return offsetHandler(req,res);
  if(action==='excel')return excelHandler(req,res);
  if(action==='products')return productsHandler(req,res);
+ if(action==='ubc')return ubcHandler(req,res);
  try{
   const identity=await session(req);
   if(!identity)return res.status(401).json({ok:false,message:'سجّل الدخول أولًا.'});
