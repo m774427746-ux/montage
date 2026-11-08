@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { estimate,DEFAULT } from '../api/offset.js';
+import { estimate,DEFAULT } from '../server/offset.js';
 const rates={...DEFAULT,paperPerSheet:0.2,pressPer1000:50,platePerColor:45,setup:100,wastePct:5,marginPct:30};
 const valid={sheetW:450,sheetH:320,itemW:210,itemH:148,quantity:1000,margin:10,bleed:3,gap:3,sides:1,colors:4};
 const quote=estimate(valid,rates);
