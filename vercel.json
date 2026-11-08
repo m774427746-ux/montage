@@ -28,6 +28,14 @@
   ],
   "rewrites": [
     {
+      "source": "/api/offset",
+      "destination": "/api/manage?action=offset"
+    },
+    {
+      "source": "/api/admin-excel",
+      "destination": "/api/manage?action=excel"
+    },
+    {
       "source": "/api/product-quote",
       "destination": "/api/prices?resource=product-quote"
     },
