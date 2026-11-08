@@ -6,11 +6,13 @@ on:
       - codex/montage-offset-excel-pricing-20261108
       - codex/montage-product-catalog-search-20261108
       - codex/montage-sequential-sku-gifts-20261108
+      - codex/montage-barcode-scan-product-card-20261108
       - main
   push:
     branches:
       - codex/montage-sequential-sku-gifts-20261108
       - codex/montage-barcode-scan-product-card-20261108
+      - codex/asbarix-barcode-compatibility-hotfix-20261108
   workflow_dispatch:
 permissions:
   contents: read
