@@ -4,5 +4,10 @@
   "private": true,
   "type": "module",
   "description": "مونتاج — أدوات المصمم للمطبعة",
-  "engines": { "node": ">=18" }
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "exceljs": "^4.4.0"
+  }
 }
