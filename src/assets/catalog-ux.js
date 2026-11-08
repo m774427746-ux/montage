@@ -153,42 +153,5 @@ function details(){
   if(header){const elements=[...main.children];for(const node of elements){if(node===firstKpis||node===more)continue;more.append(node);}main.append(more);}
  }
 }
-function stickerByMeter(){
- const qty=$('st-qty'),kpis=$('st-kpis'),side=qty?.closest('.side');if(!qty||!kpis||!side)return;
- const wrap=document.createElement('section');wrap.className='meter-control';
- wrap.innerHTML='<div class="meter-tabs" role="group" aria-label="طريقة حساب الاستيكر"><button type="button" data-unit="pieces" aria-pressed="true">بالعدد</button><button type="button" data-unit="meters" aria-pressed="false">بالمتر الطولي</button></div><label id="meter-amount-label" hidden>عدد الأمتار المطلوبة <select class="sel" id="meter-amount">'+[1,2,3,5,10,15,20,25,50,100].map(n=>'<option value="'+n+'">'+n+' متر</option>').join('')+'</select></label><p id="meter-note" role="status" class="hint"></p><div id="meter-summary" class="meter-summary" aria-live="polite"></div>';
- qty.closest('.field').before(wrap);
- let mode='pieces',meters=1;const note=$('meter-note'),summary=$('meter-summary');
- const latin=s=>String(s||'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/,/g,'').replace(/[^0-9.]/g,'');
- function update(){
-  const first=kpis.querySelector('.kpi'),perMeter=Number(latin(first?.querySelector('.v')?.textContent||''));
-  const valid=Number.isFinite(perMeter)&&perMeter>0;
-  qty.closest('.field').hidden=mode==='meters';$('meter-amount-label').hidden=mode!=='meters';
-  if(!valid){summary.textContent='أدخل مقاسًا صالحًا وعرض الرول أولًا.';return;}
-  const count=Math.floor(perMeter*meters);
-  if(mode==='meters'&&Number(qty.value)!==Math.max(1,count)){
-   // Update only if changed so the existing calculator does not enter a feedback loop.
-   setInput('st-qty',Math.max(1,count));
-  }
-  const rawPrice=$('st-price').value,rate=Number(rawPrice),linear=document.querySelector('#st-pmode [aria-pressed="true"]')?.dataset.v==='lin';
-  const priced=rawPrice!==''&&Number.isFinite(rate)&&rate>=0;
-  let priceInfo='';
-  if(priced&&linear)priceInfo='<span>سعر المتر الطولي: '+money(rate)+' · سعر الحبة تقريبيًا: '+money(rate/perMeter)+'</span>';
-  else if(priced)priceInfo='<span>سعر الإدخال: '+money(rate)+' لكل متر مربع. يعرض حساب التوزيع التكلفة حسب عرض الرول.</span>';
-  summary.innerHTML='<strong>'+num(perMeter)+' حبة في المتر الطولي</strong><span>'+(mode==='meters'?num(meters)+' متر طولي ≈ '+num(count)+' حبة':'اختر بالمتر لحساب أي طول من الرول')+'</span>'+priceInfo;
-  note.textContent=mode==='meters'?'العدد تقريبي وفق توزيع متر كامل؛ راجع طول آخر صف وهوامش القص في المزيد.':'يمكنك التبديل بين الحبات والأمتار في أي وقت.';
- }
- wrap.querySelectorAll('[data-unit]').forEach(btn=>btn.onclick=()=>{
-  mode=btn.dataset.unit;wrap.querySelectorAll('[data-unit]').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));update();
- });
- $('meter-amount').onchange=e=>{meters=Number(e.target.value);update();};
- let scheduled=false;
- const observer=new MutationObserver(()=>{
-  if(scheduled)return;scheduled=true;queueMicrotask(()=>{scheduled=false;update();});
- });
- observer.observe(kpis,{childList:true});
- $('st-price').addEventListener('input',update);
- update();
-}
-presets();details();stickerByMeter();load();
+presets();details();load();
 })();
