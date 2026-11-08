@@ -37,7 +37,7 @@ function showProduct(p){
  message('تم العثور على المنتج.');
 }
 function lookup(value){
- if(!window.MontageCatalog){message('المنتجات لم تكتمل بعد؛ حدّث الصفحة أو سجّل الدخول.');return;}
+ if(!window.MontageCatalog&&!productCache.length){message('المنتجات لم تُحمّل بعد؛ تحقق من تسجيل الدخول أو أعد فتح الماسح.');return;}
  const p=find(value);
  if(!p){$('scan-product-card').hidden=true;current=null;message('لم نجد منتجًا بهذا الرقم أو الباركود. راجع الرقم أو أضفه من الإدارة.');return;}
  showProduct(p);
