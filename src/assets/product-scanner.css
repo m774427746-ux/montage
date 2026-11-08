@@ -1,0 +1,26 @@
+/* Barcode scanner and details modal */
+.montage-scanner{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:16px}
+.montage-scanner[hidden]{display:none}.scan-shade{position:absolute;inset:0;background:#190c16bc;backdrop-filter:blur(9px)}
+.scan-modal-open{overflow:hidden}
+.scan-dialog{position:relative;background:var(--surface,#fff);color:var(--ink,#292129);border:1px solid var(--line,#ddd);width:min(100%,650px);max-height:min(90vh,880px);overflow-y:auto;border-radius:22px;padding:24px;box-shadow:0 28px 90px #150b1380;animation:scan-appear .28s ease-out}
+.scan-dialog header{display:flex;align-items:center;justify-content:space-between;gap:16px}.scan-dialog h2{font-size:clamp(20px,3vw,26px);margin:0}
+.scan-intro{color:var(--muted,#74656e);font-size:14px;line-height:1.8;margin:12px 0 18px}
+.scan-toolbar,.scan-actions,.scan-input-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.scan-primary,.scan-secondary,.scan-close{padding:11px 16px;border-radius:11px;border:1px solid var(--line,#ddd);font:inherit;cursor:pointer;min-height:42px}
+.scan-primary{background:var(--accent,#7c1e33);color:#fff;border-color:transparent;font-weight:700}.scan-secondary,.scan-close{background:var(--surface,#fff);color:var(--ink,#222)}.scan-primary:hover{filter:brightness(1.1)}.scan-secondary:hover,.scan-close:hover{border-color:var(--accent,#7c1e33)}
+#scan-lookup-form{margin:16px 0 0}#scan-lookup-form label{display:block;font-size:14px;font-weight:700;margin-bottom:7px}.scan-input-row input{flex:1;min-width:0;padding:12px 14px;border:1px solid var(--line,#bbb);border-radius:11px;font:inherit;background:var(--surface,#fff);color:var(--ink,#222);min-height:44px}
+.scan-input-row input:focus-visible,.scan-dialog button:focus-visible{outline:3px solid var(--focus,#c5a777);outline-offset:2px}
+.scan-message{font-size:13px;min-height:21px;color:var(--muted,#655);margin:12px 0}
+#scan-video-container{position:relative;margin-top:14px;border-radius:14px;overflow:hidden;max-height:290px;background:#070707}
+#scan-video{display:block;width:100%;max-height:290px;object-fit:cover}
+.scan-video-frame{position:absolute;inset:28% 12%;border:2px solid #e5bb68;border-radius:10px;pointer-events:none;box-shadow:0 0 0 150px #0003}
+.scan-product-card{border:1px solid var(--line,#ddd);background:var(--surface,#fff);border-radius:17px;padding:19px;margin-top:18px}.scan-product-card[hidden]{display:none}
+.scan-card-kicker{color:var(--accent,#7c1e33);font-size:13px;font-weight:700}.scan-product-card h3{font-size:23px;line-height:1.4;margin:8px 0}.scan-spec{color:var(--muted,#74656e);font-size:15px;line-height:1.65}
+.scan-data{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.scan-data>div{display:grid;gap:7px;border:1px solid var(--line,#ddd);background:var(--sunk,#faf8f6);border-radius:12px;padding:12px;min-width:0}
+.scan-data span{font-size:12px;color:var(--muted,#75656b)}.scan-data strong{font-size:16px;overflow-wrap:anywhere}
+.scan-code{padding:12px;border-radius:12px;border:1px dashed var(--line,#ddd);text-align:center;margin:10px 0;background:#fff;color:#222}.scan-code span{font:14px Arial}.scan-code svg{display:block;width:min(100%,350px);height:auto;margin:10px auto}
+.scan-suppliers{font-size:13px;color:var(--muted,#74656e)}.scan-product-card details{border-top:1px solid var(--line,#ddd);padding:12px 0}.scan-product-card summary{cursor:pointer;font-weight:700}
+.scan-actions{margin-top:14px}.scan-actions button{flex:1}
+@keyframes scan-appear{from{transform:translateY(18px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+@media(max-width:560px){.scan-dialog{padding:16px;border-radius:18px}.scan-input-row{display:grid}.scan-input-row input,.scan-input-row button{width:100%}.scan-data{grid-template-columns:1fr}.scan-actions{display:grid}.scan-toolbar button{flex:1}}
+@media(prefers-reduced-motion:reduce){.scan-dialog{animation:none}}
