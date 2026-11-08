@@ -252,23 +252,22 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 <nav class="tabbar" aria-label="الأدوات">
   <div class="wrap">
     <div class="tabs" role="tablist">
-      <button type="button" role="tab" data-tab="cups" aria-selected="true">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14l-2 16H7z"/><path d="M5.5 8h13"/></svg>قوالب الأكواب</button>
-      <button type="button" role="tab" data-tab="sheets" aria-selected="false">
+      <button type="button" role="tab" data-tab="sheets" aria-selected="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="1"/><path d="M8 7h3v3H8zM13 7h3v3h-3zM8 12h3v3H8zM13 12h3v3h-3z"/></svg>حاسبة الأوراق</button>
       <button type="button" role="tab" data-tab="stickers" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
-      <button type="button" role="tab" data-tab="acrylic-tools" aria-selected="false">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M9 4v16M4 12h16"/></svg>أدوات مصمم الأكريليك</button>
+      <button type="button" role="tab" data-tab="offset" aria-selected="false">▤ حاسبة الأوفست</button>
+      <button type="button" role="tab" data-tab="cups" aria-selected="false">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14l-2 16H7z"/><path d="M5.5 8h13"/></svg>قوالب الأكواب</button>
     </div>
   </div>
 </nav>
 
 
 <main>
-<div class="tabpanel" id="tab-cups">
+<div class="tabpanel" id="tab-cups" hidden>
 <section class="wrap" id="shelf" aria-labelledby="shelfTitle">
   <div class="sechead">
     <h2 id="shelfTitle">قوالب الأكواب</h2>
@@ -397,7 +396,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 </section>
 
 </div>
-<div class="tabpanel" id="tab-sheets" hidden>
+<div class="tabpanel" id="tab-sheets">
 <section class="wrap" aria-labelledby="sh-title">
   <div class="sechead"><h2 id="sh-title">حاسبة الأوراق</h2><span class="muted sub">كم قطعة تطلع من الورقة، وكم ورقة تحتاج للكمية</span></div>
   <div class="calc-layout">
@@ -557,6 +556,9 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 </section>
 </div>
 
+
+<div class="tabpanel" id="tab-offset" hidden><section class="wrap" aria-labelledby="offset-title"><div class="sechead"><h2 id="offset-title">حاسبة طباعة الأوفست</h2><span class="muted sub">حساب الأفرخ والتكلفة والسعر المعتمد</span></div><form id="offset-form" class="panel"><p class="hint">الأبعاد بالمليمتر. السعر تقديري وفق إعدادات الإدارة، ويجب اعتماد عرض المورد والتشطيب قبل الإنتاج.</p><div class="offset-grid"><label>عرض الفرخ (مم)<input name="sheetW" type="number" min="100" max="1500" value="450" required></label><label>ارتفاع الفرخ (مم)<input name="sheetH" type="number" min="100" max="1500" value="320" required></label><label>عرض المطبوع (مم)<input name="itemW" type="number" min="1" max="1500" value="210" required></label><label>ارتفاع المطبوع (مم)<input name="itemH" type="number" min="1" max="1500" value="148" required></label><label>الكمية المطلوبة<input name="quantity" type="number" min="1" max="10000000" value="1000" required></label><label>هامش الفرخ لكل طرف (مم)<input name="margin" type="number" min="0" max="100" value="10" required></label><label>النزف لكل طرف (مم)<input name="bleed" type="number" min="0" max="20" value="3" required></label><label>الفاصل بين القطع (مم)<input name="gap" type="number" min="0" max="50" value="3" required></label><label>عدد الأوجه<select name="sides"><option value="1">وجه واحد</option><option value="2">وجهين</option></select></label><label>الألوان لكل وجه<select name="colors"><option value="1">لون واحد</option><option value="2">لونان</option><option value="4" selected>أربعة ألوان CMYK</option></select></label></div><button type="submit" class="btn btn-dl" style="margin-top:16px">احسب الأوفست</button><p id="offset-status" role="status" class="hint"></p><div id="offset-result" class="kpis" aria-live="polite"></div></form></section></div>
+<style>.offset-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px}.offset-grid label{display:grid;gap:4px;font-weight:600}.offset-grid input,.offset-grid select{padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);width:100%;font:inherit}.offset-grid input:focus-visible{outline:2px solid var(--focus)}#offset-result{margin-top:16px}</style>
 </main>
 <footer class="sitefoot">
   <div class="wrap footin">
@@ -1444,10 +1446,10 @@ $("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), 
 $("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
 
 /* ---------- Tabs (hash routed) ---------- */
-const TABS=["cups","sheets","stickers","acrylic","acrylic-tools"]; const rendered={};
+const TABS=["sheets","stickers","acrylic","offset","cups"]; const rendered={};
 window.asbarixShowTab=(t)=>showTab(t);
 function showTab(t){
-  if(!TABS.includes(t)) t="cups";
+  if(!TABS.includes(t)) t="sheets";
   TABS.forEach(x=>{ $("tab-"+x).hidden=x!==t; const b=document.querySelector(`[data-tab="${x}"]`); b.setAttribute("aria-selected",String(x===t)); b.tabIndex= x===t?0:-1; });
   if(!rendered[t]){ rendered[t]=1; if(t==="sheets") sheetsCalc(); if(t==="stickers") stickersCalc(); if(t==="acrylic") acrylicCalc(); }
   if(t==="cups" && current) applyView();
