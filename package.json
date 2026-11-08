@@ -11,7 +11,7 @@
     "exceljs": "^4.4.0"
   },
   "scripts": {
-    "test": "node tests/managed-products.test.mjs && node tests/offset.test.mjs && node tests/barcode.test.mjs && node tests/ubc.test.mjs",
+    "test": "node tests/managed-products.test.mjs && node tests/offset.test.mjs && node tests/barcode.test.mjs && node tests/ubc.test.mjs && node tests/ubc-api.test.mjs",
     "build": "node src/build.mjs"
   }
 }
