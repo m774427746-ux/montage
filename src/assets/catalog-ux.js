@@ -10,7 +10,7 @@ const tools=[
  ['sheets','حاسبة الأفرخ والأوراق','كم قطعة في الفرخ؟ كم فرخ نحتاج؟','أفرخ ورق كروت طباعة'],
  ['stickers','حاسبة الاستيكرات','استيكرات بالمتر، استغلال الرولات','استكر ستكر رول متر'],
  ['acrylic','حاسبة الأكريليك','مساحة وتكلفة الأكريليك','الليزر تكلفة سم²'],
- ['offset','حاسبة الأوفست','حساب تشغيل الأفرخ والألوان','offset'],
+ ['offset-products','منتجات الأوفست الجاهزة','دفاتر فواتير وأكواب ورقية وكروت','أوفست'],
  ['offset-products','منتجات الأوفست الجاهزة','دفاتر فواتير، كروت، أكواب ورقية','طباعة جاهزة'],
  ['gifts','الهدايا الدعائية','أكواب وأقلام وأعلام','هدايا شعارات'],
  ['cups','قوالب الأكواب','ملفات SVG لقوالب الأكواب','قوالب كوب مخروط']
@@ -32,21 +32,43 @@ async function load(){
  }catch(e){for(const id of ['offset-products-status','gifts-status'])if($(id))$(id).textContent=e.message;}
 }
 function card(p){
+ const barcode=p.category==='gifts'&&p.barcode;
+ const supplierNames=(p.suppliers||[]).map(x=>x.supplierName).filter(Boolean);
  const approved=typeof p.price==='number'&&p.price>0;
  const per=approved?p.price/p.packQty:null;
- return '<article class="montage-product" data-product="'+esc(p.id)+'"><div class="product-meta">'+(p.category==='offset'?'أوفست':'هدية دعائية')+' · '+esc(p.unit)+'</div><h3>'+esc(p.name)+'</h3><p class="product-spec">'+esc(p.spec)+'</p><p class="product-price">'+(approved?money(p.price)+' <small>للباقة من '+num(p.packQty)+' '+esc(p.unit)+'</small>':'السعر بانتظار اعتماد الإدارة')+'</p><div class="product-controls"><label>عدد الباقات <select data-pack="'+esc(p.id)+'">'+[1,2,3,5,10,20,50].map(n=>'<option value="'+n+'">'+num(n)+'</option>').join('')+'</select></label><div data-amount="'+esc(p.id)+'" class="product-total">'+(approved?money(p.price):'—')+'</div></div><details><summary>المواصفات وسعر الوحدة</summary><p>'+esc(p.notes||'يُحدّد التجهيز والمواصفات النهائية حسب طلب العميل.')+'</p><p>الباقة: '+num(p.packQty)+' '+esc(p.unit)+'</p><p>سعر الحبة: '+(approved?money(per):'لم يُعتمد بعد')+'</p><p>السعر لا يشمل خدمات أو ضريبة لم تعتمدها الإدارة ضمن الباقة.</p></details></article>';
+ return '<article class="montage-product" data-product="'+esc(p.id)+'"><div class="product-meta"><span>'+(p.category==='offset'?'أوفست':'هدية دعائية')+' · '+esc(p.unit)+'</span><strong class="product-sku">رقم '+esc(p.sku)+'</strong></div><h3>'+esc(p.name)+'</h3><p class="product-spec">'+esc(p.spec)+'</p><p class="product-price">'+(approved?money(p.price)+' <small>للباقة من '+num(p.packQty)+' '+esc(p.unit)+'</small>':'السعر بانتظار اعتماد الإدارة')+'</p><div class="product-controls"><label>عدد الباقات <select data-pack="'+esc(p.id)+'">'+[1,2,3,5,10,20,50].map(n=>'<option value="'+n+'">'+num(n)+'</option>').join('')+'</select></label><div data-amount="'+esc(p.id)+'" class="product-total">'+(approved?money(p.price):'—')+'</div></div><details><summary>المواصفات وسعر الوحدة</summary><p>'+esc(p.notes||'يُحدّد التجهيز والمواصفات النهائية حسب طلب العميل.')+'</p><p>الباقة: '+num(p.packQty)+' '+esc(p.unit)+'</p><p>سعر الحبة: '+(approved?money(per):'لم يُعتمد بعد')+'</p><p>السعر لا يشمل خدمات أو ضريبة لم تعتمدها الإدارة ضمن الباقة.</p></details></article>';
 }
 function renderCatalog(category){
  const prefix=category==='offset'?'offset-products':'gifts',wrap=$(prefix+'-items'),q=norm($(prefix+'-search').value);
- const visible=products.filter(p=>p.category===category&&p.active!==false&&norm([p.name,p.spec,p.notes,p.unit].join(' ')).includes(q));
+ const visible=products.filter(p=>p.category===category&&p.active!==false&&norm([p.sku,p.barcode,p.name,p.spec,p.notes,p.unit].join(' ')).includes(q));
  wrap.innerHTML=visible.map(card).join('')||'<p class="hint">ما لقينا منتجات مطابقة. جرّب كلمة أخرى.</p>';
  $(prefix+'-status').textContent=visible.length+' منتج · الأسعار المعروضة تعتمدها الإدارة فقط';
+ wrap.querySelectorAll('[data-barcode-product]').forEach(el=>{
+  const p=products.find(x=>x.id===el.dataset.barcodeProduct);
+  if(p?.barcode&&window.MontageBarcode)el.innerHTML=window.MontageBarcode.encode(p.barcode);
+ });
+ wrap.querySelectorAll('[data-barcode-download]').forEach(button=>button.onclick=()=>{
+  const p=products.find(x=>x.id===button.dataset.barcodeDownload);
+  if(p?.barcode)window.MontageBarcode.download(p.barcode);
+ });
  wrap.querySelectorAll('[data-pack]').forEach(select=>select.onchange=()=>{
   const p=products.find(x=>x.id===select.dataset.pack);wrap.querySelector('[data-amount="'+p.id+'"]').textContent=p.price===null?'بانتظار التسعير':money(p.price*Number(select.value));
  });
 }
 for(const [category,prefix] of [['offset','offset-products'],['gifts','gifts']])$(prefix+'-search')?.addEventListener('input',()=>renderCatalog(category));
 const header=document.querySelector('header.top .brandrow')||document.querySelector('header.top');
+// Primary navigation: logo always returns to the workspace, and back follows history when safe.
+const brandLogo=document.querySelector('header.top .brand .logo');
+if(brandLogo){
+ const home=document.createElement('a');home.href='/';home.className='brand-home';home.setAttribute('aria-label','العودة إلى الرئيسية');
+ brandLogo.replaceWith(home);home.append(brandLogo);
+}
+const back=document.createElement('button');back.type='button';back.className='global-back';back.textContent='← رجوع';
+back.addEventListener('click',()=>{
+ if(document.referrer&&new URL(document.referrer).origin===location.origin&&history.length>1)history.back();
+ else{const current=location.hash.slice(1);if(current&&current!=='sheets')jump('sheets');else location.href='/';}
+});
+header.append(back);
 const searchButton=document.createElement('button');
 searchButton.type='button';searchButton.id='global-search-button';searchButton.className='global-search-button';
 searchButton.setAttribute('aria-haspopup','dialog');
@@ -62,7 +84,7 @@ function closeSearch(){overlay.hidden=true;searchOpen=false;document.body.classL
 function results(){
  const q=norm($('montage-search-input').value);
  const toolMatches=tools.filter(t=>!q||norm(t.join(' ')).includes(q)).map(t=>({title:t[1],description:t[2],tab:t[0]}));
- const matchedProducts=products.filter(p=>!q||norm([p.name,p.spec,p.notes,p.unit].join(' ')).includes(q)).slice(0,15).map(p=>({title:p.name,description:p.spec,tab:p.category==='offset'?'offset-products':'gifts',product:p.id}));
+ const matchedProducts=products.filter(p=>!q||norm([p.sku,p.barcode,p.name,p.spec,p.notes,p.unit].join(' ')).includes(q)).slice(0,15).map(p=>({title:p.name,description:p.spec,tab:p.category==='offset'?'offset-products':'gifts',product:p.id}));
  return [...toolMatches,...matchedProducts].slice(0,20);
 }
 function renderSearch(){
