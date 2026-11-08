@@ -4,12 +4,20 @@ const price=n=>Number(n).toLocaleString('ar-SA',{minimumFractionDigits:2,maximum
 const scan=document.createElement('div');scan.className='montage-scanner';scan.id='montage-scanner';scan.hidden=true;
 scan.innerHTML='<div class="scan-shade" data-scan-close></div><section class="scan-dialog" role="dialog" aria-modal="true" aria-labelledby="scan-title"><header><h2 id="scan-title">مسح باركود منتج</h2><button type="button" class="scan-close" data-scan-close aria-label="إغلاق">✕</button></header><p class="scan-intro">امسح باركود الهدية الدعائية، أو أدخل رقم أي منتج. يمكنك استخدام قارئ باركود USB في حقل البحث.</p><div class="scan-toolbar"><button type="button" id="scan-camera-start" class="scan-primary">فتح الكاميرا</button><button type="button" id="scan-camera-stop" class="scan-secondary" hidden>إيقاف الكاميرا</button></div><div id="scan-video-container" hidden><video id="scan-video" autoplay muted playsinline aria-label="معاينة الكاميرا لمسح الباركود"></video><div class="scan-video-frame"></div></div><form id="scan-lookup-form"><label for="scan-value">رقم المنتج أو الباركود</label><div class="scan-input-row"><input id="scan-value" autocomplete="off" inputmode="text" placeholder="مثال: GFT000016 أو 000016" required><button type="submit" class="scan-primary">عرض المنتج</button></div></form><p id="scan-message" role="status" aria-live="polite" class="scan-message"></p><article id="scan-product-card" class="scan-product-card" hidden></article></section>';
 document.body.append(scan);
+// The scanner owns its launcher independently of optional calculator/catalog code.
+const launcher=document.createElement('button');
+launcher.type='button';launcher.id='montage-scan-launcher';launcher.className='global-back';
+launcher.textContent='▥ مسح باركود';
+launcher.setAttribute('aria-label','مسح باركود منتج أو البحث برقم المنتج');
+const header=document.querySelector('header.top .brandrow')||document.querySelector('header.top');
+if(header)header.append(launcher);
+launcher.addEventListener('click',()=>open());
 const $=id=>document.getElementById(id),message=(s)=>{$('scan-message').textContent=s;};
-let stream=null,detector=null,frame=null,active=false,focusBefore=null,current=null,scanning=false;
+let stream=null,detector=null,frame=null,active=false,focusBefore=null,current=null,scanning=false,productCache=[];
 const normalize=s=>String(s??'').trim().toUpperCase().replace(/[٠-٩۰-۹]/g,d=>{const n='٠١٢٣٤٥٦٧٨٩'.indexOf(d);return String(n>=0?n:'۰۱۲۳۴۵۶۷۸۹'.indexOf(d));}).replace(/\s+/g,'');
 function find(value){
  const q=normalize(value);if(!q)return null;
- const records=window.MontageCatalog?.getProducts?.()||[];
+ const records=window.MontageCatalog?.getProducts?.()||productCache;
  return records.find(p=>normalize(p.barcode)===q||normalize(p.sku)===q)||null;
 }
 function textFor(p){
@@ -24,7 +32,7 @@ function showProduct(p){
  const card=$('scan-product-card');card.hidden=false;
  card.innerHTML='<div class="scan-card-kicker">'+(p.category==='gifts'?'هدية دعائية':'منتج أوفست')+' · رقم <b>'+esc(p.sku)+'</b></div><h3>'+esc(p.name)+'</h3><p class="scan-spec">'+esc(p.spec)+'</p><div class="scan-data"><div><span>الكمية بالباقة</span><strong>'+esc(p.packQty)+' '+esc(p.unit)+'</strong></div><div><span>السعر المعتمد</span><strong>'+(approved?price(p.price):'لم يُعتمد بعد')+'</strong></div></div>'+(p.barcode?'<div class="scan-code"><span>الباركود: '+esc(p.barcode)+'</span><div id="scan-barcode-visual"></div></div>':'')+(names.length?'<p class="scan-suppliers">الموردون: '+esc(names.join('، '))+'</p>':'')+(p.notes?'<details><summary>ملاحظات المنتج</summary><p>'+esc(p.notes)+'</p></details>':'')+'<div class="scan-actions"><button type="button" class="scan-primary" id="scan-copy">نسخ معلومات المنتج</button><button type="button" class="scan-secondary" id="scan-more">عرضه في الكتالوج</button></div>';
  if(p.barcode&&window.MontageBarcode) $('scan-barcode-visual').innerHTML=window.MontageBarcode.encode(p.barcode);
- $('scan-copy').onclick=async()=>{const content=textFor(p);try{await navigator.clipboard.writeText(content);message('تم نسخ معلومات المنتج.');}catch{const field=$('scan-value');field.value=content;field.focus();field.select();message('تعذر النسخ التلقائي؛ حدّد النص وانسخه يدويًا.');}};
+ $('scan-copy').onclick=async()=>{const content=textFor(p);try{await navigator.clipboard.writeText(content);message('تم نسخ معلومات المنتج.');}catch{const field=document.createElement('textarea');field.value=content;field.style.cssText='position:fixed;opacity:0;left:-9999px';document.body.append(field);field.select();let copied=false;try{copied=document.execCommand('copy');}catch{}field.remove();message(copied?'تم نسخ معلومات المنتج.':'تعذّر النسخ التلقائي. استخدم متصفحًا يدعم النسخ أو جرّب مرة أخرى.');}};
  $('scan-more').onclick=()=>{const category=p.category==='gifts'?'gifts':'offset-products';close();document.querySelector('[data-tab="'+category+'"]')?.click();const element=[...document.querySelectorAll('[data-product]')].find(e=>e.dataset.product===p.id);element?.scrollIntoView({behavior:'smooth',block:'center'});};
  message('تم العثور على المنتج.');
 }
@@ -69,8 +77,13 @@ async function startCamera(){
   active=true;message('وجّه الكاميرا إلى الخطوط السوداء للباركود.');frame=requestAnimationFrame(checkFrame);
  }catch(error){stopCamera();message(error?.name==='NotAllowedError'?'تم رفض إذن الكاميرا. فعّل الإذن من المتصفح أو أدخل الرقم يدويًا.':'تعذر تشغيل الكاميرا. تأكد من HTTPS والأذونات، أو استخدم الإدخال اليدوي.');}
 }
-function open(){
+async function open(){
  focusBefore=document.activeElement;scan.hidden=false;document.body.classList.add('scan-modal-open');$('scan-product-card').hidden=true;current=null;message('');$('scan-value').value='';$('scan-value').focus();
+ if(!window.MontageCatalog){
+  message('جارٍ تحميل المنتجات…');
+  try{const response=await fetch('/api/manage?action=products',{credentials:'same-origin'});const data=await response.json();if(!response.ok)throw Error(data.message||'لم تُحمّل المنتجات');productCache=data.items||[];message('امسح الباركود أو أدخل رقم المنتج.');}
+  catch(error){message('تعذّر تحميل المنتجات: '+error.message+'. تحقق من تسجيل الدخول.');}
+ }
 }
 function close(){stopCamera();scan.hidden=true;document.body.classList.remove('scan-modal-open');focusBefore?.focus?.();}
 $('scan-lookup-form').addEventListener('submit',e=>{e.preventDefault();lookup($('scan-value').value);});
