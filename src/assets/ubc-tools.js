@@ -16,11 +16,12 @@ const productsApi=async(method,body)=>{
 const overlay=document.createElement('div');overlay.id='ubc-overlay';overlay.className='ubc-overlay';overlay.hidden=true;
 overlay.innerHTML='<div class="ubc-backdrop" data-ubc-close></div><section class="ubc-dialog" role="dialog" aria-modal="true" aria-labelledby="ubc-heading"><header class="ubc-heading"><div><small>ASBARIX · LABEL STUDIO</small><h2 id="ubc-heading">باركودات المنتجات</h2></div><button type="button" class="ubc-close" data-ubc-close aria-label="إغلاق">✕</button></header><nav class="ubc-tabs"><button type="button" data-ubc-tab="generate" aria-pressed="true">توليد وطباعة</button><button type="button" data-ubc-tab="lookup" aria-pressed="false">مسح وربط</button><button type="button" data-ubc-tab="history" aria-pressed="false">سجل الباركودات</button></nav><div id="ubc-generate" class="ubc-section"><p class="ubc-help">أرقام UBC تسلسلية ومجهولة حتى تربطها بمنتج. كل صفحة A4 تضم عشرة ملصقات بخط قص مستدير منفصل عن الباركود.</p><form id="ubc-batch-form" class="ubc-horizontal"><label>كم باركود تريد؟ <input id="ubc-quantity" type="number" min="1" max="100" step="1" value="10" required></label><button type="submit" class="ubc-primary">توليد وحفظ الباركودات</button></form><div id="ubc-batch-result" hidden><p id="ubc-batch-info" role="status"></p><div class="ubc-buttons"><button id="ubc-svg" type="button">تحميل SVG بخطوط القص</button><button id="ubc-pdf" type="button" class="ubc-primary">طباعة / حفظ PDF واحد A4</button></div><div class="ubc-preview" id="ubc-preview"></div><p class="ubc-help">لون حدود القص أرجواني داخل مجموعة CUT_LINES مستقلة في SVG، وباقي الرسومات في PRINT_ART. تأكد من مقاس الطباعة 100% بدون ملاءمة الصفحة.</p></div></div><div id="ubc-lookup" class="ubc-section" hidden><form id="ubc-code-form" class="ubc-horizontal"><label>رقم الباركود<input id="ubc-code" autocomplete="off" placeholder="UBC000001" required></label><button type="submit" class="ubc-primary">فتح الباركود</button></form><div id="ubc-record" hidden><div id="ubc-record-head"></div><div id="ubc-record-editor"></div></div></div><div id="ubc-history" class="ubc-section" hidden><button id="ubc-refresh" type="button">تحديث السجل</button><div id="ubc-history-content" class="ubc-history-content"></div></div><p class="ubc-status" id="ubc-status" role="status" aria-live="polite"></p></section>';
 document.body.append(overlay);
-let batch=[],record=null,products=[],focusBefore=null,activeTab='generate';
+let batch=[],record=null,products=[],focusBefore=null,activeTab='generate',role='team';
 const info=(msg,kind='')=>{const el=$('ubc-status');el.textContent=msg;el.dataset.kind=kind;};
 const optionProduct=p=>'<option value="'+esc(p.id)+'">'+esc(p.sku+' · '+p.name)+'</option>';
 function setTab(tab){activeTab=tab;overlay.querySelectorAll('[data-ubc-tab]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.ubcTab===tab)));['generate','lookup','history'].forEach(t=>{ $('ubc-'+t).hidden=t!==tab;});}
 function open(tab='generate'){
+ fetch('/api/manage?action=session',{credentials:'same-origin'}).then(r=>r.json()).then(d=>{role=d.role||'team';if(record)renderRecord();}).catch(()=>{role='team';});
  focusBefore=document.activeElement;overlay.hidden=false;setTab(tab);info('');if(tab==='history')loadHistory();
  if(tab==='lookup')$('ubc-code').focus();else $('ubc-quantity').focus();
 }
@@ -93,7 +94,7 @@ function stateActions(item){
  const actions=[];
  if(item.productId)actions.push('<button data-ubc-action="unlinked">فك الربط</button>');
  if(item.status!=='printed')actions.push('<button data-ubc-action="printed">تحديد كمطبوع</button>');
- if(item.status!=='cancelled')actions.push('<button data-ubc-action="cancelled" class="ubc-danger">إلغاء الباركود (الإدارة)</button>');
+ if(role==='admin'&&item.status!=='cancelled')actions.push('<button data-ubc-action="cancelled" class="ubc-danger">إلغاء الباركود</button>');
  return '<div class="ubc-buttons">'+actions.join('')+'</div>';
 }
 function renderRecord(){
