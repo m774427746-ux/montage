@@ -52,7 +52,7 @@ function composedSvg(items){
  const pages=slicePages(items);if(!pages.length)throw Error('لم تُنشأ باركودات.');
  if(pages.length===1)return sheet(pages[0]);
  // One scalable SVG file containing successive A4 pages, vertically aligned. PDF is recommended for printing.
- const content=pages.map((page,i)=>'<g transform="translate(0 '+i*297+')">'+sheet(page).replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'')+'</g>').join('');
+ const content=pages.map((page,i)=>'<g transform="translate(0 '+i*297+')">'+sheet(page).replace(/^<svg[^>]*>/,'').replace(/<\/svg>\s*$/,'').replace('id="PRINT_ART"','id="PRINT_ART_'+i+'"').replace('id="CUT_LINES"','id="CUT_LINES_'+i+'"')+'</g>').join('');
  return '<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="'+297*pages.length+'mm" viewBox="0 0 210 '+297*pages.length+'"><title>ASBARIX · '+pages.length+' A4 sheets</title>'+content+'</svg>';
 }
 function download(content,name,type){
