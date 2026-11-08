@@ -4,10 +4,11 @@ import tls from 'node:tls';
 import { SITE, timed, loadState, saveState, sendEmail } from './lib.mjs';
 
 const failures = [], warnings = [], metrics = {};
+const LOCAL = /^http:\/\/(127\.0\.0\.1|localhost)(:|\/|$)/.test(SITE); // self-test mode: no TLS/redirect checks
 const check = (name, cond, detail) => { if (!cond) failures.push(`${name}: ${detail}`); };
 
 // 1. http -> https redirect
-const http = await timed(SITE.replace('https://', 'http://') + '/login');
+const http = LOCAL ? { ok: true, status: 308, headers: new Headers({ location: 'https://x' }) } : await timed(SITE.replace('https://', 'http://') + '/login');
 check('HTTP->HTTPS', http.ok && [301, 307, 308].includes(http.status) && /^https:/.test(http.headers.get('location') || ''), `status ${http.status} ${http.error || ''}`);
 
 // 2. login page and every asset it references
@@ -38,7 +39,7 @@ for (const p of ['/api/suppliers', '/api/prices', '/api/manage', '/api/favorites
 
 // 5. TLS certificate expiry
 const host = new URL(SITE).hostname;
-const days = await new Promise((res) => {
+const days = LOCAL ? 365 : await new Promise((res) => {
   const s = tls.connect({ host, port: 443, servername: host, timeout: 10000 }, () => {
     const c = s.getPeerCertificate(); s.end();
     res(c.valid_to ? Math.floor((Date.parse(c.valid_to) - Date.now()) / 864e5) : null);

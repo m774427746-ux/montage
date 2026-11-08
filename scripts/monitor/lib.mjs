@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 export const SITE = (process.env.SITE_URL || 'https://asbarix.vercel.app').replace(/\/$/, '');
 export const TO = process.env.ALERT_EMAIL || 'adv.asbar@gmail.com';
 export const FROM = process.env.MONITOR_FROM || 'ASBARIX Monitor <onboarding@resend.dev>';
+export const RESEND_URL = process.env.RESEND_API_URL || 'https://api.resend.com/emails';
 export const REPO = process.env.GITHUB_REPOSITORY || 'm774427746-ux/montage';
 export const STATE_DIR = process.env.STATE_DIR || '.monitor-state';
 export const riyadh = (d = new Date()) => d.toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh', hour12: false });
@@ -32,7 +33,7 @@ export async function sendEmail(subject, lines, { level = 'info' } = {}) {
   if (!key) { console.error('RESEND_API_KEY missing - cannot send email'); process.exitCode = 2; return false; }
   const color = { critical: '#b42318', warn: '#b54708', ok: '#067647', info: '#175cd3' }[level] || '#175cd3';
   const html = `<div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;max-width:640px;margin:auto"><div style="background:${color};color:#fff;padding:14px 18px;border-radius:8px 8px 0 0;font-size:18px">${esc(subject)}</div><div style="border:1px solid #ddd;border-top:0;padding:16px;border-radius:0 0 8px 8px"><ul style="line-height:1.9;padding-inline-start:20px">${lines.map((l) => `<li>${esc(l)}</li>`).join('')}</ul><p style="color:#667085;font-size:12px">${esc(riyadh())} (Asia/Riyadh) · ${esc(SITE)}</p></div></div>`;
-  const r = await fetch('https://api.resend.com/emails', {
+  const r = await fetch(RESEND_URL, {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({ from: FROM, to: [TO], subject, html, text: lines.join('\n') }),
