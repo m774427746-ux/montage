@@ -94,7 +94,7 @@ export async function productsHandler(req,res){
   if(item.supplierOfferIds.some(id=>!ids.has(id)))return res.status(400).json({message:'أحد عروض الموردين لم يعد موجودًا.'});
   if(!old){
    // SETNX initializes the counter without overwriting any existing allocation.
-   await pipeline([['SETNX',SEQUENCE,Math.max(initialCount,items.length)]]);
+   await pipeline([['SETNX',SEQUENCE,Math.max(initialCount,...items.map(p=>Number(p.sku)||0))]]);
    const [n]=await pipeline([['INCR',SEQUENCE]]);
    item.sku=String(n).padStart(6,'0');
   }
