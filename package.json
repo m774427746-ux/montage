@@ -9,5 +9,9 @@
   },
   "dependencies": {
     "exceljs": "^4.4.0"
+  },
+  "scripts": {
+    "test": "node tests/managed-products.test.mjs && node tests/offset.test.mjs",
+    "build": "node src/build.mjs"
   }
 }

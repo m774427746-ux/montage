@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import {examples,validate} from '../server/managed-products.js';
+assert.equal(examples.length,6);
+assert.equal(examples.filter(x=>x.category==='offset').length,3);
+assert.equal(examples.filter(x=>x.category==='gifts').length,3);
+assert(examples.every(x=>x.price===null));
+const base={category:'gifts',name:'قلم معدني فاخر',spec:'ليزر شعار واحد',unit:'قلم',notes:'بدون تغليف',packQty:100,price:200,active:true};
+const p=validate(base);
+assert.equal(p.packQty,100);
+assert.equal(p.price,200);
+assert.equal(validate({...base,price:null}).price,null);
+assert.equal(validate({...base,name:'قلم جديد'},p).id,p.id);
+for(const item of [{...base,category:'unknown'},{...base,price:-1},{...base,packQty:1.5},{...base,active:'true'},{...base,name:''}])assert.throws(()=>validate(item));
+console.log('managed products validation tests passed');
