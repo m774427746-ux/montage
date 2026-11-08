@@ -4,7 +4,7 @@ export const SITE = (process.env.SITE_URL || 'https://asbarix.vercel.app').repla
 export const TO = process.env.ALERT_EMAIL || 'adv.asbar@gmail.com';
 export const FROM = process.env.MONITOR_FROM || 'ASBARIX Monitor <onboarding@resend.dev>';
 export const RESEND_URL = process.env.RESEND_API_URL || 'https://api.resend.com/emails';
-export const REPO = process.env.GITHUB_REPOSITORY || 'm774427746-ux/montage';
+export const REPO = process.env.GITHUB_REPOSITORY || 'musdes21/asbarix';
 export const STATE_DIR = process.env.STATE_DIR || '.monitor-state';
 export const riyadh = (d = new Date()) => d.toLocaleString('ar-SA', { timeZone: 'Asia/Riyadh', hour12: false });
 
