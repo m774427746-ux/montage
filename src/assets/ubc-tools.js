@@ -66,8 +66,10 @@ function printPdf(items){
  const pages=sheets.map(page=>'<section class="page">'+sheet(page)+'</section>').join('');
  windowRef.document.open();windowRef.document.write('<!doctype html><html lang="ar"><head><meta charset="utf-8"><title>ASBARIX - UBC Labels</title><style>@page{size:A4 portrait;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}.page{width:210mm;height:297mm;break-after:page;page-break-after:always;overflow:hidden}.page:last-child{break-after:auto;page-break-after:auto}.page svg{display:block;width:210mm;height:297mm}@media screen{body{background:#ddd}.page{margin:10px auto;background:#fff;box-shadow:0 0 12px #999}}</style></head><body>'+pages+'</body></html>');windowRef.document.close();
  // Let document/layout finish before opening the browser print-to-PDF dialog.
- windowRef.onload=()=>{windowRef.focus();windowRef.print();};
- setTimeout(()=>{try{if(!windowRef.closed){windowRef.focus();windowRef.print();}}catch{}},600);
+ let started=false;
+ const doPrint=()=>{if(started||windowRef.closed)return;started=true;windowRef.focus();windowRef.print();};
+ windowRef.onload=doPrint;
+ setTimeout(doPrint,700);
  info('اختر «حفظ كـ PDF» من نافذة الطباعة؛ سيتم إنشاء ملف واحد بعدد صفحات A4 المناسب.','success');
 }
 function displayBatch(){
@@ -110,6 +112,8 @@ function renderRecord(){
    $('ubc-new').querySelectorAll('input,select,textarea').forEach(el=>el.disabled=!isNew);
   }
   form.querySelectorAll('[name="ubc-mode"]').forEach(r=>r.onchange=swap);swap();
+  const stateBox=document.createElement('div');stateBox.innerHTML=stateActions(record);$('ubc-record-editor').append(stateBox);
+  stateBox.querySelectorAll('[data-ubc-action]').forEach(b=>b.onclick=()=>transition(b.dataset.ubcAction,b));
   form.onsubmit=async e=>{
    e.preventDefault();const button=e.submitter;button.disabled=true;info('جارٍ حفظ الربط…');
    try{
