@@ -12,6 +12,7 @@ on:
       - codex/montage-sequential-sku-gifts-20261108
       - codex/montage-barcode-scan-product-card-20261108
       - codex/asbarix-remove-linear-meter-20261108
+      - codex/asbarix-unassigned-ubc-labels-20261108
   workflow_dispatch:
 permissions:
   contents: read
