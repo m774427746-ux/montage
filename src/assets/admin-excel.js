@@ -22,7 +22,7 @@
   const btn=$('excel-import');btn.disabled=true;msg('excel-message','جارٍ فحص الملف وتحديث قاعدة البيانات…');
   try{
    const base64=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(Error('تعذرت قراءة الملف.'));reader.onload=()=>resolve(String(reader.result).split(',')[1]);reader.readAsDataURL(file);});
-   const d=await (await req('/api/admin-excel?type='+type,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64})})).json());
+   const d=await (await req('/api/admin-excel?type='+type,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64})})).json();
    msg('excel-message','تم حفظ '+d.updated+' صف وتحديث البيانات المشتركة. حدّث صفحات الأسعار لعرضها.',true);
   }catch(e){msg('excel-message','لم يطبّق الاستيراد: '+e.message);}finally{btn.disabled=false;}
  };
