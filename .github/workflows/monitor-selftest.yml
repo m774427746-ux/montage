@@ -1,0 +1,22 @@
+name: Monitor - selftest (real email)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Alert pipeline self-test (sends 2 real emails)
+        run: node scripts/monitor/selftest.mjs --real
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
+          MONITOR_FROM: ${{ vars.MONITOR_FROM }}
