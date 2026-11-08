@@ -1,0 +1,37 @@
+name: Monitor - health (15m)
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: monitor-health.yml
+  cancel-in-progress: false
+env:
+  RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+  ALERT_EMAIL: ${{ vars.ALERT_EMAIL }}
+  MONITOR_FROM: ${{ vars.MONITOR_FROM }}
+  SITE_URL: ${{ vars.SITE_URL }}
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  GITHUB_TOKEN: ${{ github.token }}
+  STATE_DIR: ${{ github.workspace }}/.monitor-state
+  TZ: Asia/Riyadh
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: actions/cache@v4
+        with:
+          path: .monitor-state
+          key: health-${{ github.run_id }}
+          restore-keys: health-
+      - run: node scripts/monitor/health.mjs
