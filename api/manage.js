@@ -1,3 +1,4 @@
+import {productsHandler} from '../server/managed-products.js';
 import offsetHandler from '../server/offset.js';
 import excelHandler from '../server/admin-excel.js';
 import { pipeline } from './_redis.js';
@@ -10,6 +11,7 @@ export default async function handler(req,res){
  const action=req.query?.action||'session';
  if(action==='offset')return offsetHandler(req,res);
  if(action==='excel')return excelHandler(req,res);
+ if(action==='products')return productsHandler(req,res);
  try{
   const identity=await session(req);
   if(!identity)return res.status(401).json({ok:false,message:'سجّل الدخول أولًا.'});
