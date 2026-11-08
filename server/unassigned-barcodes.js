@@ -7,7 +7,7 @@ const statuses=new Set(['unassigned','linked','printed','cancelled','unlinked'])
 export const codeFor=n=>'UBC'+String(n).padStart(6,'0');
 export const validCode=s=>typeof s==='string'&&/^UBC[0-9]{6,12}$/.test(s);
 const parseRecord=(raw)=>{if(!raw)return null;try{const p=JSON.parse(raw);return p&&validCode(p.code)&&statuses.has(p.status)?p:null;}catch{return null;}};
-const publicRecord=(rec,products)=>({...rec,product:rec.productId?products.find(p=>p.id===rec.productId)||null:null});
+const publicRecord=(rec,products)=>{const p=rec.productId?products.find(item=>item.id===rec.productId):null;return {...rec,product:p?{id:p.id,sku:p.sku,name:p.name,category:p.category,spec:p.spec,unit:p.unit,packQty:p.packQty,price:p.price,active:p.active}:null};};
 const getRecord=async code=>parseRecord((await pipeline([['GET',PREFIX+code]]))[0]);
 
 // EVAL protects state changes from racing writers and prevents duplicate product assignment.
