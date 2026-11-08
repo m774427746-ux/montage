@@ -1,9 +1,6 @@
 name: Monitor - selftest (real email)
 on:
   workflow_dispatch:
-  push:
-    branches: [ops/asbarix-monitoring-main]
-    paths: ['.github/workflows/monitor-selftest.yml']
 permissions:
   contents: read
 jobs:
