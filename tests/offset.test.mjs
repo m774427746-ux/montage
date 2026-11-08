@@ -1,0 +1,18 @@
+import assert from 'node:assert/strict';
+import { estimate,DEFAULT } from '../server/offset.js';
+const rates={...DEFAULT,paperPerSheet:0.2,pressPer1000:50,platePerColor:45,setup:100,wastePct:5,marginPct:30};
+const valid={sheetW:450,sheetH:320,itemW:210,itemH:148,quantity:1000,margin:10,bleed:3,gap:3,sides:1,colors:4};
+const quote=estimate(valid,rates);
+assert.equal(quote.ups,2);
+assert.equal(quote.needed,500);
+assert.equal(quote.printed,525);
+assert.equal(quote.plates,4);
+assert.equal(quote.estimatedPrice,587.5);
+assert.equal(quote.priceConfigured,true);
+assert.throws(()=>estimate({...valid,itemW:1400},rates));
+assert.throws(()=>estimate({...valid,quantity:1.5},rates));
+assert.throws(()=>estimate({...valid,margin:100},rates));
+assert.throws(()=>estimate({...valid,colors:3},rates));
+assert.equal(estimate(valid,DEFAULT).priceConfigured,false);
+assert.equal(estimate({...valid,sides:2},rates).plates,8);
+console.log('offset calculation tests passed');
