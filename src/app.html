@@ -447,7 +447,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 
 <div class="tabpanel" id="tab-stickers" hidden>
 <section class="wrap" aria-labelledby="st-title">
-  <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><a class="btn" href="/retail-prices">اختيار الصنف وتسعير الكمية مع الربح ↗</a><span class="muted sub">كم استيكر في المتر الطولي والمربع، وكم متر تحتاج</span></div>
+  <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><a class="btn" href="/retail-prices">اختيار الصنف وتسعير الكمية مع الربح ↗</a><span class="muted sub">عدد الاستيكرات والمساحة والتكلفة بالمتر المربع</span></div>
   <div class="calc-layout">
     <div class="panel side">
       <h3>الاستيكر</h3>
@@ -473,11 +473,8 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
-      <div class="seg full" id="st-pmode" role="group" aria-label="طريقة التسعير">
-        <button type="button" data-v="sqm" aria-pressed="true">سعر المتر المربع</button>
-        <button type="button" data-v="lin" aria-pressed="false">سعر المتر الطولي</button>
-      </div>
-      <div class="field"><label for="st-price">السعر</label><div class="inwrap"><input id="st-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+
+      <div class="field"><label for="st-price">سعر المتر المربع (اختياري)</label><div class="inwrap"><input id="st-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
       <div class="errors" id="st-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
@@ -486,7 +483,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <div class="layoutbox" id="st-stage"></div>
       <div class="dlbar"><button class="btn btn-dl" type="button" id="st-dl">تنزيل متر واحد SVG للقص</button><span class="fname" id="st-fname"></span></div>
       <h3 class="mt">كل عروض الرولات لهذا الاستيكر</h3>
-      <div class="tablewrap"><table class="cmp"><thead><tr><th>عرض الرول</th><th>في الصف</th><th>في المتر الطولي</th><th>المتر الطولي للكمية</th><th>المتر المربع للكمية</th><th>التكلفة</th></tr></thead><tbody id="st-cmp"></tbody></table></div>
+      <div class="tablewrap"><table class="cmp"><thead><tr><th>عرض الرول</th><th>في الصف</th><th>المساحة المطلوبة (م²)</th><th>التكلفة</th></tr></thead><tbody id="st-cmp"></tbody></table></div>
     </div>
   </div>
 </section>
@@ -1352,11 +1349,11 @@ function stickersCalc(){
   const plan=stickerPlan({...base,rollW});
   if(!plan){ showErrs("st",["الاستيكر أعرض من المساحة المطبوعة في الرول. اختر رولًا أعرض أو قلّل الهامش الجانبي."],{"st-w":"الاستيكر أعرض من الرول","st-h":"الاستيكر أعرض من الرول","st-side":"الاستيكر أعرض من الرول"}); $("st-dl").disabled=true; return; }
   showErrs("st",[],{}); $("st-dl").disabled=false;
-  const pmode=segVal("st-pmode"), price=v["st-price"];
-  const cost = p=> price==null? null : (pmode==="sqm"? p.areaM2*price : p.lengthMM/1000*price);
-  let html=kpi("في المتر الطولي",fmtN(plan.pm),`${plan.across} في الصف · ${plan.m.desc}`,true)
-    + kpi("في المتر المربع",fmtN(plan.perSqm),"بنفس المسافة بين الاستيكرات")
-    + kpi("طول الطباعة للكمية",fmtN(plan.lengthMM/1000,2)+" m",`${fmtN(plan.areaM2,2)} m² · لـ ${fmtN(base.qty)} استيكر`);
+  const price=v["st-price"];
+  const cost = p=> price==null? null : p.areaM2*price;
+  let html=kpi("الكمية المطلوبة",fmtN(base.qty),"حبة",true)
+    + kpi("المساحة المطلوبة",fmtN(plan.areaM2,2)+" م²",`على رول بعرض ${num(cmTxt(rollW),"cm")}`)
+    + kpi("الاستيكرات في المتر المربع",fmtN(plan.perSqm),"وفق المقاس والمسافة بين الاستيكرات");
   const cst=cost(plan); if(cst!=null) html+=kpi("التكلفة",money(cst),`الاستيكر ${money(cst/base.qty)}`);
   $("st-kpis").innerHTML=html;
   $("st-cap").innerHTML=`متر واحد من رول عرضه ${num(cmTxt(rollW),"cm")}`;
@@ -1367,7 +1364,7 @@ function stickersCalc(){
   $("st-stage").innerHTML=layoutPreview({...stCur,label:`${plan.pm} استيكر في متر واحد`});
   $("st-fname").innerHTML=`<span class="n">${stName()}</span>`;
   $("st-cmp").innerHTML=ALLROLLS.map(r=>{ const p=stickerPlan({...base,rollW:r.w}); const cc=p?cost(p):null; const cur=!custom&&r.v===$("st-roll").value;
-    return `<tr data-v="${r.v}" class="${cur?"cur":""}${p?"":" none"}" tabindex="0"><td><b>${num(r.w/10,"cm")}</b></td><td>${p?p.across:"—"}</td><td><b>${p?fmtN(p.pm):"—"}</b></td><td>${p?fmtN(p.lengthMM/1000,2)+" m":"—"}</td><td>${p?fmtN(p.areaM2,2)+" m²":"—"}</td><td>${cc!=null?money(cc):"—"}</td></tr>`; }).join("");
+    return `<tr data-v="${r.v}" class="${cur?"cur":""}${p?"":" none"}" tabindex="0"><td><b>${num(r.w/10,"cm")}</b></td><td>${p?p.across:"—"}</td><td><b>${p?fmtN(p.areaM2,2)+" م²":"—"}</b></td><td>${cc!=null?money(cc):"—"}</td></tr>`; }).join("");
 }
 let stCur=null;
 function stName(){ const v=stCur.v; const sz= stCur.shape==="rect"? `${safeName(fx(v["st-w"]))}x${safeName(fx(v["st-h"]))}cm` : `${safeName(fx(v["st-w"]))}cm`; return `stickers-${stCur.shape}-${sz}-roll-${safeName(cmTxt(stCur.rollW))}cm-1m-${stCur.n}pcs.svg`; }
@@ -1438,7 +1435,7 @@ fillSelect("st-roll",ROLLS,"127");
 fillSelect("ac-sheet",ACR,"122x244");
 $("ac-t").innerHTML=[2,3,4,5,6,8,10,12,15,20].map(t=>`<option value="${t}"${t===3?" selected":""}>${t} mm</option>`).join("");
 wireInputs("tab-sheets",sheetsCalc); wireInputs("tab-stickers",stickersCalc); wireInputs("tab-acrylic",acrylicCalc);
-segWire("st-shape",stickersCalc); segWire("st-pmode",stickersCalc); segWire("ac-shape",acrylicCalc);
+segWire("st-shape",stickersCalc); segWire("ac-shape",acrylicCalc);
 const pickRow=(tb,sel,fn)=>{ const h=e=>{ if(e.type==="keydown"&&e.key!=="Enter") return; const tr=e.target.closest("tr[data-v]"); if(!tr||tr.classList.contains("none")) return; $(sel).value=tr.dataset.v; fn(); $(sel).scrollIntoView({block:"nearest"}); }; $(tb).addEventListener("click",h); $(tb).addEventListener("keydown",h); };
 pickRow("sh-cmp","sh-paper",sheetsCalc); pickRow("st-cmp","st-roll",stickersCalc); pickRow("ac-cmp","ac-sheet",acrylicCalc);
 $("sh-dl").addEventListener("click",()=>{ if(!shCur) return; const P=shCur.P; saveFile(shName(), layoutExport({...shCur,kind:"sheet",title:`Imposition ${shCur.n}-up on ${cmTxt(P.w)} x ${cmTxt(P.h)} cm`}), "image/svg+xml"); });
