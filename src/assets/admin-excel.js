@@ -6,7 +6,7 @@
   try{const d=await (await req('/api/offset')).json();for(const [k,v] of Object.entries(d.rates))if($('offset-rates-form').elements.namedItem(k))$('offset-rates-form').elements.namedItem(k).value=v;}
   catch(e){msg('offset-rates-message',e.message);}
  }
- $('offset-rates-form').onsubmit=async e=>{
+ if($('offset-rates-form')) $('offset-rates-form').onsubmit=async e=>{
   e.preventDefault();const btn=e.submitter;btn.disabled=true;
   try{const rates=Object.fromEntries([...new FormData(e.currentTarget)].map(([k,v])=>[k,Number(v)]));await req('/api/offset',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({rates})});msg('offset-rates-message','تم حفظ الأسعار وأصبحت حاسبة الأوفست تعتمدها.',true);}
   catch(error){msg('offset-rates-message',error.message);}finally{btn.disabled=false;}
@@ -26,5 +26,5 @@
    msg('excel-message','تم حفظ '+d.updated+' صف وتحديث البيانات المشتركة. حدّث صفحات الأسعار لعرضها.',true);
   }catch(e){msg('excel-message','لم يطبّق الاستيراد: '+e.message);}finally{btn.disabled=false;}
  };
- rates();
+ if($('offset-rates-form'))rates();
 })();
