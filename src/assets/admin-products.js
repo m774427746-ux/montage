@@ -62,7 +62,7 @@
  $('catalog-add-supplier').onclick=()=>{const id=$('catalog-supplier-choose').value;if(id){selected.add(id);drawLinks();}};
  $('catalog-new-product').onclick=()=>{reset();form.scrollIntoView({behavior:'smooth'});form.elements.namedItem('name').focus();};
  $('catalog-refresh').onclick=()=>{load();loadOffers();};
- form.addEventListener('reset',()=>setTimeout(reset,0));
+ form.querySelector('[type="reset"]')?.addEventListener('click',e=>{e.preventDefault();reset();});
  form.onsubmit=async e=>{
   e.preventDefault();const b=e.submitter;b.disabled=true;
   const f=Object.fromEntries(new FormData(form).entries()),id=f.id;
