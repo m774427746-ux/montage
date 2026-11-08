@@ -1,0 +1,39 @@
+/* UBC batch label manager – small, independent surface; safe inside admin and designer views. */
+.ubc-overlay{position:fixed;inset:0;z-index:600;display:grid;place-items:center;padding:15px}
+.ubc-overlay[hidden],.ubc-section[hidden],#ubc-batch-result[hidden],#ubc-record[hidden],#ubc-new[hidden],#ubc-existing[hidden]{display:none!important}
+.ubc-backdrop{position:absolute;inset:0;background:#180d15bd;backdrop-filter:blur(7px)}
+.ubc-dialog{position:relative;width:min(100%,870px);max-height:93vh;overflow:auto;border-radius:20px;background:var(--surface,#fff);color:var(--ink,#261821);box-shadow:0 24px 80px #0005;padding:22px;direction:rtl;border:1px solid var(--line,#ddd)}
+.ubc-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.ubc-heading small{color:var(--muted,#777);letter-spacing:.05em}
+.ubc-heading h2{font-size:clamp(21px,3vw,29px);margin:4px 0}
+.ubc-close{height:42px;width:42px;border-radius:11px;border:1px solid var(--line,#ddd);background:transparent;color:inherit;cursor:pointer;font-size:20px}
+.ubc-tabs{display:flex;gap:8px;border-bottom:1px solid var(--line,#ddd);padding:15px 0;flex-wrap:wrap}
+.ubc-tabs button,.ubc-buttons button,.ubc-launcher,.ubc-horizontal button,.ubc-section button,.ubc-close{font-family:inherit}
+.ubc-tabs button{border:0;background:transparent;color:var(--muted,#666);padding:12px 15px;border-radius:10px;cursor:pointer;min-height:42px}
+.ubc-tabs button[aria-pressed=true]{background:var(--accent-soft,#f5e6e9);color:var(--accent,#7c1e33);font-weight:800}
+.ubc-section{padding:14px 0}
+.ubc-help{font-size:13px;color:var(--muted,#6e5e63);line-height:1.8}
+.ubc-horizontal,.ubc-buttons{display:flex;flex-wrap:wrap;align-items:end;gap:12px;margin:12px 0}
+.ubc-horizontal label,.ubc-form-grid label,#ubc-existing label{display:grid;gap:7px;font-weight:650;font-size:14px;min-width:0}
+.ubc-form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+.ubc-dialog input:not([type=radio]),.ubc-dialog select,.ubc-dialog textarea{border:1px solid var(--line,#ddd);background:var(--surface,#fff);color:var(--ink,#222);border-radius:9px;padding:11px;min-height:43px;box-sizing:border-box;width:100%;font:inherit}
+.ubc-horizontal label{flex:1;min-width:170px}
+.ubc-dialog button{cursor:pointer;min-height:42px}
+.ubc-primary{background:var(--accent,#7c1e33)!important;color:var(--accent-ink,#fff)!important;border:1px solid transparent!important;border-radius:10px;padding:10px 17px;font-weight:800}
+.ubc-dialog button:not(.ubc-primary):not(.ubc-close):not(.ubc-tabs button),.ubc-launcher{background:var(--sunk,#f4eeea);color:var(--ink,#222);border:1px solid var(--line,#ddd);border-radius:10px;padding:10px 13px}
+.ubc-launcher{display:inline-flex;align-items:center;justify-content:center;font-weight:700;margin:4px;white-space:nowrap}
+.ubc-preview{background:#ddd;overflow:auto;border:1px solid #ccc;border-radius:12px;max-height:440px;padding:16px;display:flex;justify-content:center}
+.ubc-preview svg{width:min(100%,365px);height:auto;background:#fff;box-shadow:0 6px 18px #0002}
+.ubc-record-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 0}
+.ubc-record-summary strong{font:800 19px Arial,sans-serif;direction:ltr}
+.ubc-pill{font-size:12px;background:var(--accent-soft,#f3e7e9);color:var(--accent,#7c1e33);border-radius:20px;padding:7px 11px;font-weight:700}
+.ubc-choice{display:flex;flex-wrap:wrap;gap:13px;margin:15px 0}
+.ubc-choice label{display:flex;gap:7px;align-items:center;font-size:14px;font-weight:700}
+.ubc-choice input{accent-color:var(--accent,#7c1e33)}
+.ubc-status{min-height:24px;font-size:13px;color:var(--muted,#777);border-top:1px solid var(--line,#ddd);margin-top:10px;padding:13px 0 0}
+.ubc-status[data-kind=error]{color:#be243c}.ubc-status[data-kind=success]{color:#2b7a4b}
+.ubc-history-rows{display:grid;gap:7px;max-height:350px;overflow:auto;margin-top:12px}
+.ubc-history-rows button{display:flex;justify-content:space-between;gap:10px;align-items:center;text-align:right}
+.ubc-danger{color:#b42335!important}
+.ubc-dialog button:focus-visible,.ubc-launcher:focus-visible{outline:3px solid var(--focus,#c5a777);outline-offset:2px}
+@media(max-width:540px){.ubc-dialog{padding:13px}.ubc-form-grid{grid-template-columns:1fr}.ubc-horizontal{display:grid;align-items:stretch}.ubc-buttons button{flex:1}.ubc-tabs{display:grid;grid-template-columns:repeat(3,1fr)}.ubc-tabs button{padding:8px 4px;font-size:12px}}

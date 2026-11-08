@@ -29,6 +29,13 @@ function showProduct(p){
  message('تم العثور على المنتج.');
 }
 function lookup(value){
+ const scanned=normalize(value).replace(/^\\*|\\*$/g,'');
+ if(/^UBC[0-9]{6,12}$/.test(scanned)){
+  close();
+  if(window.AsbarixUBC)window.AsbarixUBC.openCode(scanned);
+  else message('تعذر فتح سجل UBC؛ حدّث الصفحة وأعد المحاولة.');
+  return;
+ }
  if(!window.MontageCatalog){message('المنتجات لم تكتمل بعد؛ حدّث الصفحة أو سجّل الدخول.');return;}
  const p=find(value);
  if(!p){$('scan-product-card').hidden=true;current=null;message('لم نجد منتجًا بهذا الرقم أو الباركود. راجع الرقم أو أضفه من الإدارة.');return;}
@@ -49,7 +56,7 @@ async function checkFrame(){
   if(video.readyState>=2){
    const found=await detector.detect(video);
    if(found.length){
-    const code=found.find(x=>find(x.rawValue))||found[0];
+    const code=found.find(x=>/^UBC[0-9]{6,12}$/.test(normalize(x.rawValue))||find(x.rawValue))||found[0];
     if(code){$('scan-value').value=code.rawValue;lookup(code.rawValue);if(current)return;}
    }
   }
