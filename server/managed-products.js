@@ -13,7 +13,7 @@ export const examples=[
 ];
 const string=(v,n)=>typeof v==='string'?v.trim().slice(0,n):'';
 const money=v=>v===null||v===''||v===undefined?null:(typeof v==='number'&&Number.isFinite(v)&&v>0&&v<1e7?v:NaN);
-const validate=(raw,old)=>{
+export const validate=(raw,old)=>{
  const category=string(raw.category,20),name=string(raw.name,100),spec=string(raw.spec,300),unit=string(raw.unit,24),notes=string(raw.notes,500);
  const packQty=Number(raw.packQty),price=money(raw.price);
  if(!['offset','gifts'].includes(category)||!name||!spec||!unit||!Number.isInteger(packQty)||packQty<1||packQty>10000000||Number.isNaN(price)||typeof raw.active!=='boolean')throw Error('راجع الاسم والمواصفات والكمية والسعر وحالة المنتج.');
