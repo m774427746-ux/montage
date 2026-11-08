@@ -76,12 +76,12 @@ export async function productsHandler(req,res){
  try{
   const user=await session(req);if(!user)return res.status(401).json({message:'سجّل الدخول أولًا.'});
   if(req.method==='GET'){
-   const items=await productsData(),offers=(await supplierCatalog()).offers;
-   const supplierNames=(await supplierCatalog()).suppliers;
+   const items=await productsData(),supplierData=await supplierCatalog(),offers=supplierData.offers;
+   const supplierNames=supplierData.suppliers;
    const map=new Map(offers.map(o=>[o.id,o])),names=new Map(supplierNames.map(s=>[s.id,s.name]));
    return res.status(200).json({ok:true,canEdit:user.role==='admin',items:items.filter(x=>user.role==='admin'||x.active).map(p=>({
     ...p,barcode:barcodeFor(p),priceStatus:p.price===null?'غير معتمد':'معتمد من الإدارة',
-    suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}))
+    suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>user.role==='admin'?({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}):({supplierName:names.get(o.supplierId)||o.supplierId}))
    }))});
   }
   if(user.role!=='admin')return res.status(403).json({message:'إضافة المنتجات والتسعير للإدارة فقط.'});
