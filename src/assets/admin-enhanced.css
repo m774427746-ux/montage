@@ -1,0 +1,31 @@
+/* Montage management redesign: calmer hierarchy, high legibility and responsive actions */
+.admin-shell{max-width:1450px;margin:auto}
+.admin-navigation{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e3d6cf;padding:12px 0;margin-bottom:12px;color:var(--muted,#766a6f);font-size:13px}
+.admin-back{display:inline-flex;gap:8px;align-items:center;text-decoration:none;color:#7c1e33;font-weight:700;border-radius:10px;padding:9px 12px;background:#f6e9ed}
+.admin-back:hover{background:#efdae0}
+.admin-head .logo{max-height:60px;max-width:160px;object-fit:contain}
+.admin-head .bar{flex-wrap:wrap;gap:10px}
+.admin-nav button{transition:background .17s,border-color .17s}
+.admin-layout main .section-card{border-radius:18px;box-shadow:0 6px 24px #31152109;margin-bottom:18px}
+.admin-layout h2{line-height:1.5}
+.catalog-dashboard{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:18px 0}
+.catalog-dashboard>div{background:#faf7f2;border:1px solid #e9d9d4;border-radius:15px;padding:16px;display:flex;flex-direction:column;gap:7px;min-width:0}
+.catalog-dashboard span{color:#786c70;font-size:13px}
+.catalog-dashboard strong{font-size:clamp(22px,3vw,32px);color:#7c1e33;font-family:Arial,sans-serif;font-weight:800}
+.catalog-number{display:inline-flex;align-items:center;border:1px dashed #c5a777;background:#faf5e8;border-radius:12px;padding:10px 14px;font-weight:700;color:#7c1e33;margin:10px 0 18px}
+.catalog-sku{font-family:Arial,sans-serif;direction:ltr;white-space:nowrap}
+.catalog-sku strong{font-size:15px;font-weight:800}
+.catalog-sku small,.catalog-muted{display:block;margin-top:5px;color:#807478;font-size:12px;max-width:280px;white-space:normal}
+.barcode-action{display:block;max-width:120px;margin:6px auto 0;font-family:inherit;direction:rtl}
+.supplier-links{display:grid;gap:9px;margin-top:10px}
+.catalog-supplier-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#faf7f2;border:1px solid #e8d9d1;border-radius:12px;padding:10px 12px}
+.catalog-supplier-row div{min-width:0;display:grid;gap:4px}
+.catalog-supplier-row small{font-size:12px;color:#77686f;overflow-wrap:anywhere}
+#catalog-product-form{border-top:3px solid #c5a777}
+#catalog-product-form .field{min-width:0}
+#catalog-product-form select,#catalog-product-form input,#catalog-product-form textarea{width:100%;box-sizing:border-box}
+#catalog-product-form button{min-height:38px}
+#catalog-admin-rows tr:hover{background:#fcf9f7}
+#catalog-admin-rows td{vertical-align:middle}
+@media(max-width:850px){.catalog-dashboard{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-navigation{padding-inline:12px}.admin-layout main{min-width:0}}
+@media(max-width:480px){.catalog-dashboard{gap:8px}.catalog-dashboard>div{padding:11px}.admin-head .bar a,.admin-head .bar button{font-size:12px}.admin-layout main .section-card{padding:12px}}
