@@ -71,11 +71,6 @@ back.addEventListener('click',()=>{
  else{const current=location.hash.slice(1);if(current&&current!=='sheets')jump('sheets');else location.href='/';}
 });
 header.append(back);
-const scanLauncher=document.createElement('button');
-scanLauncher.type='button';scanLauncher.id='montage-scan-launcher';scanLauncher.className='global-back';scanLauncher.innerHTML='▥ مسح باركود';
-scanLauncher.setAttribute('aria-label','مسح باركود منتج أو البحث برقم المنتج');
-scanLauncher.addEventListener('click',()=>window.MontageScanner?.open());
-header.append(scanLauncher);
 const searchButton=document.createElement('button');
 searchButton.type='button';searchButton.id='global-search-button';searchButton.className='global-search-button';
 searchButton.setAttribute('aria-haspopup','dialog');
@@ -190,5 +185,9 @@ function stickerByMeter(){
  $('st-price').addEventListener('input',update);
  update();
 }
-presets();details();stickerByMeter();load();
+// Features are isolated: an unsupported control must never block the entire workspace.
+for(const feature of [presets,details,stickerByMeter]){
+ try{feature();}catch(error){console.warn('Montage optional tool unavailable:',error);}
+}
+load().catch(error=>console.warn('Catalog loading failed:',error));
 })();
