@@ -1,0 +1,18 @@
+/* Calculators: mobile ergonomics + live result bar. Loaded last; safe to remove. */
+.calc-summary{position:fixed;inset-inline:12px;bottom:max(12px,env(safe-area-inset-bottom,0px));z-index:25;display:none;align-items:center;gap:14px;padding:10px 14px;border-radius:16px;border:1px solid var(--line);background:var(--ink);color:var(--bg);box-shadow:0 10px 30px #0004;cursor:pointer;font:inherit;text-align:start}
+.calc-summary.show{display:flex}
+.calc-summary .cs-item{display:flex;flex-direction:column;min-width:0;flex:1}
+.calc-summary .cs-l{font-size:12px;opacity:.8}
+.calc-summary .cs-v{font-weight:800;font-size:18px;direction:ltr;unicode-bidi:isolate;text-align:start;font-variant-numeric:tabular-nums;white-space:nowrap}
+.calc-summary .cs-go{font-size:12.5px;font-weight:700;opacity:.9;white-space:nowrap}
+body.has-calc-summary .help-trigger{bottom:calc(86px + env(safe-area-inset-bottom,0px))}
+body.has-calc-summary{padding-bottom:84px}
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+@media (max-width:900px){
+  .inwrap input,.sel{font-size:16px;min-height:44px}
+  .chip{min-height:36px;display:inline-flex;align-items:center}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpi .v{font-size:24px}
+  .panel{padding:14px}
+}
+@media (prefers-reduced-motion:no-preference){.calc-summary{transition:transform .2s}.calc-summary:active{transform:scale(.98)}}
