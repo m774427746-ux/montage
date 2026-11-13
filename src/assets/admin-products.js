@@ -58,7 +58,8 @@
  async function loadOffers(){
   try{
    const r=await fetch('/api/suppliers',{credentials:'same-origin'}),d=await r.json();if(!r.ok)throw Error(d.message||'تعذر قراءة الموردين');
-   supplierOffers=d.offers||[];supplierNames=new Map((d.suppliers||[]).map(x=>[x.id,x.name]));options();drawLinks();
+   const materials=new Set((d.suppliers||[]).filter(x=>x.kind==='materials').map(x=>x.id));
+   supplierOffers=(d.offers||[]).filter(o=>!materials.has(o.supplierId));supplierNames=new Map((d.suppliers||[]).map(x=>[x.id,x.name]));options();drawLinks();
   }catch(e){msg('catalog-admin-message','الموردون غير متاحين: '+e.message);}
  }
  $('catalog-search').addEventListener('input',list);$('catalog-filter').addEventListener('change',list);

@@ -16,7 +16,7 @@ function unitFor(g,it) {
  if(g.id==='print-acc'&&/كيس/.test(it.name))return {unit:'كيس',packageSpec:it.name.match(/\d+ حبة/)?.[0]||'',unitNote:''};
  return {unit:'قطعة',packageSpec:it.spec==='—'?'':it.spec,unitNote:''};
 }
-export const creative={id:'creative',name:'كريتيف',updated:source.updated,source:'new price list creative.pdf',note:'قائمة أغسطس 2026. ضريبة 15% مضافة وفق إعداد التسعير المعتمد في الموقع.'};
+export const creative={id:'creative',name:'كريتيف',kind:'materials',updated:source.updated,source:'new price list creative.pdf',note:'قائمة أغسطس 2026. ضريبة 15% مضافة وفق إعداد التسعير المعتمد في الموقع.'};
 export const baseOffers=source.groups.flatMap(g=>g.items.map((it,i)=>({
  id:'creative-'+g.id+'-'+i,supplierId:'creative',productKey:g.id+'-'+i,category:g.title.replace(' (سعر الرول)','').replace(' (سعر الحبة)',''),
  name:it.name,spec:it.spec,price:it.price,vat:source.vat,currency:'SAR',updated:source.updated,source:creative.source,sourcePage:pageFor(g.id,i),

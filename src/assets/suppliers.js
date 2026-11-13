@@ -90,7 +90,7 @@ $('reference').onchange=()=>copyReference(data.offers.find(o=>o.id===$('referenc
 $('reset-offer').onclick=resetOffer;
 $('supplier-form').onsubmit=async e=>{
  e.preventDefault();const button=e.submitter;button.disabled=true;
- try{const result=await api('POST',{action:'supplier',name:$('supplier-name').value,source:$('supplier-source').value});await load();$('supplier-form').reset();$('offer-supplier').value=result.supplier.id;message('supplier-message','تم حفظ المورد. أضف أسعاره من النموذج التالي.',true);}
+ try{const result=await api('POST',{action:'supplier',name:$('supplier-name').value,kind:$('supplier-kind').value,source:$('supplier-source').value});await load();$('supplier-form').reset();$('offer-supplier').value=result.supplier.id;message('supplier-message','تم حفظ المورد. أضف أسعاره من النموذج التالي.',true);}
  catch(error){message('supplier-message',error.message);}finally{button.disabled=false;}
 };
 $('offer-form').onsubmit=async e=>{

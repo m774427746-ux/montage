@@ -17,7 +17,9 @@ export default async function handler(req,res){
   if(body.action==='supplier'&&req.method==='POST'){
    const name=clean(body.name,80);if(!name)return res.status(400).json({message:'اكتب اسم المورد.'});
    if(data.suppliers.some(s=>s.name===name))return res.status(409).json({message:'هذا المورد موجود بالفعل.'});
-   const supplier={id:randomUUID(),name,updated:new Date().toISOString().slice(0,10),source:clean(body.source)};
+   // materials: raw inputs for the sticker/acrylic calculators. ready: finished goods priced per pack for offset/gift products.
+   const kind=body.kind==='materials'?'materials':'ready';
+   const supplier={id:randomUUID(),name,kind,updated:new Date().toISOString().slice(0,10),source:clean(body.source)};
    await pipeline([['HSET',supplierKey,supplier.id,JSON.stringify(supplier)]]);
    return res.status(201).json({ok:true,supplier});
   }

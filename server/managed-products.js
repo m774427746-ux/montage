@@ -106,8 +106,13 @@ export async function productsHandler(req,res){
   if(user.role!=='admin'&&(old||body.id||body.price!==null||body.supplierOfferIds?.length||body.active!==true))
    return res.status(403).json({message:'يمكن للمصمم إنشاء منتجات جديدة غير مسعّرة فقط، دون تعديل الأسعار أو الموردين.'});
   const item=validate(user.role==='admin'?body:{...body,price:null,notes:String(body.notes||'').slice(0,500),active:true,supplierOfferIds:[]},old);
-  const ids=new Set((await supplierCatalog()).offers.map(x=>x.id));
+  const catalogData=await supplierCatalog();
+  const ids=new Set(catalogData.offers.map(x=>x.id));
   if(item.supplierOfferIds.some(id=>!ids.has(id)))return res.status(400).json({message:'أحد عروض الموردين لم يعد موجودًا.'});
+  // Products are priced from ready-goods suppliers (per pack). Raw-material offers are only for the calculators.
+  const materialSuppliers=new Set(catalogData.suppliers.filter(s=>s.kind==='materials').map(s=>s.id));
+  const materialOffers=new Set(catalogData.offers.filter(o=>materialSuppliers.has(o.supplierId)).map(o=>o.id));
+  if(item.supplierOfferIds.some(id=>materialOffers.has(id)))return res.status(400).json({message:'المواد الخام لا تُربط بالمنتجات. اربط سعر مورد المنتجات الجاهزة.'});
   if(!old){
    // SETNX initializes the counter without overwriting any existing allocation.
    await pipeline([['SETNX',SEQUENCE,Math.max(initialCount,...items.map(p=>Number(p.sku)||0))]]);
