@@ -1430,12 +1430,12 @@ function vinylOffers(){ return supplierOffers.filter(o=>/فينيل/.test(o.cate
 function acrylicOffers(){ const t=parseFloat(document.getElementById("ac-t").value); return supplierOffers.filter(o=>/أكريليك/.test(o.category)&&o.unit==="لوح"&&thickMmOf(o)===t); }
 function fillStSupplier(){
   const sel=document.getElementById("st-supplier"), list=vinylOffers(), keep=sel.value;
-  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${escHtml(o.spec)} · ${money(o.total)} ر.س للرول</option>`).join("");
+  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${escHtml(o.spec)} · ${money(o.total)} للرول</option>`).join("");
   if(list.some(o=>o.id===keep))sel.value=keep;
 }
 function fillAcSupplier(){
   const sel=document.getElementById("ac-supplier"), list=acrylicOffers(), keep=sel.value;
-  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${money(o.total)} ر.س للوح 122 × 244</option>`).join("");
+  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${money(o.total)} للوح 122 × 244</option>`).join("");
   if(list.some(o=>o.id===keep))sel.value=keep;
   document.getElementById("ac-supplier-note").textContent=list.length?"السعر يُحسب من لوح 122 × 244 سم حسب مساحة اللوح المختار.":"لا يوجد سعر مورد لهذه السماكة. أضفه من تبويب الأسعار والموردون.";
 }
