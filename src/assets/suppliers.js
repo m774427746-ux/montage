@@ -78,7 +78,7 @@ async function load(){
  message('status','جارٍ تحميل الموردين…');
  try{
   data=await api();selected=new Set([...selected].filter(id=>data.offers.some(o=>o.id===id)));
-  $('management').hidden=!data.canEdit;$('admin-link').hidden=!data.canEdit;$('actions-head').hidden=!data.canEdit;
+  $('management').hidden=!data.canEdit;if($('admin-link'))$('admin-link').hidden=!data.canEdit;$('actions-head').hidden=!data.canEdit;
   editorOptions();cards();render();message('status','');
  }catch(e){message('status',e.message);throw e;}
 }

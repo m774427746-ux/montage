@@ -258,6 +258,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
+      <button type="button" role="tab" data-tab="suppliers" aria-selected="false">▦ الأسعار والموردون</button>
       <button type="button" role="tab" data-tab="offset-products" aria-selected="false">▤ منتجات الأوفست</button>
       <button type="button" role="tab" data-tab="gifts" aria-selected="false">✦ الهدايا الدعائية</button>
       <button type="button" role="tab" data-tab="cups" aria-selected="false">
@@ -475,6 +476,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
 
       <div class="field"><label for="st-price">سعر المتر المربع (اختياري)</label><div class="inwrap"><input id="st-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="field"><label for="st-supplier">المورد (من قائمة الأسعار)</label><select id="st-supplier" class="sel"><option value="">— بدون مورد —</option></select></div>
       <div class="errors" id="st-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
@@ -530,7 +532,8 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
       </div>
       <div class="field"><label for="ac-margin">هامش الحافة لكل جهة</label><div class="inwrap"><input id="ac-margin" inputmode="decimal" autocomplete="off" value="5"><span>mm</span></div></div>
 
-      <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div></details>
+      <div class="field"><label for="ac-price">سعر اللوح</label><div class="inwrap"><input id="ac-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
+      <div class="field"><label for="ac-supplier">المورد (من قائمة الأسعار)</label><select id="ac-supplier" class="sel"><option value="">— بدون مورد —</option></select><p class="hint" id="ac-supplier-note"></p></div></details>
       <div class="errors" id="ac-err" role="alert" hidden></div>
     </div>
     <div class="panel main">
@@ -1416,6 +1419,54 @@ function acrylicCalc(){
 }
 function acName(){ const a=acCur; const sz=a.circle?`d${safeName(fx(a.w/10))}cm`:`${safeName(fx(a.w/10))}x${safeName(fx(a.h/10))}cm`; return `acrylic-${sz}-${a.t}mm-on-${safeName(cmTxt(a.W))}x${safeName(cmTxt(a.H))}cm-${a.n}pcs.svg`; }
 
+/* ---------- Supplier prices feed the sticker and acrylic costs ---------- */
+let supplierOffers=[];
+const escHtml=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const widthMOf=o=>{ const m=String(o.spec||"").replace(",",".").match(/([\d.]+)\s*m\b/); return m?parseFloat(m[1]):NaN; };
+const rollLengthMOf=o=>{ const m=String(o.packageSpec||"").replace(",",".").match(/×\s*([\d.]+)\s*m/); return m?parseFloat(m[1]):50; };
+const thickMmOf=o=>{ const m=String(o.spec||"").replace(",",".").match(/([\d.]+)\s*mm/); return m?parseFloat(m[1]):NaN; };
+const ACR_BASE_MM2=1220*2440; // supplier acrylic prices are for a 122 × 244 cm sheet
+function vinylOffers(){ return supplierOffers.filter(o=>/فينيل/.test(o.category)&&o.unit==="رول"&&Number.isFinite(widthMOf(o))); }
+function acrylicOffers(){ const t=parseFloat(document.getElementById("ac-t").value); return supplierOffers.filter(o=>/أكريليك/.test(o.category)&&o.unit==="لوح"&&thickMmOf(o)===t); }
+function fillStSupplier(){
+  const sel=document.getElementById("st-supplier"), list=vinylOffers(), keep=sel.value;
+  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${escHtml(o.spec)} · ${money(o.total)} ر.س للرول</option>`).join("");
+  if(list.some(o=>o.id===keep))sel.value=keep;
+}
+function fillAcSupplier(){
+  const sel=document.getElementById("ac-supplier"), list=acrylicOffers(), keep=sel.value;
+  sel.innerHTML='<option value="">— بدون مورد —</option>'+list.map(o=>`<option value="${escHtml(o.id)}">${escHtml(o.supplierName)} · ${escHtml(o.name)} · ${money(o.total)} ر.س للوح 122 × 244</option>`).join("");
+  if(list.some(o=>o.id===keep))sel.value=keep;
+  document.getElementById("ac-supplier-note").textContent=list.length?"السعر يُحسب من لوح 122 × 244 سم حسب مساحة اللوح المختار.":"لا يوجد سعر مورد لهذه السماكة. أضفه من تبويب الأسعار والموردون.";
+}
+function applySt(){
+  const o=supplierOffers.find(x=>x.id===document.getElementById("st-supplier").value); if(!o)return;
+  document.getElementById("st-price").value=(o.total/(widthMOf(o)*rollLengthMOf(o))).toFixed(4); // ر.س لكل م²
+  stickersCalc();
+}
+function applyAc(){
+  const o=supplierOffers.find(x=>x.id===document.getElementById("ac-supplier").value); if(!o)return;
+  const custom=document.getElementById("ac-sheet").value==="custom";
+  const S=custom?{w:(+document.getElementById("ac-sw").value||0)*10,h:(+document.getElementById("ac-sh").value||0)*10}:ALLACR.find(s=>s.v===document.getElementById("ac-sheet").value);
+  if(!S||!S.w||!S.h)return;
+  document.getElementById("ac-price").value=(o.total*(S.w*S.h)/ACR_BASE_MM2).toFixed(2); // ر.س لكل لوح
+  acrylicCalc();
+}
+async function loadSupplierOffers(){
+  try{
+    const r=await fetch("/api/suppliers",{credentials:"same-origin"}), d=await r.json();
+    if(!r.ok)throw Error(d.message||"تعذّر تحميل الموردين");
+    const names=new Map((d.suppliers||[]).map(s=>[s.id,s.name]));
+    supplierOffers=(d.offers||[]).map(o=>({...o,supplierName:names.get(o.supplierId)||""}));
+  }catch{ supplierOffers=[]; }
+  fillStSupplier(); fillAcSupplier();
+}
+document.getElementById("st-supplier").addEventListener("change",applySt);
+document.getElementById("ac-supplier").addEventListener("change",applyAc);
+document.getElementById("ac-sheet").addEventListener("change",()=>{ if(document.getElementById("ac-supplier").value)applyAc(); });
+document.getElementById("ac-t").addEventListener("change",()=>{ fillAcSupplier(); applyAc(); });
+loadSupplierOffers();
+
 /* ---------- Wiring ---------- */
 $("sh-presets").innerHTML=ITEMS.map(p=>`<button type="button" class="chip" data-w="${p.w}" data-h="${p.h}" data-c="${p.c?1:0}" aria-pressed="false">${p.t}</button>`).join("");
 $("sh-presets").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; $("sh-w").value=b.dataset.w; $("sh-h").value=b.dataset.h; $("sh-circle").checked=b.dataset.c==="1"; sheetsCalc(); });
@@ -1443,7 +1494,7 @@ $("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), 
 $("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
 
 /* ---------- Tabs (hash routed) ---------- */
-const TABS=["sheets","stickers","acrylic","offset-products","gifts","cups"]; const rendered={};
+const TABS=["sheets","stickers","acrylic","suppliers","offset-products","gifts","cups"]; const rendered={};
 window.asbarixShowTab=(t)=>showTab(t);
 function showTab(t){
   if(!TABS.includes(t)) t="sheets";

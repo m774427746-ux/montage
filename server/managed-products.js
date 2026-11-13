@@ -52,7 +52,11 @@ export const validate=(raw,old)=>{
  const ids=raw.supplierOfferIds??old?.supplierOfferIds??[];
  if(!Array.isArray(ids)||ids.length>30||ids.some(x=>typeof x!=='string'||x.length>100)||new Set(ids).size!==ids.length)throw Error('قائمة عروض الموردين غير صالحة.');
  if(old&&category!==old.category)throw Error('لا يمكن تغيير نوع المنتج بعد إصدار رقمه. أنشئ منتجًا جديدًا بدلاً من ذلك.');
- return {id:old?.id||randomUUID(),sku:old?.sku||null,category,name,spec,unit,notes,packQty,price,active:raw.active,supplierOfferIds:ids};
+ const priceMode=raw.priceMode==='supplier'?'supplier':'manual';
+ const marginPct=raw.marginPct===''||raw.marginPct==null?null:Number(raw.marginPct);
+ if(marginPct!==null&&(!Number.isFinite(marginPct)||marginPct<0||marginPct>95))throw Error('هامش الربح يكون بين 0 و95%.');
+ if(priceMode==='supplier'&&!ids.length)throw Error('اربط سعر مورد واحدًا على الأقل ليُحسب السعر منه.');
+ return {id:old?.id||randomUUID(),sku:old?.sku||null,category,name,spec,unit,notes,packQty,price,active:raw.active,supplierOfferIds:ids,priceMode,marginPct};
 };
 export function combineCatalog(legacy,changes){
  const seen=new Map();
@@ -79,10 +83,20 @@ export async function productsHandler(req,res){
    const items=await productsData(),supplierData=await supplierCatalog(),offers=supplierData.offers;
    const supplierNames=supplierData.suppliers;
    const map=new Map(offers.map(o=>[o.id,o])),names=new Map(supplierNames.map(s=>[s.id,s.name]));
-   return res.status(200).json({ok:true,canEdit:user.role==='admin',items:items.filter(x=>user.role==='admin'||x.active).map(p=>({
-    ...p,barcode:barcodeFor(p),priceStatus:p.price===null?'غير معتمد':'معتمد من الإدارة',
+   const [policyRaw]=await pipeline([['GET','montage:policy']]);
+   const defaultMargin=policyRaw?(JSON.parse(policyRaw).defaultMargin??35):35;
+   return res.status(200).json({ok:true,canEdit:user.role==='admin',items:items.filter(x=>user.role==='admin'||x.active).map(p=>{
+    const linked=(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean);
+    // Cheapest linked supplier price (incl. VAT) → sale price at the applied margin. Cost is shown to admins only.
+    const cost=linked.length?Math.min(...linked.map(o=>o.total)):null;
+    const margin=p.marginPct??defaultMargin;
+    const supplierPrice=cost===null?null:Math.ceil(cost/(1-margin/100)*100-1e-8)/100;
+    const effective=p.priceMode==='supplier'?supplierPrice:p.price;
+    const adminOnly=user.role==='admin'?{manualPrice:p.price,supplierCost:cost,suggestedPrice:supplierPrice,appliedMargin:margin}:{};
+    return {
+    ...p,price:effective,barcode:barcodeFor(p),priceStatus:effective===null?'غير معتمد':(p.priceMode==='supplier'?'من سعر المورد':'معتمد من الإدارة'),...adminOnly,
     suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>user.role==='admin'?({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}):({supplierName:names.get(o.supplierId)||o.supplierId}))
-   }))});
+   };})});
   }
   if(user.role!=='admin'&&req.method!=='POST')return res.status(403).json({message:'تعديل المنتجات والأسعار للإدارة فقط.'});
   if(!['POST','PUT'].includes(req.method))return res.status(405).json({message:'الطريقة غير مدعومة.'});

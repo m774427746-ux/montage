@@ -35,12 +35,15 @@
   }).join('')||'<p class="hint">لا توجد عروض موردين مرتبطة بهذا المنتج بعد.</p>';
   target.querySelectorAll('[data-remove-offer]').forEach(b=>b.onclick=()=>{selected.delete(b.dataset.removeOffer);drawLinks();});
  }
- function reset(){form.reset();form.elements.namedItem('id').value='';$('catalog-editor-title').textContent='إضافة منتج جديد';$('catalog-number').textContent='الرقم التالي سيصدر تلقائيًا عند الحفظ';$('catalog-category').disabled=false;$('catalog-pack').value='100';selected.clear();drawLinks();msg('catalog-save-message','');}
+ function reset(){form.reset();$('catalog-price-preview').textContent='';form.elements.namedItem('id').value='';$('catalog-editor-title').textContent='إضافة منتج جديد';$('catalog-number').textContent='الرقم التالي سيصدر تلقائيًا عند الحفظ';$('catalog-category').disabled=false;$('catalog-pack').value='100';selected.clear();drawLinks();msg('catalog-save-message','');}
  function edit(id){
   const p=items.find(x=>x.id===id);if(!p)return;
   form.elements.namedItem('id').value=p.id;
   for(const k of ['category','name','spec','unit','packQty','notes'])form.elements.namedItem(k).value=p[k]??'';
-  form.elements.namedItem('price').value=p.price===null?'':p.price;
+  form.elements.namedItem('price').value=(p.manualPrice??p.price)===null||(p.manualPrice??p.price)===undefined?'':(p.manualPrice??p.price);
+  form.elements.namedItem('priceMode').value=p.priceMode==='supplier'?'supplier':'manual';
+  form.elements.namedItem('marginPct').value=p.marginPct??'';
+  $('catalog-price-preview').textContent=p.supplierCost==null?'لا يوجد سعر مورد مرتبط بعد.':'أقل سعر مورد: '+cash(p.supplierCost)+' · السعر المقترح بهامش '+p.appliedMargin+'%: '+cash(p.suggestedPrice);
   form.elements.namedItem('active').checked=p.active;
   $('catalog-category').disabled=true;
   selected=new Set(p.supplierOfferIds||[]);drawLinks();
