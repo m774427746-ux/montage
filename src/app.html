@@ -448,6 +448,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 </div>
 
 <div class="tabpanel" id="tab-stickers" hidden>
+<section class="wrap"><div class="ready-prices" data-group="stickers"></div></section>
 <section class="wrap" aria-labelledby="st-title">
   <div class="sechead"><h2 id="st-title">حاسبة الاستيكرات</h2><a class="btn" href="/retail-prices">اختيار الصنف وتسعير الكمية مع الربح ↗</a><span class="muted sub">عدد الاستيكرات والمساحة والتكلفة بالمتر المربع</span></div>
   <div class="calc-layout">
@@ -475,8 +476,6 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
 
       <h3 class="mt">الكمية والتكلفة</h3>
       <div class="field"><label for="st-qty">عدد الاستيكرات</label><div class="inwrap"><input id="st-qty" inputmode="numeric" autocomplete="off" value="1000"><span>حبة</span></div></div>
-      <div class="field"><label for="st-ready">منتج جاهز من الكتالوج (اختياري)</label><select id="st-ready" class="sel"><option value="">— بدون —</option></select></div>
-      <div class="field" id="st-ready-margin-wrap" hidden><label for="st-ready-margin">هامش الربح: <output id="st-ready-margin-value"></output></label><input id="st-ready-margin" type="range" step="0.5" min="0" max="95" value="35"><small class="hint" id="st-ready-result" aria-live="polite"></small></div>
 
       <div class="field"><label for="st-price">سعر المتر المربع (اختياري)</label><div class="inwrap"><input id="st-price" inputmode="decimal" autocomplete="off" placeholder="اختياري"><span>ر.س</span></div></div>
       <div class="field"><label for="st-supplier">المورد (من قائمة الأسعار)</label><select id="st-supplier" class="sel"><option value="">— بدون مورد —</option></select></div>
@@ -1470,83 +1469,6 @@ document.getElementById("ac-supplier").addEventListener("change",applyAc);
 document.getElementById("ac-sheet").addEventListener("change",()=>{ if(document.getElementById("ac-supplier").value)applyAc(); });
 document.getElementById("ac-t").addEventListener("change",()=>{ fillAcSupplier(); applyAc(); });
 loadSupplierOffers();
-
-/* ---------- Ready products (catalog) priced for the stickers calculator ---------- */
-let readyProducts=[], readySeq=0, readyTimer;
-async function loadReadyProducts(){
-  try{
-    const r=await fetch("/api/manage?action=products",{credentials:"same-origin"}), d=await r.json();
-    if(!r.ok)throw Error();
-    readyProducts=d.items.filter(p=>p.usage==="stickers"&&p.price!==null);
-  }catch{ readyProducts=[]; }
-  document.getElementById("st-ready").innerHTML='<option value="">— بدون —</option>'+readyProducts.map(p=>`<option value="${escHtml(p.id)}">${escHtml(p.name)} · ${p.packQty} حبة · ${money(p.price)} للعبوة</option>`).join("");
-}
-function quoteReady(){
-  const id=document.getElementById("st-ready").value, wrap=document.getElementById("st-ready-margin-wrap"), out=document.getElementById("st-ready-result"), slider=document.getElementById("st-ready-margin");
-  const seq=++readySeq; clearTimeout(readyTimer);
-  if(!id){ wrap.hidden=true; out.textContent=""; return; }
-  readyTimer=setTimeout(async()=>{
-    const body={id,qty:Number(document.getElementById("st-qty").value)};
-    if(slider.dataset.touched)body.margin=Number(slider.value);
-    try{
-      const r=await fetch("/api/manage?action=ready-quote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}), d=await r.json();
-      if(seq!==readySeq)return;
-      if(!r.ok){ out.textContent=d.message||"تعذّر الحساب."; wrap.hidden=true; return; }
-      if(d.range){
-        wrap.hidden=false; slider.min=d.range.min; slider.max=d.range.max;
-        if(!slider.dataset.touched)slider.value=d.margin;
-        document.getElementById("st-ready-margin-value").textContent=d.margin+"%";
-      } else wrap.hidden=true;
-      out.textContent=`${d.packs} عبوة = ${d.chargedQty} حبة · الإجمالي ${money(d.total)} · سعر الحبة ${money(d.per)}`+(d.profit!=null?` · الربح ${money(d.profit)}`:"");
-    }catch{ if(seq===readySeq)out.textContent="تعذّر الاتصال بالحساب."; }
-  },200);
-}
-document.getElementById("st-ready").addEventListener("change",()=>{ document.getElementById("st-ready-margin").dataset.touched=""; quoteReady(); });
-const readySlider=document.getElementById("st-ready-margin");
-readySlider.addEventListener("input",()=>{ readySlider.dataset.touched="1"; document.getElementById("st-ready-margin-value").textContent=readySlider.value+"%"; quoteReady(); });
-document.getElementById("st-qty").addEventListener("input",quoteReady);
-loadReadyProducts();
-
-/* ---------- Banner calculator: ready banner product, size in cm, iron / installation options ---------- */
-let bnProducts=[], bnSeq=0, bnTimer;
-async function loadBannerProducts(){
-  try{
-    const r=await fetch("/api/manage?action=products",{credentials:"same-origin"}), d=await r.json();
-    if(!r.ok)throw Error();
-    bnProducts=d.items.filter(p=>p.usage==="banners"&&p.price!==null);
-  }catch{ bnProducts=[]; }
-  document.getElementById("bn-material").innerHTML='<option value="">— اختر —</option>'+bnProducts.map(p=>`<option value="${escHtml(p.id)}">${escHtml(p.name)} · ${money(p.price)} للعبوة</option>`).join("");
-}
-function resetBanner(){ for(const id of ["bn-area","bn-total","bn-per"])document.getElementById(id).textContent="—"; }
-function quoteBanner(){
-  const seq=++bnSeq; clearTimeout(bnTimer);
-  const id=document.getElementById("bn-material").value, out=document.getElementById("bn-status"), wrap=document.getElementById("bn-margin-wrap"), slider=document.getElementById("bn-margin");
-  if(!id){ wrap.hidden=true; resetBanner(); out.textContent="اختر الخامة لحساب السعر."; return; }
-  bnTimer=setTimeout(async()=>{
-    const body={id,w:Number(document.getElementById("bn-w").value),h:Number(document.getElementById("bn-h").value),option:document.getElementById("bn-option").value};
-    if(slider.dataset.touched)body.margin=Number(slider.value);
-    try{
-      const r=await fetch("/api/manage?action=banner-quote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}), d=await r.json();
-      if(seq!==bnSeq)return;
-      if(!r.ok){ resetBanner(); wrap.hidden=true; out.textContent=d.message||"تعذّر الحساب."; return; }
-      if(d.range){
-        wrap.hidden=false; slider.min=d.range.min; slider.max=d.range.max;
-        if(!slider.dataset.touched)slider.value=d.margin;
-        document.getElementById("bn-margin-value").textContent=d.margin+"%";
-      } else wrap.hidden=true;
-      document.getElementById("bn-area").textContent=d.areaM2+" م²";
-      document.getElementById("bn-total").textContent=money(d.total);
-      document.getElementById("bn-per").textContent=money(d.perM2);
-      out.textContent=(d.profit!=null?"الربح "+money(d.profit)+" · ":"")+"المقاس يُقرّب للمتر المربع الكامل.";
-    }catch{ if(seq===bnSeq)out.textContent="تعذّر الاتصال بالحساب."; }
-  },200);
-}
-document.getElementById("bn-material").addEventListener("change",()=>{ document.getElementById("bn-margin").dataset.touched=""; quoteBanner(); });
-for(const x of ["bn-w","bn-h"])document.getElementById(x).addEventListener("input",quoteBanner);
-document.getElementById("bn-option").addEventListener("change",quoteBanner);
-const bnSlider=document.getElementById("bn-margin");
-bnSlider.addEventListener("input",()=>{ bnSlider.dataset.touched="1"; document.getElementById("bn-margin-value").textContent=bnSlider.value+"%"; quoteBanner(); });
-loadBannerProducts();
 
 /* ---------- Wiring ---------- */
 $("sh-presets").innerHTML=ITEMS.map(p=>`<button type="button" class="chip" data-w="${p.w}" data-h="${p.h}" data-c="${p.c?1:0}" aria-pressed="false">${p.t}</button>`).join("");

@@ -1,1 +1,7 @@
-document.querySelectorAll('[data-reveal]').forEach(button=>{const input=document.getElementById(button.dataset.reveal);let timer;const hide=()=>{input.type='password';button.textContent='إظهار';button.setAttribute('aria-pressed','false');};button.addEventListener('click',()=>{clearTimeout(timer);if(input.type==='text'){hide();return;}input.type='text';button.textContent='إخفاء';button.setAttribute('aria-pressed','true');timer=setTimeout(hide,3000);});input.addEventListener('blur',()=>{if(document.activeElement!==button)hide();});document.addEventListener('visibilitychange',()=>{if(document.hidden)hide();});});
+// Show / hide toggle for password fields. Stays in the chosen state until the user presses the button again.
+document.querySelectorAll('[data-reveal]').forEach(button=>{
+ const input=document.getElementById(button.dataset.reveal);
+ const set=(visible)=>{input.type=visible?'text':'password';button.textContent=visible?'إخفاء':'إظهار';button.setAttribute('aria-pressed',String(visible));button.setAttribute('aria-label',visible?'إخفاء كلمة المرور':'إظهار كلمة المرور');};
+ set(false);
+ button.addEventListener('click',()=>{set(input.type==='password');input.focus();});
+});

@@ -6,8 +6,6 @@ import { pipeline } from './_redis.js';
 import { session,parseBody,readCookie } from './_session.js';
 import { credential,matches,saveCredential,issue } from './_credentials.js';
 import { catalog,publicItem,calculateQuote } from './_pricing.js';
-import { readyQuoteHandler } from '../server/ready-quote.js';
-import { bannerQuoteHandler, bannerExtrasHandler } from '../server/banner-quote.js';
 const validPolicy=p=>p&&typeof p.funMessages==='boolean'&&[p.minMargin,p.maxMargin,p.defaultMargin].every(x=>typeof x==='number'&&Number.isFinite(x))&&p.minMargin>=0&&p.maxMargin<95&&p.maxMargin>=p.minMargin&&p.defaultMargin>=p.minMargin&&p.defaultMargin<=p.maxMargin;
 export default async function handler(req,res){
  res.setHeader('Cache-Control','no-store');
@@ -16,9 +14,6 @@ export default async function handler(req,res){
  if(action==='excel')return excelHandler(req,res);
  if(action==='products')return productsHandler(req,res);
  if(action==='ubc')return ubcHandler(req,res);
- if(action==='ready-quote')return readyQuoteHandler(req,res);
- if(action==='banner-quote')return bannerQuoteHandler(req,res);
- if(action==='banner-extras')return bannerExtrasHandler(req,res);
  try{
   const identity=await session(req);
   if(!identity)return res.status(401).json({ok:false,message:'سجّل الدخول أولًا.'});
