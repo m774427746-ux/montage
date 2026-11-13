@@ -24,7 +24,9 @@ async function quote(id,qty,increase){
  const d=await r.json();if(!r.ok)throw Error(d.message||'تعذّر حساب السعر.');return d;
 }
 // Shared "increase profit" slider markup.
-const sliderHtml=(id)=>`<div class="rp-field rp-profit"><label for="${id}">زيادة الربح فوق السعر الأساسي: <output id="${id}-out">0%</output></label><input id="${id}" type="range" min="0" max="${increaseMax}" step="1" value="0"><small>حرّك الشريط لرفع سعر البيع. السعر الأساسي هو الحد الأدنى ولا ينزل عنه.</small></div>`;
+// Compact and folded by default: starts at +10%, the arrow reveals the slider.
+const DEFAULT_INCREASE=10;
+const sliderHtml=(id)=>`<details class="rp-profit"><summary title="اضغط لتعديل زيادة الربح"><span class="rp-profit-label">زيادة الربح</span><output id="${id}-out">${DEFAULT_INCREASE}%</output><span class="rp-chev" aria-hidden="true"></span></summary><div class="rp-profit-body"><input id="${id}" type="range" min="0" max="${increaseMax}" step="1" value="${DEFAULT_INCREASE}" aria-label="زيادة الربح بالنسبة المئوية"><div class="rp-scale" aria-hidden="true"><span>0%</span><span>${increaseMax}%</span></div><small>سعر القائمة هو الحد الأدنى، والشريط يرفع سعر البيع فوقه.</small></div></details>`;
 const resultHtml=(d,unitWord)=>`<div class="rp-result"><div><span>سعر البيع</span><strong>${money(d.total)}</strong></div><div><span>سعر ${unitWord}</span><strong>${money(d.per)}</strong></div><div><span>الربح الإضافي</span><strong>${money(d.extra||0)}</strong></div></div>`+(d.chargedQty/d.packs>1?`<p class="rp-note">يُحتسب ${d.packs} باقة كاملة (${d.chargedQty} حبة).</p>`:'');
 
 function mountList(box){
