@@ -42,6 +42,7 @@
   for(const k of ['category','name','spec','unit','packQty','notes'])form.elements.namedItem(k).value=p[k]??'';
   form.elements.namedItem('price').value=(p.manualPrice??p.price)===null||(p.manualPrice??p.price)===undefined?'':(p.manualPrice??p.price);
   form.elements.namedItem('priceMode').value=p.priceMode==='supplier'?'supplier':'manual';
+  form.elements.namedItem('usage').value=p.usage||'';
   form.elements.namedItem('marginPct').value=p.marginPct??'';
   $('catalog-price-preview').textContent=p.supplierCost==null?'لا يوجد سعر مورد مرتبط بعد.':'أقل سعر مورد: '+cash(p.supplierCost)+' · السعر المقترح بهامش '+p.appliedMargin+'%: '+cash(p.suggestedPrice);
   form.elements.namedItem('active').checked=p.active;

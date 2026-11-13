@@ -47,6 +47,7 @@ const clean=(v,n)=>typeof v==='string'?v.trim().slice(0,n):'';
 const money=v=>v===null||v===''||v===undefined?null:(typeof v==='number'&&Number.isFinite(v)&&v>0&&v<1e7?v:NaN);
 export const barcodeFor=(p)=>p.category==='gifts'?'GFT'+p.sku:null;
 export const validate=(raw,old)=>{
+ const usage=['stickers','banners'].includes(raw.usage)?raw.usage:null; // which calculator may use this ready product
  const category=clean(raw.category,20),name=clean(raw.name,100),spec=clean(raw.spec,300),unit=clean(raw.unit,24),notes=clean(raw.notes,500),packQty=Number(raw.packQty),price=money(raw.price);
  if(!['offset','gifts'].includes(category)||!name||!spec||!unit||!Number.isInteger(packQty)||packQty<1||packQty>1e7||Number.isNaN(price)||typeof raw.active!=='boolean')throw Error('راجع الاسم والمواصفات والكمية والسعر وحالة المنتج.');
  const ids=raw.supplierOfferIds??old?.supplierOfferIds??[];
@@ -56,7 +57,7 @@ export const validate=(raw,old)=>{
  const marginPct=raw.marginPct===''||raw.marginPct==null?null:Number(raw.marginPct);
  if(marginPct!==null&&(!Number.isFinite(marginPct)||marginPct<0||marginPct>95))throw Error('هامش الربح يكون بين 0 و95%.');
  if(priceMode==='supplier'&&!ids.length)throw Error('اربط سعر مورد واحدًا على الأقل ليُحسب السعر منه.');
- return {id:old?.id||randomUUID(),sku:old?.sku||null,category,name,spec,unit,notes,packQty,price,active:raw.active,supplierOfferIds:ids,priceMode,marginPct};
+ return {id:old?.id||randomUUID(),sku:old?.sku||null,category,name,spec,unit,notes,packQty,price,active:raw.active,supplierOfferIds:ids,priceMode,marginPct,usage};
 };
 export function combineCatalog(legacy,changes){
  const seen=new Map();
@@ -95,7 +96,7 @@ export async function productsHandler(req,res){
     const adminOnly=user.role==='admin'?{manualPrice:p.price,supplierCost:cost,suggestedPrice:supplierPrice,appliedMargin:margin}:{};
     return {
     ...p,price:effective,barcode:barcodeFor(p),priceStatus:effective===null?'غير معتمد':(p.priceMode==='supplier'?'من سعر المورد':'معتمد من الإدارة'),...adminOnly,
-    suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>user.role==='admin'?({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}):({supplierName:names.get(o.supplierId)||o.supplierId}))
+    suppliers:(p.supplierOfferIds||[]).map(id=>map.get(id)).filter(Boolean).map(o=>user.role==='admin'?({id:o.id,supplierId:o.supplierId,supplierName:names.get(o.supplierId)||o.supplierId,price:o.price,total:o.total,unit:o.unit,packageSpec:o.packageSpec,source:o.source}):null).filter(Boolean)
    };})});
   }
   if(user.role!=='admin'&&req.method!=='POST')return res.status(403).json({message:'تعديل المنتجات والأسعار للإدارة فقط.'});
