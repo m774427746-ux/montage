@@ -25,7 +25,7 @@ async function quote(id,qty,increase){
 }
 // Shared "increase profit" slider markup.
 const sliderHtml=(id)=>`<div class="rp-field rp-profit"><label for="${id}">زيادة الربح فوق السعر الأساسي: <output id="${id}-out">0%</output></label><input id="${id}" type="range" min="0" max="${increaseMax}" step="1" value="0"><small>حرّك الشريط لرفع سعر البيع. السعر الأساسي هو الحد الأدنى ولا ينزل عنه.</small></div>`;
-const resultHtml=(d,unitWord)=>`<div class="rp-result"><div><span>سعر البيع</span><strong>${money(d.total)}</strong></div><div><span>سعر ${unitWord}</span><strong>${money(d.per)}</strong></div><div><span>الربح الإضافي</span><strong>${money(d.extra||0)}</strong></div></div>`+(d.packs>1||d.chargedQty!==d.qty?`<p class="rp-note">يُحتسب ${d.packs} × باقة (${d.chargedQty} وحدة).</p>`:'');
+const resultHtml=(d,unitWord)=>`<div class="rp-result"><div><span>سعر البيع</span><strong>${money(d.total)}</strong></div><div><span>سعر ${unitWord}</span><strong>${money(d.per)}</strong></div><div><span>الربح الإضافي</span><strong>${money(d.extra||0)}</strong></div></div>`+(d.chargedQty/d.packs>1?`<p class="rp-note">يُحتسب ${d.packs} باقة كاملة (${d.chargedQty} حبة).</p>`:'');
 
 function mountList(box){
  const group=box.dataset.group,uid='rp-'+group;
