@@ -26,8 +26,9 @@ async function quote(id,qty,increase){
 // Shared "increase profit" slider markup.
 // Compact and folded by default: starts at +10%, the arrow reveals the slider.
 const DEFAULT_INCREASE=10;
-const sliderHtml=(id)=>`<details class="rp-profit"><summary title="اضغط لتعديل زيادة الربح"><span class="rp-profit-label">زيادة الربح</span><output id="${id}-out">${DEFAULT_INCREASE}%</output><span class="rp-chev" aria-hidden="true"></span></summary><div class="rp-profit-body"><input id="${id}" type="range" min="0" max="${increaseMax}" step="1" value="${DEFAULT_INCREASE}" aria-label="زيادة الربح بالنسبة المئوية"><div class="rp-scale" aria-hidden="true"><span>0%</span><span>${increaseMax}%</span></div><small>سعر القائمة هو الحد الأدنى، والشريط يرفع سعر البيع فوقه.</small></div></details>`;
-const resultHtml=(d,unitWord)=>`<div class="rp-result"><div><span>سعر البيع</span><strong>${money(d.total)}</strong></div><div><span>سعر ${unitWord}</span><strong>${money(d.per)}</strong></div><div><span>الربح الإضافي</span><strong>${money(d.extra||0)}</strong></div></div>`+(d.chargedQty/d.packs>1?`<p class="rp-note">يُحتسب ${d.packs} باقة كاملة (${d.chargedQty} حبة).</p>`:'');
+// Customer-safe: no wording about profit on screen. Only a small arrow; the slider sits under it.
+const sliderHtml=(id)=>`<details class="rp-profit"><summary title="تعديل السعر" aria-label="تعديل السعر"><span class="rp-chev" aria-hidden="true"></span><output id="${id}-out" hidden>${DEFAULT_INCREASE}%</output></summary><div class="rp-profit-body"><input id="${id}" type="range" min="0" max="${increaseMax}" step="1" value="${DEFAULT_INCREASE}" aria-label="تعديل السعر"></div></details>`;
+const resultHtml=(d,unitWord)=>`<div class="rp-result"><div><span>السعر</span><strong>${money(d.total)}</strong></div><div><span>سعر ${unitWord}</span><strong>${money(d.per)}</strong></div></div>`+(d.chargedQty/d.packs>1?`<p class="rp-note">يُحتسب ${d.packs} باقة كاملة (${d.chargedQty} حبة).</p>`:'');
 
 function mountList(box){
  const group=box.dataset.group,uid='rp-'+group;
