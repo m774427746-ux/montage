@@ -258,6 +258,7 @@ header.top{padding-block:28px 14px}.brand .logo{background:#fff;border-radius:10
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18v12H3z"/><circle cx="8" cy="12" r="2.5"/><circle cx="14" cy="12" r="2.5"/><path d="M19 9v6"/></svg>حاسبة الاستيكرات</button>
       <button type="button" role="tab" data-tab="acrylic" aria-selected="false">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7l9-4 9 4-9 4z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>حاسبة الأكريليك</button>
+      <button type="button" role="tab" data-tab="banners" aria-selected="false">▭ حاسبة البنرات</button>
       <button type="button" role="tab" data-tab="suppliers" aria-selected="false">▦ الأسعار والموردون</button>
       <button type="button" role="tab" data-tab="offset-products" aria-selected="false">▤ منتجات الأوفست</button>
       <button type="button" role="tab" data-tab="gifts" aria-selected="false">✦ الهدايا الدعائية</button>
@@ -1506,6 +1507,47 @@ readySlider.addEventListener("input",()=>{ readySlider.dataset.touched="1"; docu
 document.getElementById("st-qty").addEventListener("input",quoteReady);
 loadReadyProducts();
 
+/* ---------- Banner calculator: ready banner product, size in cm, iron / installation options ---------- */
+let bnProducts=[], bnSeq=0, bnTimer;
+async function loadBannerProducts(){
+  try{
+    const r=await fetch("/api/manage?action=products",{credentials:"same-origin"}), d=await r.json();
+    if(!r.ok)throw Error();
+    bnProducts=d.items.filter(p=>p.usage==="banners"&&p.price!==null);
+  }catch{ bnProducts=[]; }
+  document.getElementById("bn-material").innerHTML='<option value="">— اختر —</option>'+bnProducts.map(p=>`<option value="${escHtml(p.id)}">${escHtml(p.name)} · ${money(p.price)} للعبوة</option>`).join("");
+}
+function resetBanner(){ for(const id of ["bn-area","bn-total","bn-per"])document.getElementById(id).textContent="—"; }
+function quoteBanner(){
+  const seq=++bnSeq; clearTimeout(bnTimer);
+  const id=document.getElementById("bn-material").value, out=document.getElementById("bn-status"), wrap=document.getElementById("bn-margin-wrap"), slider=document.getElementById("bn-margin");
+  if(!id){ wrap.hidden=true; resetBanner(); out.textContent="اختر الخامة لحساب السعر."; return; }
+  bnTimer=setTimeout(async()=>{
+    const body={id,w:Number(document.getElementById("bn-w").value),h:Number(document.getElementById("bn-h").value),option:document.getElementById("bn-option").value};
+    if(slider.dataset.touched)body.margin=Number(slider.value);
+    try{
+      const r=await fetch("/api/manage?action=banner-quote",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)}), d=await r.json();
+      if(seq!==bnSeq)return;
+      if(!r.ok){ resetBanner(); wrap.hidden=true; out.textContent=d.message||"تعذّر الحساب."; return; }
+      if(d.range){
+        wrap.hidden=false; slider.min=d.range.min; slider.max=d.range.max;
+        if(!slider.dataset.touched)slider.value=d.margin;
+        document.getElementById("bn-margin-value").textContent=d.margin+"%";
+      } else wrap.hidden=true;
+      document.getElementById("bn-area").textContent=d.areaM2+" م²";
+      document.getElementById("bn-total").textContent=money(d.total);
+      document.getElementById("bn-per").textContent=money(d.perM2);
+      out.textContent=(d.profit!=null?"الربح "+money(d.profit)+" · ":"")+"المقاس يُقرّب للمتر المربع الكامل.";
+    }catch{ if(seq===bnSeq)out.textContent="تعذّر الاتصال بالحساب."; }
+  },200);
+}
+document.getElementById("bn-material").addEventListener("change",()=>{ document.getElementById("bn-margin").dataset.touched=""; quoteBanner(); });
+for(const x of ["bn-w","bn-h"])document.getElementById(x).addEventListener("input",quoteBanner);
+document.getElementById("bn-option").addEventListener("change",quoteBanner);
+const bnSlider=document.getElementById("bn-margin");
+bnSlider.addEventListener("input",()=>{ bnSlider.dataset.touched="1"; document.getElementById("bn-margin-value").textContent=bnSlider.value+"%"; quoteBanner(); });
+loadBannerProducts();
+
 /* ---------- Wiring ---------- */
 $("sh-presets").innerHTML=ITEMS.map(p=>`<button type="button" class="chip" data-w="${p.w}" data-h="${p.h}" data-c="${p.c?1:0}" aria-pressed="false">${p.t}</button>`).join("");
 $("sh-presets").addEventListener("click",e=>{ const b=e.target.closest(".chip"); if(!b) return; $("sh-w").value=b.dataset.w; $("sh-h").value=b.dataset.h; $("sh-circle").checked=b.dataset.c==="1"; sheetsCalc(); });
@@ -1533,7 +1575,7 @@ $("st-dl").addEventListener("click",()=>{ if(!stCur) return; saveFile(stName(), 
 $("ac-dl").addEventListener("click",()=>{ if(!acCur) return; saveFile(acName(), layoutExport({...acCur,kind:"acrylic",title:`Acrylic cut layout ${acCur.n} pcs`}), "image/svg+xml"); });
 
 /* ---------- Tabs (hash routed) ---------- */
-const TABS=["sheets","stickers","acrylic","suppliers","offset-products","gifts","cups"]; const rendered={};
+const TABS=["sheets","stickers","acrylic","banners","suppliers","offset-products","gifts","cups"]; const rendered={};
 window.asbarixShowTab=(t)=>showTab(t);
 function showTab(t){
   if(!TABS.includes(t)) t="sheets";

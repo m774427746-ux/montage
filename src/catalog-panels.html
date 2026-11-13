@@ -6,6 +6,12 @@
 <section class="wrap catalog-screen" aria-labelledby="gifts-title"><div class="sechead"><div><h2 id="gifts-title">الهدايا الدعائية</h2><p class="hint">أكواب وأقلام وأعلام ومنتجات دعائية بأسعار يعتمدها المدير.</p></div></div>
 <div class="catalog-toolbar"><label for="gifts-search">ابحث في الهدايا</label><input id="gifts-search" class="sel" placeholder="كوب، قلم، علم…" type="search"></div>
 <p id="gifts-status" role="status" class="hint"></p><div class="catalog-items" id="gifts-items"></div></section></div>
+<div class="tabpanel" id="tab-banners" hidden>
+<section class="wrap catalog-screen" aria-labelledby="banners-title"><div class="sechead"><div><h2 id="banners-title">حاسبة البنرات</h2><p class="hint">حدد المقاس بالسنتيمتر، واختر الخامة والإضافة (حديد أو تركيب أو بدون).</p></div></div>
+<div class="form-grid"><div class="field"><label for="bn-w">العرض (سم)</label><input id="bn-w" type="number" min="1" max="1000" step="1" value="100"></div><div class="field"><label for="bn-h">الطول (سم)</label><input id="bn-h" type="number" min="1" max="1000" step="1" value="100"></div><div class="field"><label for="bn-material">الخامة (منتج جاهز)</label><select id="bn-material"><option value="">— اختر —</option></select></div><div class="field"><label for="bn-option">الإضافة</label><select id="bn-option"><option value="none">بدون حديد أو تركيب</option><option value="iron">مع حديد</option><option value="install">مع تركيب</option></select></div></div>
+<div class="field" id="bn-margin-wrap" hidden><label for="bn-margin">هامش الربح: <output id="bn-margin-value"></output></label><input id="bn-margin" type="range" step="0.5"></div>
+<div class="kpis"><div class="kpi"><span class="l">المساحة</span><strong class="v" id="bn-area">—</strong></div><div class="kpi"><span class="l">الإجمالي</span><strong class="v" id="bn-total">—</strong></div><div class="kpi"><span class="l">سعر المتر</span><strong class="v" id="bn-per">—</strong></div></div>
+<p id="bn-status" class="hint" role="status"></p></section></div>
 <div class="tabpanel" id="tab-suppliers" hidden>
 <section class="wrap catalog-screen suppliers-screen" aria-labelledby="suppliers-title"><div class="sechead"><div><h2 id="suppliers-title">الأسعار والموردون</h2><p class="hint">أسعار الشراء من الموردين، ومقارنتها. هذه أسعار الموردين وليست أسعار بيع للعملاء.</p></div></div>
 <p id="status" class="message" role="status">جارٍ تحميل الموردين…</p>
